@@ -1,47 +1,23 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import AppHeader from './components/AppHeader.vue'
+import HeroSection from './components/HeroSection.vue'
+import AboutSection from './components/AboutSection.vue'
+import VisionMissionSection from './components/VisionMissionSection.vue'
+import CapabilitiesSection from './components/CapabilitiesSection.vue'
+import ServicesSection from './components/ServicesSection.vue'
+import QualitySection from './components/QualitySection.vue'
+import AppFooter from './components/AppFooter.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
+  <AppHeader />
   <main>
-    <TheWelcome />
+    <HeroSection />
+    <AboutSection />
+    <VisionMissionSection />
+    <CapabilitiesSection />
+    <ServicesSection />
+    <QualitySection />
   </main>
+  <AppFooter />
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
