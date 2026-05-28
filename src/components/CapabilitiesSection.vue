@@ -9,6 +9,9 @@ import {
   Truck,
   Landmark,
 } from '@lucide/vue'
+import { useScrollReveal } from '@/composables/useScrollReveal'
+
+const { containerRef } = useScrollReveal()
 
 const capabilities = [
   {
@@ -55,9 +58,9 @@ const capabilities = [
 </script>
 
 <template>
-  <section id="capabilities" class="section capabilities">
+  <section id="capabilities" class="section capabilities" ref="containerRef">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal">
         <span class="section-eyebrow">Agency Capability</span>
         <h2 class="section-title">Built on capability, governed by integrity</h2>
         <p class="section-lead">
@@ -65,10 +68,10 @@ const capabilities = [
         </p>
       </div>
 
-      <div class="cap-grid">
-        <article v-for="(c, i) in capabilities" :key="c.title" class="cap-card">
+      <div class="cap-grid reveal-stagger">
+        <article v-for="(c, i) in capabilities" :key="c.title" class="cap-card reveal hover-lift">
           <span class="cap-number">{{ String(i + 1).padStart(2, '0') }}</span>
-          <div class="cap-icon">
+          <div class="cap-icon icon-pulse">
             <component :is="c.icon" :size="22" />
           </div>
           <h3 class="cap-title">{{ c.title }}</h3>
@@ -96,13 +99,6 @@ const capabilities = [
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 1.75rem;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-.cap-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--color-accent);
-  box-shadow: 0 12px 30px var(--color-shadow);
 }
 
 .cap-number {

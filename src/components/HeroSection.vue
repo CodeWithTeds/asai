@@ -1,27 +1,33 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { ArrowRight, ShieldCheck, Award, Users } from '@lucide/vue'
+
+onMounted(() => {
+  // Trigger hero animations after a short delay for smooth entrance
+  setTimeout(() => {
+    document.querySelectorAll('.hero-animate').forEach((el, i) => {
+      setTimeout(() => el.classList.add('hero-visible'), i * 120)
+    })
+  }, 100)
+})
 </script>
 
 <template>
   <section id="top" class="hero">
     <div class="container hero-grid">
-      <div class="hero-visual">
-        <img src="/images/hero.png" alt="ASAI security operations" class="hero-img" />
-      </div>
-
       <div class="hero-content">
-        <span class="eyebrow">Annapolis Security Agency, Inc.</span>
-        <h1 class="hero-title">
+        <span class="eyebrow hero-animate">Annapolis Security Agency, Inc.</span>
+        <h1 class="hero-title hero-animate">
           Transforming security for a
-          <span class="accent">better business.</span>
+          <span class="accent shimmer-text">better business.</span>
         </h1>
-        <p class="hero-lead">
+        <p class="hero-lead hero-animate">
           A service-oriented corporation putting client needs and satisfaction as our utmost
           priority — backed by strong financial capabilities and highly skilled security
           professionals across Luzon, Visayas, and Mindanao.
         </p>
 
-        <div class="hero-cta">
+        <div class="hero-cta hero-animate">
           <a href="#services" class="btn-primary">
             Explore services
             <ArrowRight :size="16" />
@@ -29,29 +35,33 @@ import { ArrowRight, ShieldCheck, Award, Users } from '@lucide/vue'
           <a href="#about" class="btn-ghost">Learn more</a>
         </div>
 
-        <ul class="hero-stats">
+        <ul class="hero-stats hero-animate">
           <li>
-            <Award :size="20" class="stat-icon" />
+            <Award :size="20" class="stat-icon icon-pulse" />
             <div>
               <strong>10+ years</strong>
               <span>of trusted operations</span>
             </div>
           </li>
           <li>
-            <Users :size="20" class="stat-icon" />
+            <Users :size="20" class="stat-icon icon-pulse" />
             <div>
               <strong>Nationwide</strong>
               <span>Luzon, Visayas, Mindanao</span>
             </div>
           </li>
           <li>
-            <ShieldCheck :size="20" class="stat-icon" />
+            <ShieldCheck :size="20" class="stat-icon icon-pulse" />
             <div>
               <strong>SEC Reg.</strong>
               <span>CS201809381</span>
             </div>
           </li>
         </ul>
+      </div>
+
+      <div class="hero-visual hero-animate float-anim">
+        <img src="/images/hero.png" alt="ASAI security operations" class="hero-img" />
       </div>
     </div>
   </section>
@@ -62,6 +72,19 @@ import { ArrowRight, ShieldCheck, Award, Users } from '@lucide/vue'
   padding: 4rem 0 5rem;
   position: relative;
   overflow: hidden;
+}
+
+.hero-animate {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-animate.hero-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .hero-grid {
@@ -105,7 +128,6 @@ import { ArrowRight, ShieldCheck, Award, Users } from '@lucide/vue'
 }
 
 .hero-title .accent {
-  color: var(--color-accent);
   font-style: italic;
 }
 
@@ -132,12 +154,13 @@ import { ArrowRight, ShieldCheck, Award, Users } from '@lucide/vue'
   padding: 0.85rem 1.4rem;
   border-radius: var(--radius-sm);
   font-weight: 600;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .btn-primary:hover {
   background: var(--color-primary-dark);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(74, 95, 128, 0.3);
 }
 
 .btn-ghost {
@@ -149,11 +172,13 @@ import { ArrowRight, ShieldCheck, Award, Users } from '@lucide/vue'
   color: var(--color-primary-dark);
   border: 1px solid var(--color-border);
   background: #fff;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .btn-ghost:hover {
   border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 95, 128, 0.12);
 }
 
 .hero-stats {

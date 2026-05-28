@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { Building2, Handshake, ScrollText } from '@lucide/vue'
+import { useScrollReveal } from '@/composables/useScrollReveal'
+
+const { containerRef } = useScrollReveal()
 
 const milestones = [
   {
@@ -21,9 +24,9 @@ const milestones = [
 </script>
 
 <template>
-  <section id="about" class="section about">
+  <section id="about" class="section about" ref="containerRef">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal">
         <span class="section-eyebrow">About ASAI</span>
         <h2 class="section-title">A trusted security partner since 2014</h2>
         <p class="section-lead">
@@ -33,9 +36,9 @@ const milestones = [
         </p>
       </div>
 
-      <div class="milestones">
-        <article v-for="m in milestones" :key="m.title" class="milestone">
-          <div class="milestone-icon">
+      <div class="milestones reveal-stagger">
+        <article v-for="m in milestones" :key="m.title" class="milestone reveal hover-lift">
+          <div class="milestone-icon icon-pulse">
             <component :is="m.icon" :size="22" />
           </div>
           <h3 class="milestone-title">{{ m.title }}</h3>
@@ -43,8 +46,8 @@ const milestones = [
         </article>
       </div>
 
-      <p class="motto">
-        “TRANSFORMING SECURITY FOR A BETTER BUSINESS” — a guarantee that all clients are assured
+      <p class="motto reveal">
+        "TRANSFORMING SECURITY FOR A BETTER BUSINESS" — a guarantee that all clients are assured
         of protection and security with dedication and honesty.
       </p>
     </div>
@@ -68,12 +71,6 @@ const milestones = [
   padding: 1.75rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.milestone:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px var(--color-shadow);
 }
 
 .milestone-icon {
@@ -103,7 +100,7 @@ const milestones = [
 
 .motto {
   text-align: center;
-  font-family: var(--font-display);
+  font-family: var(--font-serif);
   font-style: italic;
   font-size: 1.15rem;
   color: var(--color-primary);

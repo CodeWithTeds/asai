@@ -16,6 +16,9 @@ import {
   UserRoundCheck,
   Camera,
 } from '@lucide/vue'
+import { useScrollReveal } from '@/composables/useScrollReveal'
+
+const { containerRef } = useScrollReveal()
 
 const services = [
   { icon: ShoppingBag, label: 'Retail / Mall Security' },
@@ -37,9 +40,9 @@ const services = [
 </script>
 
 <template>
-  <section id="services" class="section services">
+  <section id="services" class="section services" ref="containerRef">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal">
         <span class="section-eyebrow">Services Offered</span>
         <h2 class="section-title">Comprehensive coverage, tailored protection</h2>
         <p class="section-lead">
@@ -48,9 +51,9 @@ const services = [
         </p>
       </div>
 
-      <ul class="svc-grid">
-        <li v-for="s in services" :key="s.label" class="svc-card">
-          <span class="svc-icon">
+      <ul class="svc-grid reveal-stagger">
+        <li v-for="s in services" :key="s.label" class="svc-card reveal hover-lift">
+          <span class="svc-icon icon-pulse">
             <component :is="s.icon" :size="20" />
           </span>
           <span class="svc-label">{{ s.label }}</span>
@@ -80,13 +83,6 @@ const services = [
   padding: 1rem 1.1rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.svc-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--color-accent);
-  box-shadow: 0 8px 20px var(--color-shadow);
 }
 
 .svc-icon {

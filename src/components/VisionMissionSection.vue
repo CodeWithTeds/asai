@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { Eye, Target } from '@lucide/vue'
+import { useScrollReveal } from '@/composables/useScrollReveal'
+
+const { containerRef } = useScrollReveal()
 
 const visionPoints = [
   'A world-class Security Service Company',
@@ -10,10 +13,10 @@ const visionPoints = [
 </script>
 
 <template>
-  <section id="vision" class="section vision-mission">
+  <section id="vision" class="section vision-mission" ref="containerRef">
     <div class="container vm-grid">
-      <article class="vm-card">
-        <div class="vm-icon">
+      <article class="vm-card reveal-left reveal">
+        <div class="vm-icon icon-pulse">
           <Eye :size="22" />
         </div>
         <h2 class="vm-title">Vision Statement</h2>
@@ -22,8 +25,8 @@ const visionPoints = [
         </ul>
       </article>
 
-      <article class="vm-card vm-card--accent">
-        <div class="vm-icon vm-icon--accent">
+      <article class="vm-card vm-card--accent reveal-right reveal">
+        <div class="vm-icon vm-icon--accent icon-pulse">
           <Target :size="22" />
         </div>
         <h2 class="vm-title">Mission Statement</h2>
@@ -56,6 +59,12 @@ const visionPoints = [
   padding: 2.5rem;
   position: relative;
   overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.vm-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(74, 95, 128, 0.14);
 }
 
 .vm-card--accent {

@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { CheckCircle2 } from '@lucide/vue'
+import { useScrollReveal } from '@/composables/useScrollReveal'
+
+const { containerRef } = useScrollReveal()
 
 const practices = [
   'Physical Security Measures',
@@ -12,9 +15,9 @@ const practices = [
 </script>
 
 <template>
-  <section class="section quality">
+  <section class="section quality" ref="containerRef">
     <div class="container quality-grid">
-      <div>
+      <div class="reveal-left reveal">
         <span class="section-eyebrow">Our Commitment</span>
         <h2 class="section-title">Excellence, audited end-to-end.</h2>
         <p class="quality-lead">
@@ -30,7 +33,7 @@ const practices = [
         </p>
       </div>
 
-      <div class="practice-card">
+      <div class="practice-card reveal-right reveal hover-lift">
         <h3 class="practice-title">Key Practices</h3>
         <ul class="practice-list">
           <li v-for="p in practices" :key="p">
