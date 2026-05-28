@@ -114,9 +114,9 @@ onMounted(() => {
 
 .eyebrow {
   display: inline-block;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-accent);
   margin-bottom: 1rem;
@@ -218,8 +218,8 @@ onMounted(() => {
     padding: 5rem 0 7rem;
   }
   .hero-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 20%;
+    grid-template-columns: 60% 1fr;
+    gap: 4rem;
   }
   .hero-content {
     order: 1;
