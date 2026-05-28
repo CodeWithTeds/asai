@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import {
   ShoppingBag,
   Headphones,
@@ -39,27 +39,64 @@ const services = [
 ]
 
 const activeIndex = ref(0)
+const expanded = ref(false)
 const trackRef = ref<HTMLElement | null>(null)
+const removedIndices = ref<Set<number>>(new Set())
 
-const activeCap = computed(() => services[activeIndex.value] as (typeof services)[number])
+const activeCap = computed(() => {
+  return services[activeIndex.value] as (typeof services)[number]
+})
 
-function selectService(index: number) {
-  activeIndex.value = index
+const visibleServices = computed(() =>
+  services.filter((_, i) => !removedIndices.value.has(i))
+)
+
+function selectService(originalIndex: number) {
+  // Set as active (changes background + text)
+  activeIndex.value = originalIndex
+  // Remove the card from the list
+  removedIndices.value.add(originalIndex)
+}
+
+function collapseView() {
+  expanded.value = false
 }
 
 function scrollCards(direction: 'left' | 'right') {
   if (!trackRef.value) return
   const cardWidth = trackRef.value.querySelector('.svc-card')?.clientWidth ?? 200
-  const scrollAmount = cardWidth + 12 // card width + gap
+  const scrollAmount = cardWidth + 12
   trackRef.value.scrollBy({
     left: direction === 'right' ? scrollAmount : -scrollAmount,
     behavior: 'smooth',
   })
 }
+
+// Scroll-triggered entrance animation
+const sectionRef = ref<HTMLElement | null>(null)
+const isVisible = ref(false)
+
+onMounted(() => {
+  const el = sectionRef.value
+  if (!el) return
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry && entry.isIntersecting) {
+        isVisible.value = true
+        observer.disconnect()
+      }
+    },
+    { threshold: 0.15 }
+  )
+  observer.observe(el)
+
+  onUnmounted(() => observer.disconnect())
+})
 </script>
 
 <template>
-  <section id="services" class="services-section">
+  <section id="services" class="services-section" ref="sectionRef" :class="{ 'is-visible': isVisible }">
     <!-- Full background image -->
     <div class="services-bg">
       <Transition name="bg-fade" mode="out-in">
@@ -73,7 +110,7 @@ function scrollCards(direction: 'left' | 'right') {
       <div class="services-bg-overlay"></div>
     </div>
 
-    <div class="services-inner">
+    <div class="services-inner" @click="expanded ? collapseView() : null">
       <!-- Text content (changes based on active card) -->
       <div class="services-text">
         <span class="section-eyebrow">Services Offered</span>
@@ -87,29 +124,30 @@ function scrollCards(direction: 'left' | 'right') {
 
       <!-- Horizontal cards row (3 visible, scroll right) -->
       <div class="services-carousel">
-        <button class="carousel-btn carousel-btn--left" @click="scrollCards('left')" aria-label="Scroll left">
+        <button class="carousel-btn carousel-btn--left" @click.stop="scrollCards('left')" aria-label="Scroll left">
           <ChevronLeft :size="20" />
         </button>
 
         <div class="cards-track" ref="trackRef">
-          <div
-            v-for="(s, i) in services"
-            :key="s.label"
-            class="svc-card"
-            :class="{ 'svc-card--active': i === activeIndex }"
-            @click="selectService(i)"
-          >
-            <div class="svc-card-img">
-              <img :src="s.img" :alt="s.label" />
+          <TransitionGroup name="card-remove">
+            <div
+              v-for="s in visibleServices"
+              :key="s.label"
+              class="svc-card"
+              @click.stop="selectService(services.indexOf(s))"
+            >
+              <div class="svc-card-img">
+                <img :src="s.img" :alt="s.label" />
+              </div>
+              <div class="svc-card-content">
+                <component :is="s.icon" :size="16" class="svc-card-icon" />
+                <span class="svc-card-label">{{ s.label }}</span>
+              </div>
             </div>
-            <div class="svc-card-content">
-              <component :is="s.icon" :size="16" class="svc-card-icon" />
-              <span class="svc-card-label">{{ s.label }}</span>
-            </div>
-          </div>
+          </TransitionGroup>
         </div>
 
-        <button class="carousel-btn carousel-btn--right" @click="scrollCards('right')" aria-label="Scroll right">
+        <button class="carousel-btn carousel-btn--right" @click.stop="scrollCards('right')" aria-label="Scroll right">
           <ChevronRight :size="20" />
         </button>
       </div>
@@ -126,18 +164,54 @@ function scrollCards(direction: 'left' | 'right') {
   align-items: center;
 }
 
-/* Full background */
-.services-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
+/* ===== Entrance animations ===== */
 .services-bg-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transform: scale(1.1);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.services-section.is-visible .services-bg-img {
+  transform: scale(1);
+}
+
+.services-text {
+  color: #fff;
+  max-width: 600px;
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+}
+
+.services-section.is-visible .services-text {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.services-carousel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-self: end;
+  max-width: 100%;
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
+}
+
+.services-section.is-visible .services-carousel {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Full background */
+.services-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 
 .services-bg-overlay {
@@ -149,12 +223,13 @@ function scrollCards(direction: 'left' | 'right') {
     rgba(0, 0, 0, 0.5) 50%,
     rgba(0, 0, 0, 0.8) 100%
   );
+  transition: opacity 0.4s ease;
 }
 
 /* Background crossfade */
 .bg-fade-enter-active,
 .bg-fade-leave-active {
-  transition: opacity 0.6s ease;
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .bg-fade-enter-from,
 .bg-fade-leave-to {
@@ -164,15 +239,35 @@ function scrollCards(direction: 'left' | 'right') {
 /* Text crossfade */
 .text-fade-enter-active,
 .text-fade-leave-active {
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .text-fade-enter-from {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(16px) scale(0.97);
 }
 .text-fade-leave-to {
   opacity: 0;
-  transform: translateY(-12px);
+  transform: translateY(-16px) scale(0.97);
+}
+
+/* Card remove transition */
+.card-remove-enter-active {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-remove-leave-active {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: absolute;
+}
+
+.card-remove-enter-from {
+  opacity: 0;
+  transform: scale(0.8) rotateY(10deg);
+}
+
+.card-remove-leave-to {
+  opacity: 0;
+  transform: scale(0.7) rotateY(-15deg) translateY(-30px);
 }
 
 /* Inner layout */
@@ -190,11 +285,6 @@ function scrollCards(direction: 'left' | 'right') {
 }
 
 /* Text */
-.services-text {
-  color: #fff;
-  max-width: 600px;
-}
-
 .services-title {
   font-size: clamp(2rem, 4vw, 3.5rem);
   color: #fff;
@@ -208,14 +298,6 @@ function scrollCards(direction: 'left' | 'right') {
 }
 
 /* Carousel */
-.services-carousel {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-self: end;
-  max-width: 100%;
-}
-
 .carousel-btn {
   display: flex;
   align-items: center;
@@ -228,12 +310,13 @@ function scrollCards(direction: 'left' | 'right') {
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
   flex-shrink: 0;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .carousel-btn:hover {
   background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(221, 179, 96, 0.25);
 }
 
 .cards-track {
@@ -244,6 +327,7 @@ function scrollCards(direction: 'left' | 'right') {
   -webkit-overflow-scrolling: touch;
   padding: 0.5rem 0;
   flex: 1;
+  perspective: 1000px;
 }
 
 .cards-track::-webkit-scrollbar {
@@ -253,8 +337,8 @@ function scrollCards(direction: 'left' | 'right') {
 
 .svc-card {
   position: relative;
-  flex: 0 0 160px;
-  min-width: 160px;
+  flex: 0 0 200px;
+  min-width: 200px;
   aspect-ratio: 3 / 4;
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -262,20 +346,20 @@ function scrollCards(direction: 'left' | 'right') {
   scroll-snap-align: start;
   border: 2px solid transparent;
   transition:
-    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
     border-color 0.3s ease,
-    box-shadow 0.3s ease;
+    box-shadow 0.35s ease;
 }
 
 .svc-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  border-color: rgba(221, 179, 96, 0.4);
 }
 
-.svc-card--active {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 24px rgba(221, 179, 96, 0.35);
-  transform: scale(1.03);
+.svc-card:active {
+  transform: scale(0.96);
+  transition-duration: 0.1s;
 }
 
 .svc-card-img {
@@ -287,6 +371,11 @@ function scrollCards(direction: 'left' | 'right') {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.svc-card:hover .svc-card-img img {
+  transform: scale(1.08);
 }
 
 .svc-card-content {
@@ -299,6 +388,12 @@ function scrollCards(direction: 'left' | 'right') {
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  transform: translateY(4px);
+  transition: transform 0.3s ease;
+}
+
+.svc-card:hover .svc-card-content {
+  transform: translateY(0);
 }
 
 .svc-card-icon {
@@ -322,12 +417,12 @@ function scrollCards(direction: 'left' | 'right') {
   }
 
   .services-carousel {
-    max-width: 540px;
+    max-width: 660px;
   }
 
   .svc-card {
-    flex: 0 0 165px;
-    min-width: 165px;
+    flex: 0 0 200px;
+    min-width: 200px;
   }
 }
 
@@ -338,12 +433,12 @@ function scrollCards(direction: 'left' | 'right') {
   }
 
   .services-carousel {
-    max-width: 600px;
+    max-width: 750px;
   }
 
   .svc-card {
-    flex: 0 0 180px;
-    min-width: 180px;
+    flex: 0 0 230px;
+    min-width: 230px;
   }
 
   .carousel-btn {
@@ -358,7 +453,7 @@ function scrollCards(direction: 'left' | 'right') {
   }
 
   .services-carousel {
-    max-width: 660px;
+    max-width: 820px;
   }
 }
 </style>
