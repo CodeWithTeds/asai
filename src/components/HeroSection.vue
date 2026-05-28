@@ -87,6 +87,7 @@ onMounted(() => {
   padding: 4rem 4rem 5rem;
   position: relative;
   overflow: hidden;
+  background: #0d1117;
 }
 
 .particles-bg {
@@ -153,6 +154,7 @@ onMounted(() => {
 .hero-title {
   font-size: clamp(2.5rem, 6vw, 4.5rem);
   margin-bottom: 1.25rem;
+  color: #ffffff;
 }
 
 .hero-title .accent {
@@ -160,7 +162,7 @@ onMounted(() => {
 }
 
 .hero-lead {
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 1.1rem;
   max-width: 560px;
   margin-bottom: 2rem;
@@ -197,16 +199,16 @@ onMounted(() => {
   padding: 0.85rem 1.4rem;
   border-radius: var(--radius-sm);
   font-weight: 600;
-  color: var(--color-primary-dark);
-  border: 1px solid var(--color-border);
-  background: #fff;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
   transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .btn-ghost:hover {
-  border-color: var(--color-primary);
+  border-color: var(--color-accent);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(74, 95, 128, 0.12);
+  box-shadow: 0 6px 20px rgba(184, 134, 11, 0.2);
 }
 
 .hero-stats {
@@ -215,7 +217,7 @@ onMounted(() => {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1.25rem;
   padding-top: 2rem;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .hero-stats li {
@@ -232,13 +234,13 @@ onMounted(() => {
 .hero-stats strong {
   display: block;
   font-weight: 700;
-  color: var(--color-primary-dark);
+  color: #ffffff;
   font-size: 1rem;
 }
 
 .hero-stats span {
   font-size: 0.85rem;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 @media (min-width: 900px) {
