@@ -13,6 +13,21 @@ const navLinks = [
   { href: '#contact', label: 'Contact' },
 ]
 
+function handleNavClick(e: Event, href: string) {
+  e.preventDefault()
+  closeMobile()
+
+  const target = document.querySelector(href)
+  if (!target) return
+
+  const headerOffset = 64
+  const elementPosition = target.getBoundingClientRect().top + window.scrollY
+  window.scrollTo({
+    top: elementPosition - headerOffset,
+    behavior: 'instant',
+  })
+}
+
 function onScroll() {
   scrolled.value = window.scrollY > 12
 }
@@ -40,7 +55,7 @@ onUnmounted(() => {
       </a>
 
       <nav class="nav-desktop" aria-label="Primary">
-        <a v-for="link in navLinks" :key="link.href" :href="link.href" class="nav-link">
+        <a v-for="link in navLinks" :key="link.href" :href="link.href" class="nav-link" @click="handleNavClick($event, link.href)">
           {{ link.label }}
         </a>
       </nav>
@@ -64,7 +79,7 @@ onUnmounted(() => {
           :key="link.href"
           :href="link.href"
           class="nav-link-mobile"
-          @click="closeMobile"
+          @click="handleNavClick($event, link.href)"
         >
           {{ link.label }}
         </a>

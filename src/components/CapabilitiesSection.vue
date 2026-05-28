@@ -77,7 +77,7 @@ onMounted(() => {
   if (!el) return
 
   const totalItems = capabilities.length
-  const scrollPerItem = 100
+  const scrollPerItem = 60
 
   ctx = gsap.context(() => {
     ScrollTrigger.create({
@@ -108,7 +108,7 @@ onUnmounted(() => {
 <template>
   <section id="capabilities" class="capabilities-section" ref="sectionRef">
     <div class="cap-viewport">
-      <div class="cap-header">
+      <div class="cap-header" :class="{ 'cap-header--visible': activeIndex >= 0 }">
         <span class="section-eyebrow">Agency Capability</span>
         <h2 class="section-title">Built on capability, governed by integrity</h2>
         <p class="cap-subtitle">Eight pillars that define how we operate, recruit, train, and protect.</p>
@@ -164,6 +164,14 @@ onUnmounted(() => {
 .cap-header {
   text-align: center;
   margin-bottom: clamp(1.5rem, 4vh, 3.5rem);
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cap-header--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .cap-header .section-title {
