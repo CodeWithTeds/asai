@@ -2,6 +2,12 @@
 import { onMounted } from 'vue'
 import { ArrowRight, ShieldCheck, Award, Users } from '@lucide/vue'
 
+declare global {
+  interface Window {
+    particlesJS: any
+  }
+}
+
 onMounted(() => {
   // Trigger hero animations after a short delay for smooth entrance
   setTimeout(() => {
@@ -9,17 +15,23 @@ onMounted(() => {
       setTimeout(() => el.classList.add('hero-visible'), i * 120)
     })
   }, 100)
+
+  // Initialize particles.js background
+  if (window.particlesJS && window.particlesJS.load) {
+    window.particlesJS.load('particles-js', '/particles-config.json')
+  }
 })
 </script>
 
 <template>
   <section id="top" class="hero">
-    <div class="container hero-grid">
+    <div id="particles-js" class="particles-bg"></div>
+    <div class="hero-grid">
       <div class="hero-content">
         <span class="eyebrow hero-animate">Annapolis Security Agency, Inc.</span>
         <h1 class="hero-title hero-animate">
-          Transforming security for a
-          <span class="accent shimmer-text">better business.</span>
+          Transforming <span class="accent shimmer-text">security</span> for a
+          better <span class="accent shimmer-text">business.</span>
         </h1>
         <p class="hero-lead hero-animate">
           A service-oriented corporation putting client needs and satisfaction as our utmost
@@ -69,9 +81,33 @@ onMounted(() => {
 
 <style scoped>
 .hero {
-  padding: 4rem 0 5rem;
+  min-height: calc(100vh - var(--header-height));
+  display: flex;
+  align-items: center;
+  padding: 4rem 4rem 5rem;
   position: relative;
   overflow: hidden;
+}
+
+.particles-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.hero-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .hero-animate {
@@ -85,14 +121,6 @@ onMounted(() => {
 .hero-animate.hero-visible {
   opacity: 1;
   transform: translateY(0);
-}
-
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-  align-items: center;
-  position: relative;
 }
 
 .hero-visual {
@@ -123,7 +151,7 @@ onMounted(() => {
 }
 
 .hero-title {
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
   margin-bottom: 1.25rem;
 }
 
@@ -215,10 +243,11 @@ onMounted(() => {
 
 @media (min-width: 900px) {
   .hero {
-    padding: 5rem 0 7rem;
+    min-height: calc(100vh - var(--header-height));
+    padding: 3rem 6rem;
   }
   .hero-grid {
-    grid-template-columns: 60% 1fr;
+    grid-template-columns: 55% 1fr;
     gap: 4rem;
   }
   .hero-content {
