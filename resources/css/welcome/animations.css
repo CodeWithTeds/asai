@@ -1,0 +1,175 @@
+/* ===== Scroll Reveal Animations ===== */
+
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition:
+        opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger children */
+.reveal-stagger .reveal:nth-child(1) {
+    transition-delay: 0ms;
+}
+.reveal-stagger .reveal:nth-child(2) {
+    transition-delay: 80ms;
+}
+.reveal-stagger .reveal:nth-child(3) {
+    transition-delay: 160ms;
+}
+.reveal-stagger .reveal:nth-child(4) {
+    transition-delay: 240ms;
+}
+.reveal-stagger .reveal:nth-child(5) {
+    transition-delay: 320ms;
+}
+.reveal-stagger .reveal:nth-child(6) {
+    transition-delay: 400ms;
+}
+.reveal-stagger .reveal:nth-child(7) {
+    transition-delay: 480ms;
+}
+.reveal-stagger .reveal:nth-child(8) {
+    transition-delay: 560ms;
+}
+.reveal-stagger .reveal:nth-child(9) {
+    transition-delay: 640ms;
+}
+.reveal-stagger .reveal:nth-child(10) {
+    transition-delay: 720ms;
+}
+.reveal-stagger .reveal:nth-child(11) {
+    transition-delay: 800ms;
+}
+.reveal-stagger .reveal:nth-child(12) {
+    transition-delay: 880ms;
+}
+.reveal-stagger .reveal:nth-child(13) {
+    transition-delay: 960ms;
+}
+.reveal-stagger .reveal:nth-child(14) {
+    transition-delay: 1040ms;
+}
+.reveal-stagger .reveal:nth-child(15) {
+    transition-delay: 1120ms;
+}
+
+/* Slide from left */
+.reveal-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition:
+        opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-left.revealed {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Slide from right */
+.reveal-right {
+    opacity: 0;
+    transform: translateX(40px);
+    transition:
+        opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-right.revealed {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Scale up */
+.reveal-scale {
+    opacity: 0;
+    transform: scale(0.9);
+    transition:
+        opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-scale.revealed {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* ===== Hover Interactions ===== */
+
+.hover-lift {
+    transition:
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(74, 95, 128, 0.18);
+}
+
+/* ===== Pulse glow for icons ===== */
+
+@keyframes pulse-glow {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(221, 179, 96, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(221, 179, 96, 0);
+    }
+}
+
+.icon-pulse:hover {
+    animation: pulse-glow 1.5s ease infinite;
+}
+
+/* ===== Float animation for hero image ===== */
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+.float-anim {
+    animation: float 4s ease-in-out infinite;
+}
+
+/* ===== Shimmer for accent text ===== */
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% center;
+    }
+    100% {
+        background-position: 200% center;
+    }
+}
+
+.shimmer-text {
+    background: linear-gradient(
+        90deg,
+        var(--color-accent) 0%,
+        #f0d78c 25%,
+        var(--color-accent) 50%,
+        #f0d78c 75%,
+        var(--color-accent) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 8s linear infinite;
+}
