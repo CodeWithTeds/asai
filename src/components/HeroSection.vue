@@ -81,10 +81,12 @@ onMounted(() => {
 
 <style scoped>
 .hero {
-  min-height: calc(100vh - var(--header-height));
+  height: 70vh;
+  min-height: 70vh;
+  max-height: 70vh;
   display: flex;
   align-items: center;
-  padding: 4rem 4rem 5rem;
+  padding: 2rem 4rem;
   position: relative;
   overflow: hidden;
   background: #0d1117;
@@ -143,17 +145,17 @@ onMounted(() => {
 
 .eyebrow {
   display: inline-block;
-  font-size: 1.1rem;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-accent);
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .hero-title {
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
-  margin-bottom: 1.25rem;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  margin-bottom: 1rem;
   color: #ffffff;
 }
 
@@ -163,9 +165,9 @@ onMounted(() => {
 
 .hero-lead {
   color: rgba(255, 255, 255, 0.7);
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   max-width: 560px;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .hero-cta {
@@ -235,18 +237,20 @@ onMounted(() => {
   display: block;
   font-weight: 700;
   color: #ffffff;
-  font-size: 1rem;
+  font-size: 0.85rem;
 }
 
 .hero-stats span {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.6);
 }
 
 @media (min-width: 900px) {
   .hero {
-    min-height: calc(100vh - var(--header-height));
-    padding: 3rem 6rem;
+    height: 70vh;
+    min-height: 70vh;
+    max-height: 70vh;
+    padding: 2rem 6rem;
   }
   .hero-grid {
     grid-template-columns: 55% 1fr;
