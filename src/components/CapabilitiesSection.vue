@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, computed } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import {
@@ -20,81 +20,117 @@ const capabilities = [
     icon: FileCheck2,
     title: 'Audited Financial Transparency',
     text: 'Strong financial statements regularly audited by Reyes Tacandong & Co., ensuring transparency, compliance, and credibility with clients, partners, and investors.',
-    align: 'left',
   },
   {
     icon: Crown,
     title: 'Experienced Leadership',
     text: 'Led by seasoned professionals with extensive experience in security operations, law enforcement coordination, and corporate management.',
-    align: 'center',
   },
   {
     icon: Layers,
     title: 'Scalable Security Operations',
     text: 'Operational capability to deploy security personnel efficiently across multiple sites nationwide — supporting both small and large-scale requirements.',
-    align: 'right',
   },
   {
     icon: GraduationCap,
     title: 'Highly Trained Personnel',
     text: 'Officers undergo rigorous recruitment screening, training, and continuous professional development to meet the highest standards of operational readiness.',
-    align: 'left',
   },
   {
     icon: BadgeCheck,
     title: 'PNP-SOSIA Licensed Training',
     text: 'A dedicated Training Director licensed by PNP-SOSIA ensures all personnel programs comply with national regulatory standards and industry requirements.',
-    align: 'center',
   },
   {
     icon: Network,
     title: 'Integrated Security Solutions',
     text: 'Beyond manpower deployment: risk assessment, security planning, incident management, and coordination with local authorities.',
-    align: 'right',
   },
   {
     icon: Truck,
     title: 'Logistically Prepared',
     text: 'Adequate logistical resources including mobility, communication systems, and operational support for rapid deployment and emergency response.',
-    align: 'left',
   },
   {
     icon: Landmark,
     title: 'Government & Law Enforcement',
     text: 'Established coordination with PNP, NBI, MMDA, and other national authorities for efficient incident handling and security operations.',
-    align: 'center',
   },
 ]
 
-const sectionRef = ref<HTMLElement | null>(null)
-const activeIndex = ref(0)
-let ctx: gsap.Context | undefined
+// Positions cycle: top-left, top-right, bottom-right, bottom-left
+const positions = [
+  { x: '5%', y: '12%' },
+  { x: '55%', y: '12%' },
+  { x: '55%', y: '55%' },
+  { x: '5%', y: '55%' },
+]
 
-const activeCap = computed(() => capabilities[activeIndex.value] as (typeof capabilities)[number])
+const sectionRef = ref<HTMLElement | null>(null)
+let ctx: gsap.Context | undefined
 
 onMounted(() => {
   const el = sectionRef.value
   if (!el) return
 
-  const totalItems = capabilities.length
-  const scrollPerItem = 60
-
   ctx = gsap.context(() => {
+    const totalItems = capabilities.length
+    const zoomCanvas = el.querySelector('.cap-zoom-canvas') as HTMLElement
+    const header = el.querySelector('.cap-header') as HTMLElement
+
     ScrollTrigger.create({
       trigger: el,
       start: 'top top',
-      end: `+=${totalItems * scrollPerItem}%`,
+      end: `+=${totalItems * 40}%`,
       pin: true,
-      scrub: 0.3,
+      scrub: 0.4,
       onUpdate: (self) => {
         const progress = self.progress
-        const newIndex = Math.min(
-          Math.floor(progress * totalItems),
-          totalItems - 1
-        )
-        if (newIndex !== activeIndex.value) {
-          activeIndex.value = newIndex
+        const currentIndex = Math.min(Math.floor(progress * totalItems), totalItems - 1)
+        const itemProgress = (progress * totalItems) - currentIndex
+
+        // Zoom the entire canvas as we scroll
+        const baseScale = 1 + (progress * 1.5)
+        if (zoomCanvas) {
+          zoomCanvas.style.transform = `scale(${baseScale})`
         }
+
+        // Fade header
+        if (header) {
+          if (progress > 0.03) {
+            header.style.opacity = '0'
+            header.style.transform = 'translate(-50%, -50%) scale(0.8)'
+          } else {
+            header.style.opacity = '1'
+            header.style.transform = 'translate(-50%, -50%) scale(1)'
+          }
+        }
+
+        // Show/hide items with zoom
+        const items = el.querySelectorAll('.cap-item') as NodeListOf<HTMLElement>
+        items.forEach((item, i) => {
+          if (i === currentIndex) {
+            item.classList.add('active')
+            // Zoom the active item further based on item progress
+            const itemScale = 1 + (itemProgress * 0.15)
+            item.style.transform = `scale(${itemScale})`
+          } else if (i < currentIndex) {
+            item.classList.remove('active')
+            item.classList.add('passed')
+            item.style.transform = 'scale(0.8)'
+          } else {
+            item.classList.remove('active')
+            item.classList.remove('passed')
+            item.style.transform = 'scale(0.5)'
+          }
+        })
+
+        // Update dots
+        const dots = el.querySelectorAll('.cap-dot')
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === currentIndex)
+          dot.classList.toggle('visited', i < currentIndex)
+        })
       },
     })
   }, el)
@@ -103,37 +139,52 @@ onMounted(() => {
 onUnmounted(() => {
   ctx?.revert()
 })
+
+function getPosition(index: number) {
+  return positions[index % positions.length]
+}
 </script>
 
 <template>
   <section id="capabilities" class="capabilities-section" ref="sectionRef">
     <div class="cap-viewport">
-      <div class="cap-header" :class="{ 'cap-header--visible': activeIndex >= 0 }">
+      <!-- Header -->
+      <div class="cap-header">
         <span class="section-eyebrow">Agency Capability</span>
         <h2 class="section-title">Built on capability, governed by integrity</h2>
         <p class="cap-subtitle">Eight pillars that define how we operate, recruit, train, and protect.</p>
       </div>
 
-      <div class="cap-display" :class="`cap-display--${activeCap.align}`" :key="activeIndex">
-        <div class="cap-left">
-          <div class="cap-icon-wrap">
-            <component :is="activeCap.icon" :size="36" />
+      <!-- Zoom canvas - the whole thing scales up as you scroll -->
+      <div class="cap-zoom-canvas">
+        <div
+          v-for="(cap, i) in capabilities"
+          :key="i"
+          class="cap-item"
+          :style="{
+            left: getPosition(i).x,
+            top: getPosition(i).y,
+          }"
+        >
+          <div class="cap-item-inner">
+            <div class="cap-number-row">
+              <div class="cap-icon-wrap">
+                <component :is="cap.icon" :size="24" />
+              </div>
+              <span class="cap-number">{{ String(i + 1).padStart(2, '0') }}</span>
+            </div>
+            <h3 class="cap-title">{{ cap.title }}</h3>
+            <p class="cap-text">{{ cap.text }}</p>
           </div>
-          <span class="cap-number">{{ String(activeIndex + 1).padStart(2, '0') }}</span>
-          <h3 class="cap-title">{{ activeCap.title }}</h3>
-        </div>
-
-        <div class="cap-right">
-          <p class="cap-text">{{ activeCap.text }}</p>
         </div>
       </div>
 
+      <!-- Dots -->
       <div class="cap-dots">
         <span
           v-for="(_c, i) in capabilities"
           :key="i"
           class="cap-dot"
-          :class="{ active: i === activeIndex, visited: i < activeIndex }"
         ></span>
       </div>
     </div>
@@ -144,150 +195,130 @@ onUnmounted(() => {
 .capabilities-section {
   width: 100%;
   height: 100vh;
-  background: #fff;
+  background: #0d1117;
   overflow: hidden;
 }
 
 .cap-viewport {
   width: 100%;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 1.5rem;
-  max-width: 1400px;
-  margin: 0 auto;
   position: relative;
+  overflow: hidden;
 }
 
+/* Header */
 .cap-header {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
   text-align: center;
-  margin-bottom: clamp(1.5rem, 4vh, 3.5rem);
-  opacity: 0;
-  transform: translateY(30px) scale(0.95);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.cap-header--visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+  z-index: 10;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  width: 90%;
+  max-width: 700px;
 }
 
 .cap-header .section-title {
-  font-size: clamp(1.5rem, 3.5vw, 2.75rem);
+  font-size: clamp(1.8rem, 3.5vw, 2.75rem);
+  color: #fff;
 }
 
 .cap-subtitle {
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.6);
   font-size: clamp(0.9rem, 1.2vw, 1.1rem);
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
 }
 
-.cap-display {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 1100px;
-  align-items: center;
+/* Zoom canvas - scales the entire content area */
+.cap-zoom-canvas {
+  position: absolute;
+  inset: 0;
+  transform-origin: center center;
+  transition: transform 0.1s linear;
+  will-change: transform;
 }
 
-.cap-display--left {
-  animation: zoomFromLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Each capability item */
+.cap-item {
+  position: absolute;
+  width: 38%;
+  max-width: 450px;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 5;
 }
 
-.cap-display--center {
-  animation: zoomFromCenter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.cap-item.active {
+  opacity: 1;
+  z-index: 8;
 }
 
-.cap-display--right {
-  animation: zoomFromRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.cap-item.passed {
+  opacity: 0.15;
 }
 
-@keyframes zoomFromLeft {
-  0% { opacity: 0; transform: scale(0.85) translateX(-40px); }
-  100% { opacity: 1; transform: scale(1) translateX(0); }
+.cap-item-inner {
+  padding: 1.5rem;
 }
 
-@keyframes zoomFromCenter {
-  0% { opacity: 0; transform: scale(0.85); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-@keyframes zoomFromRight {
-  0% { opacity: 0; transform: scale(0.85) translateX(40px); }
-  100% { opacity: 1; transform: scale(1) translateX(0); }
-}
-
-.cap-left {
+.cap-number-row {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 .cap-icon-wrap {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: clamp(52px, 6vw, 80px);
-  height: clamp(52px, 6vw, 80px);
-  border-radius: clamp(12px, 1.5vw, 20px);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   background: var(--color-primary);
   color: #fff;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.cap-display--left .cap-icon-wrap,
-.cap-display--center .cap-icon-wrap,
-.cap-display--right .cap-icon-wrap {
-  transform: scale(1.05);
 }
 
 .cap-number {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 4rem);
+  font-size: clamp(2rem, 4vw, 3.5rem);
   font-weight: 800;
-  color: rgba(74, 95, 128, 0.1);
+  color: rgba(255, 255, 255, 0.06);
   line-height: 1;
 }
 
 .cap-title {
-  font-family: var(--font-sans);
-  font-size: clamp(1.25rem, 2.5vw, 2.5rem);
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
   font-weight: 800;
-  color: var(--color-primary-dark);
+  color: #fff;
+  margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
 }
 
-.cap-right {
-  padding: 1.25rem;
-  border-left: 3px solid var(--color-accent);
-  min-height: 80px;
-  display: flex;
-  align-items: center;
-}
-
 .cap-text {
-  font-size: clamp(0.95rem, 1.3vw, 1.25rem);
-  line-height: 1.8;
-  color: var(--color-text-muted);
+  font-size: clamp(0.85rem, 1.1vw, 1rem);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.7);
 }
 
+/* Dots */
 .cap-dots {
   position: absolute;
-  bottom: clamp(1rem, 3vh, 2.5rem);
+  bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: 0.5rem;
+  z-index: 20;
 }
 
 .cap-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--color-border);
+  background: rgba(255, 255, 255, 0.2);
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
@@ -300,67 +331,12 @@ onUnmounted(() => {
   transform: scale(1.4);
 }
 
-@media (min-width: 768px) {
-  .cap-viewport {
-    padding: 2rem 2.5rem;
-  }
-
-  .cap-display {
-    grid-template-columns: 1fr 1.4fr;
-    gap: 3rem;
-  }
-
-  .cap-right {
-    padding: 1.5rem 2rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .cap-viewport {
-    padding: 3rem 4rem;
-  }
-
-  .cap-display {
-    grid-template-columns: 1fr 1.5fr;
-    gap: 5rem;
-  }
-
-  .cap-right {
-    padding: 2rem 2.5rem;
-    min-height: 140px;
-  }
-}
-
-@media (min-width: 1600px) {
-  .cap-viewport {
-    max-width: 1600px;
-    padding: 4rem 6rem;
-  }
-
-  .cap-display {
-    max-width: 1300px;
-    gap: 6rem;
-  }
-
-  .cap-icon-wrap {
-    width: 90px;
-    height: 90px;
-    border-radius: 22px;
-  }
-
-  .cap-right {
-    padding: 2.5rem 3rem;
-    min-height: 160px;
-  }
-}
-
-@media (min-width: 2000px) {
-  .cap-viewport {
-    max-width: 1800px;
-  }
-
-  .cap-display {
-    max-width: 1500px;
+/* Mobile */
+@media (max-width: 767px) {
+  .cap-item {
+    width: 80%;
+    left: 10% !important;
+    top: 25% !important;
   }
 }
 </style>
