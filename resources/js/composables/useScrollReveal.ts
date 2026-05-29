@@ -6,8 +6,8 @@ export function useScrollReveal(threshold = 0.15) {
 
     onMounted(() => {
         if (!containerRef.value) {
-return;
-}
+            return;
+        }
 
         observer = new IntersectionObserver(
             (entries) => {

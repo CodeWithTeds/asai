@@ -68,8 +68,8 @@ onMounted(() => {
     const el = sectionRef.value;
 
     if (!el) {
-return;
-}
+        return;
+    }
 
     ctx = gsap.context(() => {
         const totalItems = capabilities.length;

@@ -14,8 +14,8 @@ const panels = ref<HTMLElement[]>([]);
 
 function setPanelRef(el: any, index: number) {
     if (el) {
-panels.value[index] = el;
-}
+        panels.value[index] = el;
+    }
 }
 
 onMounted(() => {
@@ -32,8 +32,8 @@ onMounted(() => {
 
     panels.value.forEach((panel) => {
         if (panel) {
-observer.observe(panel);
-}
+            observer.observe(panel);
+        }
     });
 
     onUnmounted(() => observer.disconnect());

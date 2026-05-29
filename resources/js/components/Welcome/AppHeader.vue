@@ -20,8 +20,8 @@ function handleNavClick(e: Event, href: string) {
     const target = document.querySelector(href);
 
     if (!target) {
-return;
-}
+        return;
+    }
 
     const headerOffset = 64;
     const elementPosition = target.getBoundingClientRect().top + window.scrollY;

@@ -139,8 +139,8 @@ function collapseView() {
 
 function scrollCards(direction: 'left' | 'right') {
     if (!trackRef.value) {
-return;
-}
+        return;
+    }
 
     const cardWidth =
         trackRef.value.querySelector('.svc-card')?.clientWidth ?? 200;
@@ -159,8 +159,8 @@ onMounted(() => {
     const el = sectionRef.value;
 
     if (!el) {
-return;
-}
+        return;
+    }
 
     const observer = new IntersectionObserver(
         ([entry]) => {
