@@ -141,7 +141,7 @@ const actions = [
                             {{ getInitials(row.creator.name) }}
                         </AvatarFallback>
                     </Avatar>
-                    <span class="font-medium">{{ row.creator.name }}</span>
+                    <span class="font-medium">{{ isOwner(row) ? 'You' : row.creator.name }}</span>
                 </div>
             </template>
 
