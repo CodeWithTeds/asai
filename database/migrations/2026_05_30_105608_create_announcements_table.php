@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\AnnouncementStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,13 +17,13 @@ return new class extends Migration
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete()->index();
             $table->string('title');
             $table->text('body');
-            $table->boolean('is_active')->default(true);
+            $table->string('status')->default(AnnouncementStatus::Active->value);
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
 
             // Optimize the active scope query
-            $table->index(['is_active', 'starts_at', 'expires_at']);
+            $table->index(['status', 'starts_at', 'expires_at']);
         });
     }
 

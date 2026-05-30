@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Announcement;
 
+use App\Enums\AnnouncementStatus;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreAnnouncementRequest extends FormRequest
 {
@@ -25,7 +27,7 @@ class StoreAnnouncementRequest extends FormRequest
         return [
             'title'      => ['required', 'string', 'max:255'],
             'body'       => ['required', 'string', 'max:2000'],
-            'is_active'  => ['boolean'],
+            'status'     => ['sometimes', new Enum(AnnouncementStatus::class)],
             'starts_at'  => ['nullable', 'date'],
             'expires_at' => ['nullable', 'date', 'after:starts_at'],
         ];

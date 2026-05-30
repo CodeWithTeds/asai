@@ -117,17 +117,13 @@ function formatDate(date: string | null) {
                         <td class="px-4 py-3">
                             <span
                                 :class="
-                                    announcement.is_active
+                                    announcement.status === 'active'
                                         ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                                         : 'bg-muted text-muted-foreground'
                                 "
-                                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize"
                             >
-                                {{
-                                    announcement.is_active
-                                        ? 'Active'
-                                        : 'Inactive'
-                                }}
+                                {{ announcement.status }}
                             </span>
                         </td>
                         <td class="px-4 py-3 text-muted-foreground">

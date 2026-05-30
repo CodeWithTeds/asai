@@ -12,7 +12,7 @@ const isOpen = defineModel<boolean>('open');
 const form = useForm({
     title: '',
     body: '',
-    is_active: true,
+    status: 'active',
     starts_at: '',
     expires_at: '',
 });
@@ -97,21 +97,20 @@ function handleClose() {
                 </div>
             </div>
 
-            <!-- Active toggle -->
-            <div class="flex items-center gap-2">
-                <input
-                    id="create-is-active"
-                    v-model="form.is_active"
-                    type="checkbox"
+            <!-- Status -->
+            <div class="space-y-1">
+                <Label for="create-status">Status</Label>
+                <select
+                    id="create-status"
+                    v-model="form.status"
                     :disabled="form.processing"
-                    class="h-4 w-4 rounded border-gray-300"
-                />
-                <Label for="create-is-active" class="cursor-pointer"
-                    >Active</Label
+                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+                <InputError :message="form.errors.status" />
             </div>
-
-            <InputError :message="form.errors.is_active" />
         </form>
 
         <!-- Footer -->

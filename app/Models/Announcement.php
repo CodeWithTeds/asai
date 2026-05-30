@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AnnouncementStatus;
 use App\Policies\AnnouncementPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -9,14 +10,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['title', 'body', 'is_active', 'starts_at', 'expires_at', 'created_by'])]
+#[Fillable(['title', 'body', 'status', 'starts_at', 'expires_at', 'created_by'])]
 #[UsePolicy(AnnouncementPolicy::class)]
 class Announcement extends Model
 {
     protected function casts(): array
     {
         return [
-            'is_active' => 'boolean',
+            'status' => AnnouncementStatus::class,
             'starts_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
@@ -27,7 +28,7 @@ class Announcement extends Model
      */
     public function scopeActive(Builder $query): void
     {
-        $query->where('is_active', true)
+        $query->where('status', AnnouncementStatus::Active)
             ->where(fn (Builder $q) => $q
                 ->whereNull('starts_at')
                 ->orWhere('starts_at', '<=', now())

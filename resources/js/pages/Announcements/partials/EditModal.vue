@@ -11,7 +11,7 @@ type Announcement = {
     id: number;
     title: string;
     body: string;
-    is_active: boolean;
+    status: string;
     starts_at: string | null;
     expires_at: string | null;
 };
@@ -26,7 +26,7 @@ const isOpen = defineModel<boolean>('open');
 const form = useForm({
     title: props.announcement.title,
     body: props.announcement.body,
-    is_active: props.announcement.is_active,
+    status: props.announcement.status,
     starts_at: props.announcement.starts_at ?? '',
     expires_at: props.announcement.expires_at ?? '',
 });
@@ -109,21 +109,20 @@ function handleClose() {
                 </div>
             </div>
 
-            <!-- Active toggle -->
-            <div class="flex items-center gap-2">
-                <input
-                    id="edit-is-active"
-                    v-model="form.is_active"
-                    type="checkbox"
+            <!-- Status -->
+            <div class="space-y-1">
+                <Label for="edit-status">Status</Label>
+                <select
+                    id="edit-status"
+                    v-model="form.status"
                     :disabled="form.processing"
-                    class="h-4 w-4 rounded border-gray-300"
-                />
-                <Label for="edit-is-active" class="cursor-pointer"
-                    >Active</Label
+                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+                <InputError :message="form.errors.status" />
             </div>
-
-            <InputError :message="form.errors.is_active" />
         </form>
 
         <!-- Footer -->
