@@ -23,12 +23,17 @@ type Props = {
 const props = defineProps<Props>();
 const isOpen = defineModel<boolean>('open');
 
+function toLocalInput(date: string | null): string {
+    if (!date) return '';
+    return new Date(date).toISOString().slice(0, 16);
+}
+
 const form = useForm({
     title: props.announcement.title,
     body: props.announcement.body,
     status: props.announcement.status,
-    starts_at: props.announcement.starts_at ?? '',
-    expires_at: props.announcement.expires_at ?? '',
+    starts_at: toLocalInput(props.announcement.starts_at),
+    expires_at: toLocalInput(props.announcement.expires_at),
 });
 
 function handleSubmit() {
