@@ -3,6 +3,9 @@ import { Head, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import { index } from '@/routes/announcements';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import DataTable from '@/components/DataTable.vue';
+import { useInitials } from '@/composables/useInitials';
 import CreateModal from './partials/CreateModal.vue';
 import DeleteModal from './partials/DeleteModal.vue';
 import EditModal from './partials/EditModal.vue';
@@ -19,10 +22,11 @@ type PaginatedAnnouncements = {
 
 defineProps<{ announcements: PaginatedAnnouncements }>();
 
+const { getInitials } = useInitials();
 const authUserId = computed(() => usePage().props.auth.user?.id);
 
-function isOwner(announcement: Announcement) {
-    return authUserId.value === announcement.creator.id;
+function isOwner(row: Record<string, any>) {
+    return authUserId.value === row.creator?.id;
 }
 
 defineOptions({
@@ -31,19 +35,18 @@ defineOptions({
     },
 });
 
-// Modal state
 const showCreateModal = ref(false);
 const showEditModal = ref(false);
 const showDeleteModal = ref(false);
 const selectedAnnouncement = ref<Announcement | null>(null);
 
-function openEdit(announcement: Announcement) {
-    selectedAnnouncement.value = announcement;
+function openEdit(row: Record<string, any>) {
+    selectedAnnouncement.value = row as Announcement;
     showEditModal.value = true;
 }
 
-function openDelete(announcement: Announcement) {
-    selectedAnnouncement.value = announcement;
+function openDelete(row: Record<string, any>) {
+    selectedAnnouncement.value = row as Announcement;
     showDeleteModal.value = true;
 }
 
@@ -57,6 +60,31 @@ function formatDate(date: string | null) {
         minute: '2-digit',
     });
 }
+
+function formatTime(date: string | null) {
+    if (!date) return '';
+    return new Date(date).toLocaleTimeString('en-PH', {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+}
+
+const columns = [
+    { key: 'title', label: 'Title' },
+    { key: 'creator', label: 'Created By' },
+    { key: 'schedule', label: 'Schedule' },
+    { key: 'status', label: 'Status' },
+];
+
+const actions = [
+    { label: 'Edit', handler: openEdit, show: isOwner },
+    {
+        label: 'Delete',
+        variant: 'destructive' as const,
+        handler: openDelete,
+        show: isOwner,
+    },
+];
 </script>
 
 <template>
@@ -74,121 +102,78 @@ function formatDate(date: string | null) {
             <Button @click="showCreateModal = true">New Announcement</Button>
         </div>
 
-        <!-- Table -->
-        <div class="rounded-lg border">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="border-b bg-muted/50">
-                        <th class="px-4 py-3 text-left font-medium">Title</th>
-                        <th class="px-4 py-3 text-left font-medium">Status</th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            Starts At
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            Expires At
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            Created By
-                        </th>
-                        <th class="px-4 py-3 text-right font-medium">
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Empty state -->
-                    <tr v-if="announcements.data.length === 0">
-                        <td
-                            colspan="6"
-                            class="px-4 py-10 text-center text-muted-foreground"
-                        >
-                            No announcements yet.
-                        </td>
-                    </tr>
-
-                    <tr
-                        v-for="announcement in announcements.data"
-                        :key="announcement.id"
-                        class="border-b transition-colors last:border-b-0 hover:bg-muted/30"
-                    >
-                        <td class="px-4 py-3 font-medium">
-                            {{ announcement.title }}
-                        </td>
-                        <td class="px-4 py-3">
-                            <span
-                                :class="
-                                    announcement.status === 'active'
-                                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                                        : 'bg-muted text-muted-foreground'
-                                "
-                                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize"
-                            >
-                                {{ announcement.status }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-muted-foreground">
-                            {{ formatDate(announcement.starts_at) }}
-                        </td>
-                        <td class="px-4 py-3 text-muted-foreground">
-                            {{ formatDate(announcement.expires_at) }}
-                        </td>
-                        <td class="px-4 py-3 text-muted-foreground">
-                            {{ announcement.creator.name }}
-                        </td>
-                        <td class="px-4 py-3 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <template v-if="isOwner(announcement)">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        @click="openEdit(announcement)"
-                                    >
-                                        Edit
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="destructive"
-                                        @click="openDelete(announcement)"
-                                    >
-                                        Delete
-                                    </Button>
-                                </template>
-                                <span
-                                    v-else
-                                    class="text-xs text-muted-foreground"
-                                    >—</span
-                                >
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pagination -->
-        <div
-            v-if="announcements.last_page > 1"
-            class="flex items-center justify-end gap-1"
+        <!-- Data Table -->
+        <DataTable
+            :columns="columns"
+            :rows="announcements.data"
+            :actions="actions"
+            :current-page="announcements.current_page"
+            :last-page="announcements.last_page"
+            :per-page="announcements.per_page"
+            :total="announcements.total"
+            :links="announcements.links"
+            empty-message="No announcements yet."
         >
-            <template v-for="link in announcements.links" :key="link.label">
-                <a
-                    v-if="link.url"
-                    :href="link.url"
-                    v-html="link.label"
-                    :class="[
-                        'rounded border px-3 py-1 text-sm transition-colors',
-                        link.active
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border hover:bg-muted',
-                    ]"
-                />
-                <span
-                    v-else
-                    v-html="link.label"
-                    class="rounded border border-border px-3 py-1 text-sm text-muted-foreground opacity-50"
-                />
+            <!-- Title + body preview -->
+            <template #cell-title="{ row }">
+                <div>
+                    <div class="font-semibold text-foreground">
+                        {{ row.title }}
+                    </div>
+                    <div
+                        class="mt-0.5 max-w-[220px] truncate text-xs text-muted-foreground"
+                    >
+                        {{ row.body }}
+                    </div>
+                </div>
             </template>
-        </div>
+
+            <!-- Creator with avatar -->
+            <template #cell-creator="{ row }">
+                <div class="flex items-center gap-2.5">
+                    <Avatar class="h-8 w-8">
+                        <AvatarImage
+                            v-if="row.creator.avatar"
+                            :src="row.creator.avatar"
+                            :alt="row.creator.name"
+                        />
+                        <AvatarFallback class="text-[10px] font-semibold">
+                            {{ getInitials(row.creator.name) }}
+                        </AvatarFallback>
+                    </Avatar>
+                    <span class="font-medium">{{ row.creator.name }}</span>
+                </div>
+            </template>
+
+            <!-- Schedule (starts_at / expires_at combined) -->
+            <template #cell-schedule="{ row }">
+                <div>
+                    <div class="font-medium text-foreground">
+                        {{ formatDate(row.starts_at) }}
+                    </div>
+                    <div
+                        v-if="row.expires_at"
+                        class="mt-0.5 text-xs text-muted-foreground"
+                    >
+                        until {{ formatDate(row.expires_at) }}
+                    </div>
+                </div>
+            </template>
+
+            <!-- Status badge -->
+            <template #cell-status="{ row }">
+                <span
+                    :class="
+                        row.status === 'active'
+                            ? 'border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-400'
+                            : 'border-border bg-muted text-muted-foreground'
+                    "
+                    class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize"
+                >
+                    {{ row.status }}
+                </span>
+            </template>
+        </DataTable>
     </div>
 
     <!-- Modals -->
