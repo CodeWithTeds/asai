@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import { update } from '@/routes/announcements';
 import BaseModal from '@/components/BaseModal.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { update } from '@/routes/announcements';
 
 type Announcement = {
     id: number;
@@ -24,7 +24,10 @@ const props = defineProps<Props>();
 const isOpen = defineModel<boolean>('open');
 
 function toLocalInput(date: string | null): string {
-    if (!date) return '';
+    if (!date) {
+        return '';
+    }
+
     return new Date(date).toISOString().slice(0, 16);
 }
 

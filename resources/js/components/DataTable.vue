@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Ellipsis } from 'lucide-vue-next';
+import Pagination from '@/components/Pagination.vue';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import Pagination from '@/components/Pagination.vue';
 
 type Column = {
     key: string;
@@ -51,8 +51,14 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 function alignClass(align?: string) {
-    if (align === 'center') return 'text-center';
-    if (align === 'right') return 'text-right';
+    if (align === 'center') {
+        return 'text-center';
+    }
+
+    if (align === 'right') {
+        return 'text-right';
+    }
+
     return 'text-left';
 }
 

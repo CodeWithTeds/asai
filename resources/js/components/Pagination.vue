@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 type PaginationLink = {
     url: string | null;
@@ -57,8 +57,10 @@ const nextLink = computed(() => props.links[props.links.length - 1]);
                     preserve-state
                     preserve-scroll
                     class="min-w-[32px] rounded-lg px-2.5 py-1.5 text-center text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                    v-html="link.label"
-                />
+                >
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <span v-html="link.label" />
+                </Link>
                 <span
                     v-else
                     :class="[
@@ -67,8 +69,10 @@ const nextLink = computed(() => props.links[props.links.length - 1]);
                             ? 'bg-primary text-primary-foreground'
                             : 'text-muted-foreground opacity-40',
                     ]"
-                    v-html="link.label"
-                />
+                >
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <span v-html="link.label" />
+                </span>
             </template>
 
             <Link

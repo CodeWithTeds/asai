@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import { destroy } from '@/routes/announcements';
 import BaseModal from '@/components/BaseModal.vue';
 import { Button } from '@/components/ui/button';
+import { destroy } from '@/routes/announcements';
 
 type Announcement = {
     id: number;

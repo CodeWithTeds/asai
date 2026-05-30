@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import { index } from '@/routes/announcements';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import DataTable from '@/components/DataTable.vue';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import { useInitials } from '@/composables/useInitials';
+import { index } from '@/routes/announcements';
+import type { Announcement } from '@/types';
 import CreateModal from './partials/CreateModal.vue';
 import DeleteModal from './partials/DeleteModal.vue';
 import EditModal from './partials/EditModal.vue';
-import { Announcement } from '@/types';
 
 type PaginatedAnnouncements = {
     data: Announcement[];
@@ -51,19 +51,14 @@ function openDelete(row: Record<string, any>) {
 }
 
 function formatDate(date: string | null) {
-    if (!date) return '—';
+    if (!date) {
+        return '—';
+    }
+
     return new Date(date).toLocaleDateString('en-PH', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-}
-
-function formatTime(date: string | null) {
-    if (!date) return '';
-    return new Date(date).toLocaleTimeString('en-PH', {
         hour: '2-digit',
         minute: '2-digit',
     });
@@ -141,7 +136,9 @@ const actions = [
                             {{ getInitials(row.creator.name) }}
                         </AvatarFallback>
                     </Avatar>
-                    <span class="font-medium">{{ isOwner(row) ? 'You' : row.creator.name }}</span>
+                    <span class="font-medium">{{
+                        isOwner(row) ? 'You' : row.creator.name
+                    }}</span>
                 </div>
             </template>
 

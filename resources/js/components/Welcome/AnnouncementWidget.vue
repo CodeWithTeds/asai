@@ -24,6 +24,7 @@ onMounted(() => {
         );
         dismissedIds.value = new Set(stored);
     }
+
     isMounted.value = true;
 });
 
@@ -35,12 +36,16 @@ const current = computed(() => visible.value[currentIndex.value] ?? null);
 const total = computed(() => visible.value.length);
 
 function dismiss() {
-    if (!current.value) return;
+    if (!current.value) {
+        return;
+    }
+
     dismissedIds.value.add(current.value.id);
     sessionStorage.setItem(
         'dismissed_announcements',
         JSON.stringify([...dismissedIds.value]),
     );
+
     if (currentIndex.value >= visible.value.length) {
         currentIndex.value = Math.max(0, visible.value.length - 1);
     }
