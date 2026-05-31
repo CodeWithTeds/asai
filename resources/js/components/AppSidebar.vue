@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid, Megaphone } from 'lucide-vue-next';
+import {
+    BookOpen,
+    Briefcase,
+    FolderGit2,
+    LayoutGrid,
+    Megaphone,
+} from 'lucide-vue-next';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -16,6 +22,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as announcementsIndex } from '@/routes/announcements';
+import { index as jobPostingsIndex } from '@/routes/job-postings';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -28,6 +35,11 @@ const mainNavItems: NavItem[] = [
         title: 'Announcements',
         href: announcementsIndex(),
         icon: Megaphone,
+    },
+    {
+        title: 'Job Postings',
+        href: jobPostingsIndex(),
+        icon: Briefcase,
     },
 ];
 
