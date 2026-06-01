@@ -7,6 +7,7 @@ type JobPosting = {
     id: number;
     title: string;
     description: string;
+    cover_image: string | null;
     location: string | null;
     type: string;
 };
@@ -77,28 +78,45 @@ onMounted(() => {
                     :key="job.id"
                     class="job-card"
                 >
-                    <div class="job-card-header">
-                        <div class="job-card-icon">
-                            <Briefcase :size="20" />
+                    <!-- Cover image -->
+                    <div class="job-card-image">
+                        <img
+                            v-if="job.cover_image"
+                            :src="`/storage/${job.cover_image}`"
+                            :alt="`${job.title} cover`"
+                            class="job-card-img"
+                        />
+                        <!-- Placeholder when no image -->
+                        <div v-else class="job-card-img-placeholder">
+                            <Briefcase :size="32" />
                         </div>
-                        <span class="job-card-type">{{
-                            formatType(job.type)
-                        }}</span>
                     </div>
 
-                    <h3 class="job-card-title">{{ job.title }}</h3>
+                    <!-- Card body -->
+                    <div class="job-card-body">
+                        <div class="job-card-header">
+                            <div class="job-card-icon">
+                                <Briefcase :size="20" />
+                            </div>
+                            <span class="job-card-type">{{
+                                formatType(job.type)
+                            }}</span>
+                        </div>
 
-                    <p class="job-card-desc">{{ job.description }}</p>
+                        <h3 class="job-card-title">{{ job.title }}</h3>
 
-                    <div class="job-card-meta">
-                        <span v-if="job.location" class="job-card-location">
-                            <MapPin :size="14" />
-                            {{ job.location }}
-                        </span>
-                        <span class="job-card-badge">
-                            <Clock :size="14" />
-                            {{ formatType(job.type) }}
-                        </span>
+                        <p class="job-card-desc">{{ job.description }}</p>
+
+                        <div class="job-card-meta">
+                            <span v-if="job.location" class="job-card-location">
+                                <MapPin :size="14" />
+                                {{ job.location }}
+                            </span>
+                            <span class="job-card-badge">
+                                <Clock :size="14" />
+                                {{ formatType(job.type) }}
+                            </span>
+                        </div>
                     </div>
                 </article>
             </div>
@@ -115,6 +133,8 @@ onMounted(() => {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
+    /* Equal row heights — each track stretches to match the tallest card */
+    grid-auto-rows: 1fr;
     opacity: 0;
     transform: translateY(30px);
     transition:
@@ -127,11 +147,14 @@ onMounted(() => {
     transform: translateY(0);
 }
 
+/* Card — flex column so body stretches to fill remaining height */
 .job-card {
+    display: flex;
+    flex-direction: column;
     background: var(--color-bg-elevated);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    padding: 1.75rem;
+    overflow: hidden;
     transition:
         transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
         box-shadow 0.3s ease,
@@ -142,6 +165,42 @@ onMounted(() => {
     transform: translateY(-4px);
     box-shadow: 0 12px 32px var(--color-shadow);
     border-color: rgba(29, 33, 157, 0.15);
+}
+
+/* Fixed-height image area — same on every card */
+.job-card-image {
+    width: 100%;
+    height: 180px;
+    flex-shrink: 0;
+    background: var(--color-bg-subtle, #f4f4f5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.job-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.job-card-img-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--color-text-muted);
+    opacity: 0.4;
+}
+
+/* Body grows to fill the rest of the card height */
+.job-card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1.75rem;
 }
 
 .job-card-header {
@@ -193,6 +252,8 @@ onMounted(() => {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    /* Push meta to the bottom of the card body */
+    flex: 1;
     margin-bottom: 1.25rem;
 }
 
@@ -201,6 +262,7 @@ onMounted(() => {
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
+    margin-top: auto;
 }
 
 .job-card-location,

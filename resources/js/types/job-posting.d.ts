@@ -6,6 +6,7 @@ export type JobPosting = {
     id: number;
     title: string;
     description: string;
+    cover_image: string | null;
     location: string | null;
     type: JobPostingType;
     status: JobPostingStatus;

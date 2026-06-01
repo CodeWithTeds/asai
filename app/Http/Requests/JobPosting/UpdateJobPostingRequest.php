@@ -29,13 +29,15 @@ class UpdateJobPostingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'       => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string', 'max:5000'],
-            'location'    => ['nullable', 'string', 'max:255'],
-            'type'        => ['required', new Enum(JobPostingType::class)],
-            'status'      => ['sometimes', new Enum(JobPostingStatus::class)],
-            'starts_at'   => ['nullable', 'date'],
-            'expires_at'  => ['nullable', 'date', 'after:starts_at'],
+            'title'               => ['required', 'string', 'max:255'],
+            'description'         => ['required', 'string', 'max:5000'],
+            'cover_image'         => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'remove_cover_image'  => ['sometimes', 'boolean'],
+            'location'            => ['nullable', 'string', 'max:255'],
+            'type'                => ['required', new Enum(JobPostingType::class)],
+            'status'              => ['sometimes', new Enum(JobPostingStatus::class)],
+            'starts_at'           => ['nullable', 'date'],
+            'expires_at'          => ['nullable', 'date', 'after:starts_at'],
         ];
     }
 }

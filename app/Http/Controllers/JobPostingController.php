@@ -28,11 +28,15 @@ class JobPostingController extends Controller
     }
 
     /**
-     * Store a new job posting
+     * Store a new job posting with optional cover image.
      */
     public function store(StoreJobPostingRequest $request): RedirectResponse
     {
-        $this->jobPostingService->create($request->validated(), $request->user()->id);
+        $this->jobPostingService->create(
+            $request->validated(),
+            $request->user()->id,
+            $request->file('cover_image'),
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Job posting created.']);
 
@@ -40,11 +44,15 @@ class JobPostingController extends Controller
     }
 
     /**
-     * Update an existing job posting
+     * Update an existing job posting, replacing the cover image if provided.
      */
     public function update(UpdateJobPostingRequest $request, JobPosting $jobPosting): RedirectResponse
     {
-        $this->jobPostingService->update($jobPosting, $request->validated());
+        $this->jobPostingService->update(
+            $jobPosting,
+            $request->validated(),
+            $request->file('cover_image'),
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Job posting updated.']);
 
@@ -52,7 +60,7 @@ class JobPostingController extends Controller
     }
 
     /**
-     * Delete a job posting.
+     * Delete a job posting and its cover image.
      */
     public function destroy(JobPosting $jobPosting): RedirectResponse
     {

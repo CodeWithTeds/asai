@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete()->index();
             $table->string('title');
             $table->text('description');
+            $table->string('cover_image')->nullable();
             $table->string('location')->nullable();
             $table->string('type')->default(JobPostingType::FullTime->value);
             $table->string('status')->default(JobPostingStatus::Open->value);
