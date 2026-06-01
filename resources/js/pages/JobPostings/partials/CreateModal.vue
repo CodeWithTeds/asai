@@ -43,8 +43,8 @@ function handleFileChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0] ?? null;
 
     if (!file) {
-return;
-}
+        return;
+    }
 
     form.cover_image = file;
     previewLoading.value = true;
@@ -66,8 +66,8 @@ function clearImage() {
     previewLoading.value = false;
 
     if (fileInput.value) {
-fileInput.value.value = '';
-}
+        fileInput.value.value = '';
+    }
 }
 
 function handleSubmit() {
@@ -218,7 +218,7 @@ function handleClose() {
                 <!-- Image preview -->
                 <div
                     v-else-if="previewUrl"
-                    class="relative mt-2 min-h-[180px] w-full flex-1 overflow-hidden rounded-lg bg-muted/40 [outline:1px_solid_rgba(0,0,0,0.2)] [outline-offset:-1px]"
+                    class="relative mt-2 min-h-[180px] w-full flex-1 overflow-hidden rounded-lg border border-input bg-muted/40"
                 >
                     <img
                         :src="previewUrl"

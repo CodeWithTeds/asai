@@ -31,8 +31,8 @@ const isOpen = defineModel<boolean>('open');
 
 function toLocalInput(date: string | null): string {
     if (!date) {
-return '';
-}
+        return '';
+    }
 
     return new Date(date).toISOString().slice(0, 16);
 }
@@ -57,12 +57,12 @@ const previewLoading = ref(false);
 // Preview priority: local > server > nothing
 const displayUrl = computed<string | null>(() => {
     if (previewUrl.value) {
-return previewUrl.value;
-}
+        return previewUrl.value;
+    }
 
     if (form.remove_cover_image) {
-return null;
-}
+        return null;
+    }
 
     return props.jobPosting.cover_image
         ? `/storage/${props.jobPosting.cover_image}`
@@ -77,8 +77,8 @@ function handleFileChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0] ?? null;
 
     if (!file) {
-return;
-}
+        return;
+    }
 
     form.cover_image = file;
     form.remove_cover_image = false;
@@ -102,8 +102,8 @@ function clearImage() {
         form.cover_image = null;
 
         if (fileInput.value) {
-fileInput.value.value = '';
-}
+            fileInput.value.value = '';
+        }
     } else {
         // Mark server image for removal
         form.remove_cover_image = true;
@@ -115,7 +115,7 @@ fileInput.value.value = '';
 function handleSubmit() {
     form.post(update(props.jobPosting.id).url, {
         forceFormData: true,
-         
+
         headers: { 'X-HTTP-Method-Override': 'PUT' } as any,
         onSuccess: () => {
             isOpen.value = false;
@@ -132,8 +132,8 @@ function handleClose() {
     form.cover_image = null;
 
     if (fileInput.value) {
-fileInput.value.value = '';
-}
+        fileInput.value.value = '';
+    }
 }
 </script>
 
@@ -266,7 +266,7 @@ fileInput.value.value = '';
                 <!-- Preview (new pick or existing server image) -->
                 <div
                     v-else-if="hasImage && displayUrl"
-                    class="relative mt-2 min-h-[180px] w-full flex-1 overflow-hidden rounded-lg bg-muted/40 [outline:1px_solid_rgba(0,0,0,0.2)] [outline-offset:-1px]"
+                    class="relative mt-2 min-h-[180px] w-full flex-1 overflow-hidden rounded-lg border border-input bg-muted/40"
                 >
                     <img
                         :src="displayUrl"
