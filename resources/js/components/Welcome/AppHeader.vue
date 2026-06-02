@@ -132,10 +132,20 @@ onUnmounted(() => {
     justify-content: space-between;
     height: 100%;
     gap: 1rem;
-    padding: 0 4rem;
-    max-width: 100%;
+    padding: 0 2rem;
     width: 100%;
-    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .header-inner {
+        padding: 0 4rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .header-inner {
+        padding: 0 6rem;
+    }
 }
 
 .brand {
@@ -269,6 +279,9 @@ onUnmounted(() => {
 }
 
 @media (min-width: 768px) {
+    .header-inner {
+        padding: 0 4rem;
+    }
     .nav-desktop {
         display: flex;
     }
@@ -278,6 +291,12 @@ onUnmounted(() => {
     }
     .menu-toggle {
         display: none;
+    }
+}
+
+@media (min-width: 1200px) {
+    .header-inner {
+        padding: 0 6rem;
     }
 }
 </style>
