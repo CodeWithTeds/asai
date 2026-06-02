@@ -15,7 +15,9 @@ return new class extends Migration
     {
         Schema::create('job_postings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('created_by')->constrained('users')->cascadeOnDelete()->index();
+            $table->unsignedBigInteger('created_by');
+            $table->foreign('created_by', 'fk_job_postings_created_by')->references('id')->on('users')->cascadeOnDelete();
+            $table->index('created_by');
             $table->string('title');
             $table->text('description');
             $table->string('cover_image')->nullable();
