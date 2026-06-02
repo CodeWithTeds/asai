@@ -51,7 +51,7 @@ onUnmounted(() => {
 
 <template>
     <header class="site-header" :class="{ scrolled }">
-        <div class="header-inner container">
+        <div class="header-inner">
             <a href="#top" class="brand" @click="closeMobile">
                 <img
                     src="/images/logo.png"
@@ -132,6 +132,10 @@ onUnmounted(() => {
     justify-content: space-between;
     height: 100%;
     gap: 1rem;
+    padding: 0 4rem;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
 }
 
 .brand {
@@ -145,7 +149,7 @@ onUnmounted(() => {
 }
 
 .brand-logo {
-    height: 36px;
+    height: 48px;
     width: auto;
     display: block;
 }

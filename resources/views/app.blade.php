@@ -50,6 +50,66 @@
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">
+        <!-- Loading screen -->
+        <div id="app-loader">
+            <img src="/images/logo.png" alt="ASAI Logo" id="loader-logo" />
+            <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+        </div>
+
+        <style>
+            #app-loader {
+                position: fixed;
+                inset: 0;
+                background: #0d1117;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2.5rem;
+                z-index: 99999;
+                transition: opacity 0.6s ease, visibility 0.6s ease;
+            }
+            #app-loader.hidden {
+                opacity: 0;
+                visibility: hidden;
+            }
+            #loader-logo {
+                width: min(400px, 70vw);
+                height: auto;
+                animation: loaderPulse 2s ease-in-out infinite;
+            }
+            .loader-bar {
+                width: min(320px, 60vw);
+                height: 3px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 99px;
+                overflow: hidden;
+            }
+            .loader-bar-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #1d219d, #b8860b);
+                border-radius: 99px;
+                animation: loaderFill 1.4s cubic-bezier(0.4,0,0.2,1) forwards;
+            }
+            @keyframes loaderPulse {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.8; transform: scale(1.04); }
+            }
+            @keyframes loaderFill {
+                0% { width: 0%; }
+                100% { width: 100%; }
+            }
+        </style>
+
+        <script>
+            window.addEventListener('load', function () {
+                setTimeout(function () {
+                    var loader = document.getElementById('app-loader');
+                    if (loader) loader.classList.add('hidden');
+                }, 1500);
+            });
+        </script>
+
         <x-inertia::app />
     </body>
 </html>
