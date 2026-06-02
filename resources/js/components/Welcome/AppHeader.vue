@@ -1,90 +1,69 @@
 <script setup lang="ts">
-import { Menu, X } from 'lucide-vue-next';
+import { Phone, Menu, X } from 'lucide-vue-next';
 import { onMounted, onUnmounted, ref } from 'vue';
 
-const scrolled = ref(false);
 const mobileOpen = ref(false);
 
 const navLinks = [
-    { href: '#about', label: 'About' },
+    { href: '#about', label: 'About Us' },
+    { href: '#services', label: 'Services' },
     { href: '#vision', label: 'Vision & Mission' },
     { href: '#capabilities', label: 'Capabilities' },
-    { href: '#services', label: 'Services' },
     { href: '#contact', label: 'Contact' },
 ];
 
 function handleNavClick(e: Event, href: string) {
     e.preventDefault();
-    closeMobile();
-
-    const target = document.querySelector(href);
-
-    if (!target) {
-        return;
-    }
-
-    const headerOffset = 64;
-    const elementPosition = target.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({
-        top: elementPosition - headerOffset,
-        behavior: 'instant',
-    });
-}
-
-function onScroll() {
-    scrolled.value = window.scrollY > 12;
-}
-
-function closeMobile() {
     mobileOpen.value = false;
+    const target = document.querySelector(href);
+    if (!target) return;
+    const elementPosition = target.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top: elementPosition - 72, behavior: 'instant' });
 }
 
-onMounted(() => {
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-});
-
-onUnmounted(() => {
-    window.removeEventListener('scroll', onScroll);
-});
+onMounted(() => {});
+onUnmounted(() => {});
 </script>
 
 <template>
-    <header class="site-header" :class="{ scrolled }">
-        <div class="header-inner">
-            <a href="#top" class="brand" @click="closeMobile">
-                <img
-                    src="/images/logo.png"
-                    alt="ASAI Logo"
-                    class="brand-logo"
-                />
-                <span class="brand-name">ASAI</span>
-            </a>
+    <header class="site-header">
+        <!-- Logo zone with angled divider -->
+        <a href="#top" class="brand-zone" @click="(e) => handleNavClick(e, '#top')">
+            <img src="/images/logo.png" alt="ASAI Logo" class="brand-logo" />
+            <div class="brand-text">
+                <span class="brand-name">ANNAPOLIS</span>
+                <span class="brand-sub">Security Agency, Inc.</span>
+            </div>
+        </a>
 
-            <nav class="nav-desktop" aria-label="Primary">
+        <!-- Nav + CTA -->
+        <nav class="nav-desktop" aria-label="Primary">
+            <template v-for="(link, i) in navLinks" :key="link.href">
                 <a
-                    v-for="link in navLinks"
-                    :key="link.href"
                     :href="link.href"
                     class="nav-link"
                     @click="handleNavClick($event, link.href)"
-                >
-                    {{ link.label }}
-                </a>
-            </nav>
+                >{{ link.label }}</a>
+                <span v-if="i < navLinks.length - 1" class="nav-sep">|</span>
+            </template>
+        </nav>
 
-            <a href="#contact" class="cta-desktop">Get in touch</a>
+        <a href="#contact" class="cta-btn" @click="handleNavClick($event, '#contact')">
+            <Phone :size="14" />
+            Contact Us
+        </a>
 
-            <button
-                class="menu-toggle"
-                :aria-expanded="mobileOpen"
-                aria-label="Toggle navigation"
-                @click="mobileOpen = !mobileOpen"
-            >
-                <component :is="mobileOpen ? X : Menu" :size="22" />
-            </button>
-        </div>
+        <!-- Mobile toggle -->
+        <button
+            class="menu-toggle"
+            :aria-expanded="mobileOpen"
+            aria-label="Toggle navigation"
+            @click="mobileOpen = !mobileOpen"
+        >
+            <component :is="mobileOpen ? X : Menu" :size="22" />
+        </button>
 
+        <!-- Mobile menu -->
         <Transition name="slide">
             <nav v-if="mobileOpen" class="nav-mobile" aria-label="Mobile">
                 <a
@@ -93,12 +72,10 @@ onUnmounted(() => {
                     :href="link.href"
                     class="nav-link-mobile"
                     @click="handleNavClick($event, link.href)"
-                >
-                    {{ link.label }}
+                >{{ link.label }}</a>
+                <a href="#contact" class="cta-mobile" @click="handleNavClick($event, '#contact')">
+                    <Phone :size="14" /> Contact Us
                 </a>
-                <a href="#contact" class="cta-mobile" @click="closeMobile"
-                    >Get in touch</a
-                >
             </nav>
         </Transition>
     </header>
@@ -109,168 +86,179 @@ onUnmounted(() => {
     position: sticky;
     top: 0;
     z-index: 50;
-    height: var(--header-height);
-    background: rgba(242, 246, 246, 0.85);
-    backdrop-filter: saturate(140%) blur(14px);
-    -webkit-backdrop-filter: saturate(140%) blur(14px);
-    border-bottom: 1px solid transparent;
-    transition:
-        background-color 0.25s ease,
-        box-shadow 0.25s ease,
-        border-color 0.25s ease;
-}
-
-.site-header.scrolled {
-    background: rgba(255, 255, 255, 0.92);
-    border-bottom-color: var(--color-border);
-    box-shadow: 0 4px 20px var(--color-shadow);
-}
-
-.header-inner {
+    height: 72px;
+    background: #0d1b4b;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    height: 100%;
-    gap: 1rem;
-    padding: 0 2rem;
-    width: 100%;
+    gap: 0;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
 }
 
-@media (min-width: 768px) {
-    .header-inner {
-        padding: 0 4rem;
-    }
-}
-
-@media (min-width: 1200px) {
-    .header-inner {
-        padding: 0 6rem;
-    }
-}
-
-.brand {
-    display: inline-flex;
+/* Logo zone - white bg with angled right edge */
+.brand-zone {
+    display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.15rem;
-    color: var(--color-primary-dark);
+    gap: 0.75rem;
+    height: 100%;
+    background: #fff;
+    padding: 0 2rem 0 1.5rem;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 100%, 0 100%);
+    padding-right: 3rem;
+    text-decoration: none;
+    flex-shrink: 0;
 }
 
 .brand-logo {
-    height: 48px;
+    height: 44px;
     width: auto;
     display: block;
 }
 
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.brand-name {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #0d1b4b;
+    letter-spacing: 0.05em;
+}
+
+.brand-sub {
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: #555;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* Desktop nav */
 .nav-desktop {
     display: none;
-    gap: 1.75rem;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+    padding: 0 2rem;
 }
 
 .nav-link {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
     transition: color 0.2s ease;
-    position: relative;
+    white-space: nowrap;
+    padding: 0 0.25rem;
 }
 
 .nav-link:hover {
-    color: var(--color-primary);
+    color: #c9a84c;
 }
 
-.nav-link::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -6px;
-    height: 2px;
-    background: var(--color-accent);
-    transform: scaleX(0);
-    transform-origin: center;
-    transition: transform 0.2s ease;
+.nav-sep {
+    color: rgba(255, 255, 255, 0.25);
+    font-size: 0.75rem;
+    user-select: none;
 }
 
-.nav-link:hover::after {
-    transform: scaleX(1);
-}
-
-.cta-desktop {
+/* CTA button */
+.cta-btn {
     display: none;
-    background: var(--color-primary);
+    align-items: center;
+    gap: 0.4rem;
+    background: #c9a84c;
     color: #fff;
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 0.55rem 1.1rem;
-    border-radius: var(--radius-sm);
-    transition:
-        background-color 0.2s ease,
-        transform 0.2s ease;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.7rem 1.25rem;
+    border-radius: 4px;
+    margin-right: 1.5rem;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
 }
 
-.cta-desktop:hover {
-    background: var(--color-primary-dark);
+.cta-btn:hover {
+    background: #b8940e;
     transform: translateY(-1px);
 }
 
+/* Mobile toggle */
 .menu-toggle {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-sm);
-    color: var(--color-primary-dark);
-    transition: background-color 0.2s ease;
+    width: 44px;
+    height: 44px;
+    border-radius: 4px;
+    color: #fff;
+    margin-left: auto;
+    margin-right: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
 .menu-toggle:hover {
-    background: rgba(74, 95, 128, 0.08);
+    background: rgba(255, 255, 255, 0.08);
 }
 
+/* Mobile nav */
 .nav-mobile {
     position: absolute;
-    top: var(--header-height);
+    top: 72px;
     left: 0;
     right: 0;
-    background: #fff;
-    border-bottom: 1px solid var(--color-border);
-    padding: 1rem 1.5rem 1.25rem;
+    background: #0d1b4b;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 1.5rem 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    box-shadow: 0 8px 24px var(--color-shadow);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 100;
 }
 
 .nav-link-mobile {
-    padding: 0.75rem 0.25rem;
-    font-size: 0.95rem;
-    color: var(--color-text);
-    border-bottom: 1px solid var(--color-border);
-}
-
-.nav-link-mobile:last-of-type {
-    border-bottom: none;
+    padding: 0.8rem 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-decoration: none;
 }
 
 .cta-mobile {
-    margin-top: 0.75rem;
-    text-align: center;
-    background: var(--color-primary);
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    background: #c9a84c;
     color: #fff;
-    font-weight: 600;
-    padding: 0.75rem 1rem;
-    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.85rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
 }
 
 .slide-enter-active,
 .slide-leave-active {
-    transition:
-        opacity 0.2s ease,
-        transform 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 .slide-enter-from,
 .slide-leave-to {
@@ -278,25 +266,15 @@ onUnmounted(() => {
     transform: translateY(-8px);
 }
 
-@media (min-width: 768px) {
-    .header-inner {
-        padding: 0 4rem;
-    }
+@media (min-width: 900px) {
     .nav-desktop {
         display: flex;
     }
-    .cta-desktop {
-        display: inline-flex;
-        align-items: center;
+    .cta-btn {
+        display: flex;
     }
     .menu-toggle {
         display: none;
-    }
-}
-
-@media (min-width: 1200px) {
-    .header-inner {
-        padding: 0 6rem;
     }
 }
 </style>
