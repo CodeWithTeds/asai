@@ -78,7 +78,7 @@ onMounted(() => {
 
             <div class="hero-visual hero-animate float-anim">
                 <img
-                    src="/images/hero.png"
+                    src="/images/logo.png"
                     alt="ASAI security operations"
                     class="hero-img"
                 />
@@ -89,9 +89,9 @@ onMounted(() => {
 
 <style scoped>
 .hero {
-    height: 70vh;
-    min-height: 70vh;
-    max-height: 70vh;
+    height: 80vh;
+    min-height: 80vh;
+    max-height: 80vh;
     display: flex;
     align-items: center;
     padding: 2rem 4rem;
@@ -143,6 +143,7 @@ onMounted(() => {
 
 .hero-img {
     width: 100%;
+    max-width: 480px;
     height: auto;
     display: block;
 }
