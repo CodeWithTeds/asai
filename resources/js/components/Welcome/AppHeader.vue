@@ -30,10 +30,6 @@ onUnmounted(() => {});
         <!-- Logo zone with angled divider -->
         <a href="#top" class="brand-zone" @click="(e) => handleNavClick(e, '#top')">
             <img src="/images/logo.png" alt="ASAI Logo" class="brand-logo" />
-            <div class="brand-text">
-                <span class="brand-name">ANNAPOLIS</span>
-                <span class="brand-sub">Security Agency, Inc.</span>
-            </div>
         </a>
 
         <!-- Nav + CTA -->
@@ -86,32 +82,37 @@ onUnmounted(() => {});
     position: sticky;
     top: 0;
     z-index: 50;
-    height: 72px;
+    height: 100px;
     background: #0d1b4b;
     display: flex;
     align-items: center;
     gap: 0;
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+    overflow: visible;
 }
 
 /* Logo zone - white bg with angled right edge */
 .brand-zone {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
     height: 100%;
     background: #fff;
-    padding: 0 2rem 0 1.5rem;
+    padding: 0 3rem 0 1.5rem;
     clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 100%, 0 100%);
-    padding-right: 3rem;
     text-decoration: none;
     flex-shrink: 0;
+    overflow: visible;
+    position: relative;
+    z-index: 2;
 }
 
 .brand-logo {
-    height: 44px;
+    height: 140px;
     width: auto;
     display: block;
+    position: relative;
+    top: 10px;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
 }
 
 .brand-text {
@@ -215,7 +216,7 @@ onUnmounted(() => {});
 /* Mobile nav */
 .nav-mobile {
     position: absolute;
-    top: 72px;
+    top: 100px;
     left: 0;
     right: 0;
     background: #0d1b4b;
