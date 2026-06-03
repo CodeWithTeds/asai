@@ -6,6 +6,7 @@ import {
     FolderGit2,
     LayoutGrid,
     Megaphone,
+    FileText,
 } from 'lucide-vue-next';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -40,6 +41,11 @@ const mainNavItems: NavItem[] = [
         title: 'Job Postings',
         href: jobPostingsIndex(),
         icon: Briefcase,
+    },
+    {
+        title: 'Applications',
+        href: '/job-applications',
+        icon: FileText,
     },
 ];
 

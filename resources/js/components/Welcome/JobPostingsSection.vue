@@ -2,6 +2,7 @@
 import { usePage } from '@inertiajs/vue3';
 import { Briefcase, MapPin, Clock } from 'lucide-vue-next';
 import { computed, ref, onMounted, onUnmounted } from 'vue';
+import ApplyModal from './ApplyModal.vue';
 
 type JobPosting = {
     id: number;
@@ -15,6 +16,14 @@ type JobPosting = {
 const jobPostings = computed<JobPosting[]>(
     () => (usePage().props.jobPostings as JobPosting[]) ?? [],
 );
+
+const isApplyModalOpen = ref(false);
+const selectedJob = ref<JobPosting | null>(null);
+
+function handleApplyClick(job: JobPosting) {
+    selectedJob.value = job;
+    isApplyModalOpen.value = true;
+}
 
 function formatType(type: string) {
     const labels: Record<string, string> = {
@@ -117,10 +126,21 @@ onMounted(() => {
                                 {{ formatType(job.type) }}
                             </span>
                         </div>
+
+                        <div class="job-card-actions">
+                            <button
+                                class="apply-btn"
+                                @click="handleApplyClick(job)"
+                            >
+                                Apply Now
+                            </button>
+                        </div>
                     </div>
                 </article>
             </div>
         </div>
+
+        <ApplyModal v-model:open="isApplyModalOpen" :job="selectedJob" />
     </section>
 </template>
 
@@ -279,6 +299,37 @@ onMounted(() => {
 .job-card-badge svg {
     color: var(--color-primary-soft);
     flex-shrink: 0;
+}
+
+.job-card-actions {
+    margin-top: 1.25rem;
+    width: 100%;
+}
+
+.apply-btn {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1.2rem;
+    background: var(--color-primary);
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease;
+}
+
+.apply-btn:hover {
+    background: var(--color-primary-soft);
+}
+
+.apply-btn:active {
+    transform: scale(0.98);
 }
 
 /* Responsive */

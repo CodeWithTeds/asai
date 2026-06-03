@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'title',
@@ -59,5 +60,13 @@ class JobPosting extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * The applications submitted for this job posting.
+     */
+    public function applications(): HasMany
+    {
+        return $this->hasMany(JobApplication::class);
     }
 }
