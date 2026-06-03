@@ -63,7 +63,6 @@ onMounted(() => {
 
 <template>
     <section
-        v-if="jobPostings.length > 0"
         id="careers"
         ref="sectionRef"
         class="job-postings-section section"
@@ -81,7 +80,7 @@ onMounted(() => {
             </div>
 
             <!-- Job cards grid -->
-            <div class="job-grid">
+            <div v-if="jobPostings.length > 0" class="job-grid">
                 <article
                     v-for="job in jobPostings"
                     :key="job.id"
@@ -137,6 +136,18 @@ onMounted(() => {
                         </div>
                     </div>
                 </article>
+            </div>
+
+            <!-- Empty state when no job postings -->
+            <div v-else class="empty-state">
+                <div class="empty-icon-wrapper">
+                    <Briefcase :size="36" />
+                </div>
+                <h3 class="empty-title">No Active Openings</h3>
+                <p class="empty-text">
+                    We don't have any job openings right now. Follow us for
+                    future announcements or check back later!
+                </p>
             </div>
         </div>
 
@@ -330,6 +341,55 @@ onMounted(() => {
 
 .apply-btn:active {
     transform: scale(0.98);
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3.5rem 2rem;
+    background: var(--color-bg-elevated);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    max-width: 540px;
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+        opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s,
+        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+}
+
+.job-postings-section.is-visible .empty-state {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.empty-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(29, 33, 157, 0.05);
+    color: var(--color-primary);
+    margin-bottom: 1.25rem;
+}
+
+.empty-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    margin-bottom: 0.5rem;
+}
+
+.empty-text {
+    font-size: 0.92rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
 }
 
 /* Responsive */

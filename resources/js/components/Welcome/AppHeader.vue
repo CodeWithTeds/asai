@@ -9,6 +9,7 @@ const navLinks = [
     { href: '#services', label: 'Services' },
     { href: '#vision', label: 'Vision & Mission' },
     { href: '#capabilities', label: 'Capabilities' },
+    { href: '#careers', label: 'Careers' },
     { href: '#contact', label: 'Contact' },
 ];
 
@@ -16,7 +17,11 @@ function handleNavClick(e: Event, href: string) {
     e.preventDefault();
     mobileOpen.value = false;
     const target = document.querySelector(href);
-    if (!target) return;
+
+    if (!target) {
+        return;
+    }
+
     const elementPosition = target.getBoundingClientRect().top + window.scrollY;
     window.scrollTo({ top: elementPosition - 72, behavior: 'instant' });
 }
@@ -28,7 +33,11 @@ onUnmounted(() => {});
 <template>
     <header class="site-header">
         <!-- Logo zone with angled divider -->
-        <a href="#top" class="brand-zone" @click="(e) => handleNavClick(e, '#top')">
+        <a
+            href="#top"
+            class="brand-zone"
+            @click="(e) => handleNavClick(e, '#top')"
+        >
             <img src="/images/logo.png" alt="ASAI Logo" class="brand-logo" />
         </a>
 
@@ -39,12 +48,17 @@ onUnmounted(() => {});
                     :href="link.href"
                     class="nav-link"
                     @click="handleNavClick($event, link.href)"
-                >{{ link.label }}</a>
+                    >{{ link.label }}</a
+                >
                 <span v-if="i < navLinks.length - 1" class="nav-sep">|</span>
             </template>
         </nav>
 
-        <a href="#contact" class="cta-btn" @click="handleNavClick($event, '#contact')">
+        <a
+            href="#contact"
+            class="cta-btn"
+            @click="handleNavClick($event, '#contact')"
+        >
             <Phone :size="14" />
             Contact Us
         </a>
@@ -68,8 +82,13 @@ onUnmounted(() => {});
                     :href="link.href"
                     class="nav-link-mobile"
                     @click="handleNavClick($event, link.href)"
-                >{{ link.label }}</a>
-                <a href="#contact" class="cta-mobile" @click="handleNavClick($event, '#contact')">
+                    >{{ link.label }}</a
+                >
+                <a
+                    href="#contact"
+                    class="cta-mobile"
+                    @click="handleNavClick($event, '#contact')"
+                >
                     <Phone :size="14" /> Contact Us
                 </a>
             </nav>
@@ -112,7 +131,7 @@ onUnmounted(() => {});
     display: block;
     position: relative;
     top: 10px;
-    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
 }
 
 .brand-text {
@@ -183,7 +202,9 @@ onUnmounted(() => {});
     margin-right: 1.5rem;
     white-space: nowrap;
     text-decoration: none;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
     flex-shrink: 0;
 }
 
@@ -259,7 +280,9 @@ onUnmounted(() => {});
 
 .slide-enter-active,
 .slide-leave-active {
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
 }
 .slide-enter-from,
 .slide-leave-to {
