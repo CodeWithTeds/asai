@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('resume_path');
             $table->text('cover_letter')->nullable();
             $table->text('references')->nullable();
+            $table->unique(['job_posting_id', 'applicant_email'], 'uidx_job_applications_email');
             $table->timestamps();
         });
     }

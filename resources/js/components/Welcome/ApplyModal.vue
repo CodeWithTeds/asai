@@ -147,6 +147,31 @@ function handleSubmit() {
                 fileInput.value.value = '';
             }
         },
+        onError: (errors) => {
+            if (
+                errors.applicant_name ||
+                errors.applicant_email ||
+                errors.applicant_phone ||
+                errors.residential_address
+            ) {
+                currentStep.value = 1;
+            } else if (errors.education_level || errors.years_of_experience) {
+                currentStep.value = 2;
+            } else if (
+                errors.height_cm ||
+                errors.weight_kg ||
+                errors.license_number ||
+                errors.license_expiry
+            ) {
+                currentStep.value = 3;
+            } else if (
+                errors.resume ||
+                errors.cover_letter ||
+                errors.references
+            ) {
+                currentStep.value = 4;
+            }
+        },
     });
 }
 
