@@ -3,22 +3,58 @@
 namespace App\Services;
 
 use App\Models\JobPosting;
+use App\Traits\HasVersionedCache;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class JobPostingService
 {
+    use HasVersionedCache;
+
+    /**
+     * Define the cache key prefix for versioning
+     */
+    protected function getCacheKeyPrefix(): string
+    {
+        return 'job_postings';
+    }
+
     /**
      * Return all active job postings for public display
      */
     public function getActive(): Collection
     {
-        return JobPosting::active()
-            ->select('id', 'title', 'description', 'cover_image', 'location', 'type', 'starts_at', 'expires_at', 'created_by', 'created_at')
-            ->latest()
-            ->get();
+        $version = $this->getCacheVersion();
+        $cacheKey = "job_postings:v{$version}:active";
+
+        $result = Cache::get($cacheKey);
+
+        if (! ($result instanceof Collection)) {
+            Cache::forget($cacheKey);
+
+            $result = JobPosting::active()
+                ->select(
+                    'id',
+                    'title',
+                    'description',
+                    'cover_image',
+                    'location',
+                    'type',
+                    'starts_at',
+                    'expires_at',
+                    'created_by',
+                    'created_at'
+                )
+                ->latest()
+                ->get();
+
+            Cache::put($cacheKey, $result, now()->addMinutes(60));
+        }
+
+        return $result;
     }
 
     /**
@@ -40,10 +76,14 @@ class JobPostingService
             $data['cover_image'] = $image->store('job-postings/covers', 'public');
         }
 
-        return JobPosting::create([
+        $jobPosting = JobPosting::create([
             ...$data,
             'created_by' => $createdBy,
         ]);
+
+        $this->clearCache();
+
+        return $jobPosting;
     }
 
     /**
@@ -66,6 +106,8 @@ class JobPostingService
 
         $jobPosting->update($data);
 
+        $this->clearCache();
+
         return $jobPosting->fresh();
     }
 
@@ -76,6 +118,7 @@ class JobPostingService
     {
         $this->deleteCoverImage($jobPosting);
         $jobPosting->delete();
+        $this->clearCache();
     }
 
     /**

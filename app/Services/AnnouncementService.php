@@ -3,27 +3,51 @@
 namespace App\Services;
 
 use App\Models\Announcement;
+use App\Traits\HasVersionedCache;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class AnnouncementService
 {
+    use HasVersionedCache;
+
+    /**
+     * Define the cache key prefix for versioning
+     */
+    protected function getCacheKeyPrefix(): string
+    {
+        return 'announcements';
+    }
+
     /**
      * Return all active announcements for public display
      */
     public function getActive(?string $search = null): Collection
     {
-        $query = Announcement::active()
-            ->select('id', 'title', 'body', 'starts_at', 'expires_at', 'created_at');
+        $version = $this->getCacheVersion();
+        $cacheKey = "announcements:v{$version}:active:" . md5($search ?? '');
 
-        if (! empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('body', 'like', "%{$search}%");
-            });
+        $result = Cache::get($cacheKey);
+
+        if (! ($result instanceof Collection)) {
+            Cache::forget($cacheKey);
+
+            $query = Announcement::active()
+                ->select('id', 'title', 'body', 'starts_at', 'expires_at', 'created_at');
+
+            if (! empty($search)) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('body', 'like', "%{$search}%");
+                });
+            }
+
+            $result = $query->latest()->get();
+            Cache::put($cacheKey, $result, now()->addMinutes(60));
         }
 
-        return $query->latest()->get();
+        return $result;
     }
 
     /**
@@ -41,10 +65,14 @@ class AnnouncementService
      */
     public function create(array $data, int $createdBy): Announcement
     {
-        return Announcement::create([
+        $announcement = Announcement::create([
             ...$data,
             'created_by' => $createdBy
         ]);
+
+        $this->clearCache();
+
+        return $announcement;
     }
 
     /**
@@ -53,6 +81,7 @@ class AnnouncementService
     public function update(Announcement $announcement, array $data): Announcement
     {
         $announcement->update($data);
+        $this->clearCache();
 
         return $announcement->fresh();
     }
@@ -63,5 +92,6 @@ class AnnouncementService
     public function delete(Announcement $announcement): void
     {
         $announcement->delete();
+        $this->clearCache();
     }
 }
