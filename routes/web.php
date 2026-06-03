@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
 
-Route::post('/job-postings/{jobPosting}/apply', [JobApplicationController::class, 'store'])
+Route::post('job-postings/{jobPosting}/apply', [JobApplicationController::class, 'store'])
+    ->middleware('throttle:5,1')
     ->name('job-postings.apply');
 
 Route::middleware(['auth', 'verified'])->group(function () {
