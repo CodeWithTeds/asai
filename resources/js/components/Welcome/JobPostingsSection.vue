@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
-import { Briefcase, MapPin, Clock } from 'lucide-vue-next';
+import { Briefcase } from 'lucide-vue-next';
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import ApplyModal from './ApplyModal.vue';
 
@@ -22,7 +22,10 @@ const isApplyModalOpen = ref(false);
 const selectedJob = ref<JobPosting | null>(null);
 
 function formatDate(dateStr: string) {
-    if (!dateStr) return '';
+    if (!dateStr) {
+        return '';
+    }
+
     return new Date(dateStr).toLocaleDateString('en-US', {
         day: 'numeric',
         month: 'short',
@@ -100,7 +103,7 @@ onMounted(() => {
                     <div
                         class="job-card-top"
                         :style="{
-                            backgroundImage: `url(${job.cover_image ? '/storage/' + job.cover_image : '/images/hero.png'})`
+                            backgroundImage: `url(${job.cover_image ? '/storage/' + job.cover_image : '/images/hero.png'})`,
                         }"
                     >
                         <!-- Dark overlay -->
@@ -108,7 +111,9 @@ onMounted(() => {
 
                         <!-- Top Content Row (Date + Icon) -->
                         <div class="job-card-top-row">
-                            <span class="job-date-badge">{{ formatDate(job.created_at) }}</span>
+                            <span class="job-date-badge">{{
+                                formatDate(job.created_at)
+                            }}</span>
                             <div class="job-card-icon-circle">
                                 <Briefcase :size="16" />
                             </div>
@@ -122,8 +127,12 @@ onMounted(() => {
 
                         <!-- Bottom Content Row (Pill Badges / Tags) -->
                         <div class="job-card-tags">
-                            <span class="job-tag">{{ formatType(job.type) }}</span>
-                            <span v-if="job.location" class="job-tag">{{ job.location }}</span>
+                            <span class="job-tag">{{
+                                formatType(job.type)
+                            }}</span>
+                            <span v-if="job.location" class="job-tag">{{
+                                job.location
+                            }}</span>
                             <span class="job-tag">Active</span>
                         </div>
                     </div>
@@ -136,8 +145,12 @@ onMounted(() => {
                         <!-- Footer Actions Row -->
                         <div class="job-card-footer">
                             <div class="job-meta-info">
-                                <span class="job-meta-title">Open Position</span>
-                                <span class="job-meta-sub">{{ job.location || 'Agency' }}</span>
+                                <span class="job-meta-title"
+                                    >Open Position</span
+                                >
+                                <span class="job-meta-sub">{{
+                                    job.location || 'Agency'
+                                }}</span>
                             </div>
                             <button
                                 class="apply-btn"
