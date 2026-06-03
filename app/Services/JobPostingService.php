@@ -16,7 +16,7 @@ class JobPostingService
     public function getActive(): Collection
     {
         return JobPosting::active()
-            ->select('id', 'title', 'description', 'cover_image', 'location', 'type', 'starts_at', 'expires_at')
+            ->select('id', 'title', 'description', 'cover_image', 'location', 'type', 'starts_at', 'expires_at', 'created_by', 'created_at')
             ->latest()
             ->get();
     }

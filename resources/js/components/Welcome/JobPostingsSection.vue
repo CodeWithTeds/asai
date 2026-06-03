@@ -11,6 +11,7 @@ type JobPosting = {
     cover_image: string | null;
     location: string | null;
     type: string;
+    created_at: string;
 };
 
 const jobPostings = computed<JobPosting[]>(
@@ -19,6 +20,15 @@ const jobPostings = computed<JobPosting[]>(
 
 const isApplyModalOpen = ref(false);
 const selectedJob = ref<JobPosting | null>(null);
+
+function formatDate(dateStr: string) {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('en-US', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    });
+}
 
 function handleApplyClick(job: JobPosting) {
     selectedJob.value = job;
@@ -86,47 +96,49 @@ onMounted(() => {
                     :key="job.id"
                     class="job-card"
                 >
-                    <!-- Cover image -->
-                    <div class="job-card-image">
-                        <img
-                            v-if="job.cover_image"
-                            :src="`/storage/${job.cover_image}`"
-                            :alt="`${job.title} cover`"
-                            class="job-card-img"
-                        />
-                        <!-- Placeholder when no image -->
-                        <div v-else class="job-card-img-placeholder">
-                            <Briefcase :size="32" />
+                    <!-- Curved Top Box (peach style or cover image bg with dark overlay) -->
+                    <div
+                        class="job-card-top"
+                        :style="{
+                            backgroundImage: `url(${job.cover_image ? '/storage/' + job.cover_image : '/images/hero.png'})`
+                        }"
+                    >
+                        <!-- Dark overlay -->
+                        <div class="job-card-top-overlay"></div>
+
+                        <!-- Top Content Row (Date + Icon) -->
+                        <div class="job-card-top-row">
+                            <span class="job-date-badge">{{ formatDate(job.created_at) }}</span>
+                            <div class="job-card-icon-circle">
+                                <Briefcase :size="16" />
+                            </div>
+                        </div>
+
+                        <!-- Mid Content (Company + Title) -->
+                        <div class="job-card-top-content">
+                            <span class="job-company">ASAI</span>
+                            <h3 class="job-card-title">{{ job.title }}</h3>
+                        </div>
+
+                        <!-- Bottom Content Row (Pill Badges / Tags) -->
+                        <div class="job-card-tags">
+                            <span class="job-tag">{{ formatType(job.type) }}</span>
+                            <span v-if="job.location" class="job-tag">{{ job.location }}</span>
+                            <span class="job-tag">Active</span>
                         </div>
                     </div>
 
-                    <!-- Card body -->
-                    <div class="job-card-body">
-                        <div class="job-card-header">
-                            <div class="job-card-icon">
-                                <Briefcase :size="20" />
-                            </div>
-                            <span class="job-card-type">{{
-                                formatType(job.type)
-                            }}</span>
-                        </div>
-
-                        <h3 class="job-card-title">{{ job.title }}</h3>
-
+                    <!-- Bottom White Box -->
+                    <div class="job-card-bottom">
+                        <!-- Paragraph Description -->
                         <p class="job-card-desc">{{ job.description }}</p>
 
-                        <div class="job-card-meta">
-                            <span v-if="job.location" class="job-card-location">
-                                <MapPin :size="14" />
-                                {{ job.location }}
-                            </span>
-                            <span class="job-card-badge">
-                                <Clock :size="14" />
-                                {{ formatType(job.type) }}
-                            </span>
-                        </div>
-
-                        <div class="job-card-actions">
+                        <!-- Footer Actions Row -->
+                        <div class="job-card-footer">
+                            <div class="job-meta-info">
+                                <span class="job-meta-title">Open Position</span>
+                                <span class="job-meta-sub">{{ job.location || 'Agency' }}</span>
+                            </div>
                             <button
                                 class="apply-btn"
                                 @click="handleApplyClick(job)"
@@ -184,7 +196,8 @@ onMounted(() => {
     flex-direction: column;
     background: var(--color-bg-elevated);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    border-radius: 24px;
+    padding: 10px;
     overflow: hidden;
     transition:
         transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
@@ -198,141 +211,178 @@ onMounted(() => {
     border-color: rgba(29, 33, 157, 0.15);
 }
 
-/* Fixed-height image area — same on every card */
-.job-card-image {
+/* Curved top box with background image and overlay */
+.job-card-top {
+    position: relative;
     width: 100%;
-    height: 180px;
-    flex-shrink: 0;
-    background: var(--color-bg-subtle, #f4f4f5);
+    height: 220px;
+    border-radius: 18px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 1.5rem;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
     overflow: hidden;
 }
 
-.job-card-img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-.job-card-img-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    color: var(--color-text-muted);
-    opacity: 0.4;
-}
-
-/* Body grows to fill the rest of the card height */
-.job-card-body {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    padding: 1.75rem;
-}
-
-.job-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-}
-
-.job-card-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-sm);
+/* Dark overlay for readability */
+.job-card-top-overlay {
+    position: absolute;
+    inset: 0;
     background: linear-gradient(
-        135deg,
-        var(--color-primary) 0%,
-        var(--color-primary-soft) 100%
+        to bottom,
+        rgba(0, 0, 0, 0.3) 0%,
+        rgba(0, 0, 0, 0.65) 100%
     );
-    color: #fff;
+    z-index: 1;
 }
 
-.job-card-type {
+/* Top Row (Date and Icon) */
+.job-card-top-row {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.job-date-badge {
+    background: #ffffff;
+    color: #0f172a;
     font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-accent);
-    background: rgba(184, 134, 11, 0.08);
-    padding: 0.3rem 0.7rem;
+    padding: 0.35rem 0.9rem;
     border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.job-card-icon-circle {
+    background: #ffffff;
+    color: var(--color-primary);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+}
+
+/* Middle Content (Company & Title) */
+.job-card-top-content {
+    position: relative;
+    z-index: 2;
+    margin-top: auto;
+    margin-bottom: 0.75rem;
+}
+
+.job-company {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.8);
+    display: block;
+    margin-bottom: 0.25rem;
 }
 
 .job-card-title {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: var(--color-primary-dark);
-    margin-bottom: 0.6rem;
+    color: #ffffff;
     line-height: 1.3;
+    margin: 0;
+}
+
+/* Tags / Pills */
+.job-card-tags {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.job-tag {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    text-transform: capitalize;
+}
+
+/* Bottom White Area */
+.job-card-bottom {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1.25rem 0.75rem 0.5rem;
 }
 
 .job-card-desc {
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     color: var(--color-text-muted);
-    line-height: 1.7;
+    line-height: 1.6;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    /* Push meta to the bottom of the card body */
-    flex: 1;
     margin-bottom: 1.25rem;
+    flex: 1;
+    height: 2.7rem;
 }
 
-.job-card-meta {
+/* Footer / Action row */
+.job-card-footer {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
     margin-top: auto;
+    gap: 1rem;
 }
 
-.job-card-location,
-.job-card-badge {
+.job-meta-info {
     display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.78rem;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.job-meta-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--color-primary-dark);
+}
+
+.job-meta-sub {
+    font-size: 0.75rem;
     color: var(--color-text-muted);
     font-weight: 500;
 }
 
-.job-card-location svg,
-.job-card-badge svg {
-    color: var(--color-primary-soft);
-    flex-shrink: 0;
-}
-
-.job-card-actions {
-    margin-top: 1.25rem;
-    width: 100%;
-}
-
 .apply-btn {
-    width: 100%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.65rem 1.2rem;
+    padding: 0.6rem 1.3rem;
     background: var(--color-primary);
     color: #ffffff;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 700;
+    border-radius: 24px;
     border: none;
     cursor: pointer;
     transition:
         background 0.2s ease,
         transform 0.15s ease;
+    white-space: nowrap;
 }
 
 .apply-btn:hover {
