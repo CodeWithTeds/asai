@@ -11,12 +11,19 @@ class AnnouncementService
     /**
      * Return all active announcements for public display
      */
-    public function getActive(): Collection
+    public function getActive(?string $search = null): Collection
     {
-        return Announcement::active()
-            ->select('id', 'title', 'body', 'starts_at', 'expires_at')
-            ->latest()
-            ->get();
+        $query = Announcement::active()
+            ->select('id', 'title', 'body', 'starts_at', 'expires_at', 'created_at');
+
+        if (! empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('body', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->latest()->get();
     }
 
     /**

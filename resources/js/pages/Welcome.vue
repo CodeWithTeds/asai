@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import '../../css/welcome/main.css';
 import AboutSection from '@/components/Welcome/AboutSection.vue';
-import AnnouncementWidget from '@/components/Welcome/AnnouncementWidget.vue';
 import AppFooter from '@/components/Welcome/AppFooter.vue';
 import AppHeader from '@/components/Welcome/AppHeader.vue';
 import CapabilitiesSection from '@/components/Welcome/CapabilitiesSection.vue';
@@ -13,7 +12,6 @@ import VisionMissionSection from '@/components/Welcome/VisionMissionSection.vue'
 </script>
 
 <template>
-    <AnnouncementWidget />
     <AppHeader />
     <main>
         <HeroSection />

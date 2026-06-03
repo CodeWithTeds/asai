@@ -1,53 +1,82 @@
 <script setup lang="ts">
+import { Link, usePage } from '@inertiajs/vue3';
 import { Phone, Menu, X } from 'lucide-vue-next';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { ref } from 'vue';
 
 const mobileOpen = ref(false);
 
 const navLinks = [
-    { href: '#about', label: 'About Us' },
-    { href: '#services', label: 'Services' },
-    { href: '#vision', label: 'Vision & Mission' },
-    { href: '#capabilities', label: 'Capabilities' },
-    { href: '#careers', label: 'Careers' },
-    { href: '#contact', label: 'Contact' },
+    { href: '/#about', label: 'About Us', isAnchor: true },
+    { href: '/#services', label: 'Services', isAnchor: true },
+    { href: '/#vision', label: 'Vision & Mission', isAnchor: true },
+    { href: '/#capabilities', label: 'Capabilities', isAnchor: true },
+    { href: '/#careers', label: 'Careers', isAnchor: true },
+    { href: '/#contact', label: 'Contact', isAnchor: true },
+    { href: '/news', label: 'Announcements', isAnchor: false },
 ];
 
-function handleNavClick(e: Event, href: string) {
-    e.preventDefault();
-    mobileOpen.value = false;
-    const target = document.querySelector(href);
+function handleNavClick(
+    e: Event,
+    link: { href: string; label: string; isAnchor: boolean },
+) {
+    if (!link.isAnchor) {
+        mobileOpen.value = false;
 
-    if (!target) {
         return;
     }
 
-    const elementPosition = target.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({ top: elementPosition - 72, behavior: 'instant' });
+    const page = usePage();
+
+    if (page.url === '/' || page.url.startsWith('/#') || page.url === '') {
+        e.preventDefault();
+        mobileOpen.value = false;
+        const hash = link.href.substring(1); // remove the leading '/'
+        const target = document.querySelector(hash);
+
+        if (!target) {
+            return;
+        }
+
+        const elementPosition =
+            target.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({ top: elementPosition - 72, behavior: 'instant' });
+    } else {
+        mobileOpen.value = false;
+    }
 }
 
-onMounted(() => {});
-onUnmounted(() => {});
+function handleLogoClick(e: Event) {
+    const page = usePage();
+
+    if (page.url === '/' || page.url.startsWith('/#') || page.url === '') {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+}
 </script>
 
 <template>
     <header class="site-header">
         <!-- Logo zone with angled divider -->
-        <a
-            href="#top"
-            class="brand-zone"
-            @click="(e) => handleNavClick(e, '#top')"
-        >
+        <Link href="/" class="brand-zone" @click="handleLogoClick">
             <img src="/images/logo.png" alt="ASAI Logo" class="brand-logo" />
-        </a>
+        </Link>
 
         <!-- Nav + CTA -->
         <nav class="nav-desktop" aria-label="Primary">
             <template v-for="(link, i) in navLinks" :key="link.href">
-                <a
+                <Link
+                    v-if="!link.isAnchor"
                     :href="link.href"
                     class="nav-link"
-                    @click="handleNavClick($event, link.href)"
+                    :class="{ active: $page.url === link.href }"
+                    >{{ link.label }}</Link
+                >
+                <a
+                    v-else
+                    :href="link.href"
+                    class="nav-link"
+                    @click="handleNavClick($event, link)"
                     >{{ link.label }}</a
                 >
                 <span v-if="i < navLinks.length - 1" class="nav-sep">|</span>
@@ -55,9 +84,15 @@ onUnmounted(() => {});
         </nav>
 
         <a
-            href="#contact"
+            href="/#contact"
             class="cta-btn"
-            @click="handleNavClick($event, '#contact')"
+            @click="
+                handleNavClick($event, {
+                    href: '/#contact',
+                    label: 'Contact',
+                    isAnchor: true,
+                })
+            "
         >
             <Phone :size="14" />
             Contact Us
@@ -76,18 +111,32 @@ onUnmounted(() => {});
         <!-- Mobile menu -->
         <Transition name="slide">
             <nav v-if="mobileOpen" class="nav-mobile" aria-label="Mobile">
+                <template v-for="link in navLinks" :key="link.href">
+                    <Link
+                        v-if="!link.isAnchor"
+                        :href="link.href"
+                        class="nav-link-mobile"
+                        @click="mobileOpen = false"
+                        >{{ link.label }}</Link
+                    >
+                    <a
+                        v-else
+                        :href="link.href"
+                        class="nav-link-mobile"
+                        @click="handleNavClick($event, link)"
+                        >{{ link.label }}</a
+                    >
+                </template>
                 <a
-                    v-for="link in navLinks"
-                    :key="link.href"
-                    :href="link.href"
-                    class="nav-link-mobile"
-                    @click="handleNavClick($event, link.href)"
-                    >{{ link.label }}</a
-                >
-                <a
-                    href="#contact"
+                    href="/#contact"
                     class="cta-mobile"
-                    @click="handleNavClick($event, '#contact')"
+                    @click="
+                        handleNavClick($event, {
+                            href: '/#contact',
+                            label: 'Contact',
+                            isAnchor: true,
+                        })
+                    "
                 >
                     <Phone :size="14" /> Contact Us
                 </a>
@@ -176,7 +225,8 @@ onUnmounted(() => {});
     padding: 0 0.25rem;
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link.active {
     color: #c9a84c;
 }
 

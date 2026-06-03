@@ -22,8 +22,9 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
 
-            // Optimize the active scope query
+            // Optimize the active scope query and sorting
             $table->index(['status', 'starts_at', 'expires_at']);
+            $table->index('created_at');
         });
     }
 

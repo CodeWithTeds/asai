@@ -37,6 +37,10 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $search = validator($request->query(), [
+            'search' => 'nullable|string|max:100',
+        ])->safe()->only('search')['search'] ?? null;
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -44,7 +48,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'announcements' => app(AnnouncementService::class)->getActive(),
+            'announcements' => app(AnnouncementService::class)->getActive($search),
             'jobPostings' => app(JobPostingService::class)->getActive(),
         ];
     }

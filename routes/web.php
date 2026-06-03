@@ -6,6 +6,7 @@ use App\Http\Controllers\JobPostingController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
+Route::inertia('/news', 'Announcements/Public')->name('news');
 
 Route::post('job-postings/{jobPosting}/apply', [JobApplicationController::class, 'store'])
     ->middleware('throttle:5,1')
