@@ -19,6 +19,8 @@ type Announcement = {
     id: number;
     title: string;
     body: string;
+    type: string;
+    image: string | null;
     starts_at: string | null;
     expires_at: string | null;
     created_at: string;
@@ -33,15 +35,42 @@ const announcements = computed<Announcement[]>(
 const searchQuery = ref(
     new URLSearchParams(window.location.search).get('search') || '',
 );
+const selectedType = ref(
+    new URLSearchParams(window.location.search).get('type') || 'all',
+);
+
+const types = [
+    { value: 'all', label: 'All' },
+    { value: 'general', label: 'General' },
+    { value: 'event', label: 'Events' },
+    { value: 'activity', label: 'Activities' },
+    { value: 'news', label: 'News' },
+    { value: 'alert', label: 'Alerts' },
+];
+
+function formatTypeLabel(type: string) {
+    const labels: Record<string, string> = {
+        general: 'General',
+        event: 'Event',
+        activity: 'Activity',
+        news: 'News',
+        alert: 'Alert',
+    };
+
+    return labels[type] ?? type;
+}
 const expandedId = ref<number | null>(null);
 
 let searchTimeout: any = null;
-watch(searchQuery, (newQuery) => {
+watch([searchQuery, selectedType], ([newQuery, newType]) => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
         router.get(
             '/news',
-            { search: newQuery || undefined },
+            {
+                search: newQuery || undefined,
+                type: newType !== 'all' ? newType : undefined,
+            },
             {
                 preserveState: true,
                 replace: true,
@@ -79,24 +108,7 @@ function formatAnnouncementDate(dateStr: string) {
 }
 
 // Filtered announcements list
-const filteredAnnouncements = computed(() => {
-    return announcements.value.filter((announcement) => {
-        // Search filtering
-        if (searchQuery.value.trim() !== '') {
-            const query = searchQuery.value.toLowerCase();
-            const titleMatches = (announcement.title || '')
-                .toLowerCase()
-                .includes(query);
-            const bodyMatches = (announcement.body || '')
-                .toLowerCase()
-                .includes(query);
-
-            return titleMatches || bodyMatches;
-        }
-
-        return true;
-    });
-});
+const filteredAnnouncements = computed(() => announcements.value);
 
 // Toggle expand announcement
 function toggleExpand(id: number) {
@@ -175,6 +187,21 @@ function handleSubscribe() {
                 <span class="breadcrumb-active">Announcements</span>
             </nav>
 
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button
+                    v-for="type in types"
+                    :key="type.value"
+                    :class="[
+                        'filter-tab',
+                        { active: selectedType === type.value },
+                    ]"
+                    @click="selectedType = type.value"
+                >
+                    {{ type.label }}
+                </button>
+            </div>
+
             <!-- Announcements List -->
             <div class="announcements-container">
                 <TransitionGroup
@@ -201,6 +228,9 @@ function handleSubscribe() {
                                         item.created_at || item.starts_at,
                                     )
                                 }}</span>
+                                <span class="type-badge" :class="item.type">
+                                    {{ formatTypeLabel(item.type) }}
+                                </span>
                             </div>
 
                             <!-- Right Column: Content Intro -->
@@ -242,6 +272,16 @@ function handleSubscribe() {
                             v-if="expandedId === item.id"
                         >
                             <div class="body-inner">
+                                <div
+                                    v-if="item.image"
+                                    class="announcement-image-wrapper"
+                                >
+                                    <img
+                                        :src="`/storage/${item.image}`"
+                                        :alt="item.title"
+                                        class="announcement-image"
+                                    />
+                                </div>
                                 <p
                                     v-for="(paragraph, pIdx) in item.body.split(
                                         '\n',
@@ -800,5 +840,99 @@ function handleSubscribe() {
     .subscribe-btn {
         padding: 0.8rem;
     }
+}
+
+/* Filter Tabs */
+.filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.75rem;
+}
+
+.filter-tab {
+    padding: 0.5rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    background: transparent;
+    cursor: pointer;
+}
+
+.filter-tab:hover {
+    color: var(--color-primary);
+    background: rgba(29, 33, 157, 0.04);
+}
+
+.filter-tab.active {
+    color: var(--color-primary);
+    background: rgba(29, 33, 157, 0.08);
+    border-color: rgba(29, 33, 157, 0.15);
+}
+
+/* Type Badge */
+.type-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    padding: 0.125rem 0.625rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+    text-transform: capitalize;
+    border: 1px solid transparent;
+}
+
+.type-badge.general {
+    background-color: #f3f4f6;
+    border-color: #e5e7eb;
+    color: #4b5563;
+}
+
+.type-badge.event {
+    background-color: #eff6ff;
+    border-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.type-badge.activity {
+    background-color: #ecfdf5;
+    border-color: #d1fae5;
+    color: #047857;
+}
+
+.type-badge.news {
+    background-color: #f0fdfa;
+    border-color: #ccfbf1;
+    color: #0f766e;
+}
+
+.type-badge.alert {
+    background-color: #fef2f2;
+    border-color: #fee2e2;
+    color: #b91c1c;
+}
+
+/* Announcement Image */
+.announcement-image-wrapper {
+    margin-bottom: 1.25rem;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    max-height: 400px;
+    background-color: rgba(0, 0, 0, 0.01);
+}
+
+.announcement-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: contain;
+    display: block;
 }
 </style>

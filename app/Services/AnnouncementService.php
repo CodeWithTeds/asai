@@ -25,10 +25,10 @@ class AnnouncementService
     /**
      * Return all active announcements for public display
      */
-    public function getActive(?string $search = null): Collection
+    public function getActive(?string $search = null, ?string $type = null): Collection
     {
         $version = $this->getCacheVersion();
-        $cacheKey = "announcements:v{$version}:active:" . md5($search ?? '');
+        $cacheKey = "announcements:v{$version}:active:" . md5(($search ?? '') . ':' . ($type ?? ''));
 
         $result = Cache::get($cacheKey);
 
@@ -43,6 +43,10 @@ class AnnouncementService
                     $q->where('title', 'like', "%{$search}%")
                         ->orWhere('body', 'like', "%{$search}%");
                 });
+            }
+
+            if (! empty($type) && $type !== 'all') {
+                $query->where('type', $type);
             }
 
             $result = $query->latest()->get();
