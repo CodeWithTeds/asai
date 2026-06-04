@@ -64,9 +64,22 @@ function formatDate(date: string | null) {
     });
 }
 
+function formatType(type: string) {
+    const labels: Record<string, string> = {
+        general: 'General',
+        event: 'Event',
+        activity: 'Activity',
+        news: 'News',
+        alert: 'Alert',
+    };
+
+    return labels[type] ?? type;
+}
+
 const columns = [
     { key: 'title', label: 'Title' },
     { key: 'creator', label: 'Created By' },
+    { key: 'type', label: 'Type' },
     { key: 'schedule', label: 'Schedule' },
     { key: 'status', label: 'Status' },
 ];
@@ -140,6 +153,15 @@ const actions = [
                         isOwner(row) ? 'You' : row.creator.name
                     }}</span>
                 </div>
+            </template>
+
+            <!-- Type badge -->
+            <template #cell-type="{ row }">
+                <span
+                    class="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground"
+                >
+                    {{ formatType(row.type) }}
+                </span>
             </template>
 
             <!-- Schedule (starts_at / expires_at combined) -->

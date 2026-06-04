@@ -7,7 +7,6 @@ use App\Http\Requests\Announcement\UpdateAnnouncementRequest;
 use App\Models\Announcement;
 use App\Services\AnnouncementService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -33,7 +32,11 @@ class AnnouncementController extends Controller
      */
     public function store(StoreAnnouncementRequest $request): RedirectResponse
     {
-        $this->announcementService->create($request->validated(), $request->user()->id);
+        $this->announcementService->create(
+            $request->validated(),
+            $request->user()->id,
+            $request->file('image')
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Announcement created.']);
 
@@ -45,7 +48,11 @@ class AnnouncementController extends Controller
      */
     public function update(UpdateAnnouncementRequest $request, Announcement $announcement): RedirectResponse
     {
-        $this->announcementService->update($announcement, $request->validated());
+        $this->announcementService->update(
+            $announcement,
+            $request->validated(),
+            $request->file('image')
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Announcement updated.']);
 

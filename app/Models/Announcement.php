@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AnnouncementStatus;
+use App\Enums\AnnouncementType;
 use App\Policies\AnnouncementPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['title', 'body', 'status', 'starts_at', 'expires_at', 'created_by'])]
+#[Fillable(['title', 'body', 'type', 'image', 'status', 'starts_at', 'expires_at', 'created_by'])]
 #[UsePolicy(AnnouncementPolicy::class)]
 class Announcement extends Model
 {
@@ -18,6 +19,7 @@ class Announcement extends Model
     {
         return [
             'status' => AnnouncementStatus::class,
+            'type' => AnnouncementType::class,
             'starts_at' => 'datetime',
             'expires_at' => 'datetime',
         ];

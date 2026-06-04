@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Announcement;
 
 use App\Enums\AnnouncementStatus;
+use App\Enums\AnnouncementType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
@@ -28,11 +29,14 @@ class UpdateAnnouncementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'      => ['required', 'string', 'max:255'],
-            'body'       => ['required', 'string', 'max:2000'],
-            'status'     => ['sometimes', new Enum(AnnouncementStatus::class)],
-            'starts_at'  => ['nullable', 'date'],
-            'expires_at' => ['nullable', 'date', 'after:starts_at'],
+            'title'        => ['required', 'string', 'max:255'],
+            'body'         => ['required', 'string', 'max:2000'],
+            'type'         => ['required', new Enum(AnnouncementType::class)],
+            'image'        => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'remove_image' => ['sometimes', 'boolean'],
+            'status'       => ['sometimes', new Enum(AnnouncementStatus::class)],
+            'starts_at'    => ['nullable', 'date'],
+            'expires_at'   => ['nullable', 'date', 'after:starts_at'],
         ];
     }
 }
