@@ -7,9 +7,10 @@ const mobileOpen = ref(false);
 
 const navLinks = [
     { href: '/#about', label: 'About Us', isAnchor: true },
-    { href: '/#services', label: 'Services', isAnchor: true },
     { href: '/#vision', label: 'Vision & Mission', isAnchor: true },
     { href: '/#capabilities', label: 'Capabilities', isAnchor: true },
+    { href: '/#services', label: 'Services', isAnchor: true },
+    { href: '/#clients', label: 'Clients', isAnchor: true },
     { href: '/#careers', label: 'Careers', isAnchor: true },
     { href: '/#contact', label: 'Contact', isAnchor: true },
     { href: '/news', label: 'Announcements', isAnchor: false },
@@ -334,6 +335,7 @@ function handleLogoClick(e: Event) {
         opacity 0.2s ease,
         transform 0.2s ease;
 }
+
 .slide-enter-from,
 .slide-leave-to {
     opacity: 0;
@@ -344,9 +346,11 @@ function handleLogoClick(e: Event) {
     .nav-desktop {
         display: flex;
     }
+
     .cta-btn {
         display: flex;
     }
+
     .menu-toggle {
         display: none;
     }
