@@ -145,8 +145,6 @@ const clients = Array.from({ length: 34 }, (_, i) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0.8;
-    filter: grayscale(100%);
     transition: all 0.3s ease;
 }
 
@@ -166,8 +164,7 @@ const clients = Array.from({ length: 34 }, (_, i) => {
 }
 
 .client-logo-card:hover .logo-wrapper {
-    opacity: 1;
-    filter: grayscale(0%);
+    transform: scale(1.05);
 }
 
 /* Responsive grid layouts */
