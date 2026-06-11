@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
 import DataTable from '@/components/DataTable.vue';
+import Filterable from '@/components/Filterable.vue';
 import jobApplicationsRoute from '@/routes/job-applications';
 import type { JobApplication } from '@/types';
 
@@ -13,7 +15,10 @@ type PaginatedJobApplications = {
     links: { url: string | null; label: string; active: boolean }[];
 };
 
-defineProps<{ jobApplications: PaginatedJobApplications }>();
+const props = defineProps<{
+    jobApplications: PaginatedJobApplications;
+    filters?: { search?: string; has_license?: string };
+}>();
 
 defineOptions({
     layout: {
@@ -22,6 +27,57 @@ defineOptions({
         ],
     },
 });
+
+// Search & filter state
+const search = ref(props.filters?.search ?? '');
+const activeFilters = ref<Record<string, string>>({
+    has_license: props.filters?.has_license ?? '',
+});
+
+// Sync with server props
+watch(
+    () => props.filters,
+    (newFilters) => {
+        search.value = newFilters?.search ?? '';
+        activeFilters.value = {
+            has_license: newFilters?.has_license ?? '',
+        };
+    },
+    { deep: true },
+);
+
+function applyFilters() {
+    router.get(
+        jobApplicationsRoute.index().url,
+        {
+            search: search.value || undefined,
+            has_license: activeFilters.value.has_license || undefined,
+        },
+        { preserveState: true, preserveScroll: true, replace: true },
+    );
+}
+
+function handleSearch(val: string) {
+    search.value = val;
+    applyFilters();
+}
+
+function handleFilters(val: Record<string, string>) {
+    activeFilters.value = val;
+    applyFilters();
+}
+
+// Filter groups
+const filterGroups = [
+    {
+        key: 'has_license',
+        label: 'License',
+        options: [
+            { label: 'Licensed', value: '1' },
+            { label: 'No License', value: '0' },
+        ],
+    },
+];
 
 function formatDate(date: string) {
     return new Date(date).toLocaleDateString('en-PH', {
@@ -34,16 +90,16 @@ function formatDate(date: string) {
 }
 
 const columns = [
-    { key: 'applicant_name', label: 'Applicant' },
-    { key: 'job_posting', label: 'Applied For' },
-    { key: 'years_of_experience', label: 'Experience' },
-    { key: 'has_license', label: 'License' },
-    { key: 'created_at', label: 'Date Applied' },
+    { key: 'applicant_name', label: 'Applicant', width: '220px' },
+    { key: 'job_posting', label: 'Applied For', width: '180px' },
+    { key: 'years_of_experience', label: 'Experience', width: '100px' },
+    { key: 'has_license', label: 'License', width: '110px' },
+    { key: 'created_at', label: 'Date Applied', width: '180px' },
 ];
 
 const actions = [
     {
-        label: 'Show',
+        label: 'View',
         handler: (row: Record<string, any>) =>
             router.visit(jobApplicationsRoute.show(row.id).url),
     },
@@ -53,16 +109,24 @@ const actions = [
 <template>
     <Head title="Job Applications" />
 
-    <div class="flex flex-col gap-6 p-4">
+    <div class="flex flex-col gap-5 p-4">
         <!-- Page header -->
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-xl font-semibold">Job Applications</h1>
-                <p class="text-sm text-muted-foreground">
-                    Review and manage applications submitted by job candidates.
-                </p>
-            </div>
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-foreground">Job Applications</h1>
+            <p class="mt-0.5 text-sm text-muted-foreground">
+                Review and manage applications submitted by job candidates.
+            </p>
         </div>
+
+        <!-- Search, Filters -->
+        <Filterable
+            :search="search"
+            :filters="activeFilters"
+            :filter-groups="filterGroups"
+            search-placeholder="Search by name or email…"
+            @update:search="handleSearch"
+            @update:filters="handleFilters"
+        />
 
         <!-- Data Table -->
         <DataTable
@@ -74,26 +138,24 @@ const actions = [
             :per-page="jobApplications.per_page"
             :total="jobApplications.total"
             :links="jobApplications.links"
-            empty-message="No job applications yet."
+            empty-message="No job applications found."
         >
             <!-- Applicant details cell -->
             <template #cell-applicant_name="{ row }">
-                <div>
-                    <div class="font-semibold text-foreground">
+                <div class="w-full overflow-hidden">
+                    <div class="truncate font-semibold text-foreground">
                         {{ row.applicant_name }}
                     </div>
-                    <div class="mt-0.5 text-xs text-muted-foreground">
+                    <div class="mt-0.5 truncate text-xs text-muted-foreground">
                         {{ row.applicant_email }}
-                        <span v-if="row.applicant_phone"
-                            >· {{ row.applicant_phone }}</span
-                        >
+                        <span v-if="row.applicant_phone">· {{ row.applicant_phone }}</span>
                     </div>
                 </div>
             </template>
 
             <!-- Job Posting cell -->
             <template #cell-job_posting="{ row }">
-                <span class="font-medium text-foreground">
+                <span class="text-sm font-medium text-foreground">
                     {{ row.job_posting?.title ?? '—' }}
                 </span>
             </template>
@@ -109,16 +171,18 @@ const actions = [
             <!-- License cell -->
             <template #cell-has_license="{ row }">
                 <span
-                    v-if="row.has_license"
-                    class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-600/20 ring-inset dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20"
+                    :class="
+                        row.has_license
+                            ? 'text-green-700 dark:text-green-400'
+                            : 'text-muted-foreground'
+                    "
+                    class="inline-flex items-center gap-1.5 text-xs font-medium"
                 >
-                    Licensed
-                </span>
-                <span
-                    v-else
-                    class="inline-flex items-center rounded-full bg-yellow-50 px-2 py-0.5 text-xs font-medium text-yellow-800 ring-1 ring-yellow-600/10 ring-inset dark:bg-yellow-400/10 dark:text-yellow-500 dark:ring-yellow-400/20"
-                >
-                    No License
+                    <span
+                        :class="row.has_license ? 'bg-green-500 dark:bg-green-400' : 'bg-muted-foreground/50'"
+                        class="h-1.5 w-1.5 rounded-full"
+                    />
+                    {{ row.has_license ? 'Licensed' : 'No License' }}
                 </span>
             </template>
 

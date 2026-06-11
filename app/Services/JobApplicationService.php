@@ -24,12 +24,28 @@ class JobApplicationService
     }
 
     /**
-     * Return paginated list of all applications for admin management.
+     * Return paginated list of all applications for admin management, with optional search and filters.
      */
-    public function getPaginated(int $perPage = 15): LengthAwarePaginator
+    public function getPaginated(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        return JobApplication::with('jobPosting:id,title')
-            ->latest()
-            ->paginate($perPage);
+        $query = JobApplication::with('jobPosting:id,title')->latest();
+
+        if (! empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('applicant_name', 'like', "%{$search}%")
+                    ->orWhere('applicant_email', 'like', "%{$search}%");
+            });
+        }
+
+        if (isset($filters['has_license']) && $filters['has_license'] !== '') {
+            $query->where('has_license', $filters['has_license'] === '1');
+        }
+
+        if (! empty($filters['job_posting_id'])) {
+            $query->where('job_posting_id', $filters['job_posting_id']);
+        }
+
+        return $query->paginate($perPage)->withQueryString();
     }
 }

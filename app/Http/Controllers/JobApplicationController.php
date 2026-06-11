@@ -19,12 +19,15 @@ class JobApplicationController extends Controller
     ) {}
 
     /**
-     * Display a paginated list of job applications for admin.
+     * Display a paginated list of job applications for admin, with optional search and filters.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $filters = $request->only(['search', 'has_license', 'job_posting_id']);
+
         return Inertia::render('JobApplications/Index', [
-            'jobApplications' => $this->jobApplicationService->getPaginated(),
+            'jobApplications' => $this->jobApplicationService->getPaginated($filters),
+            'filters' => $filters,
         ]);
     }
 
