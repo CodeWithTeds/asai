@@ -6,6 +6,7 @@ use App\Http\Requests\JobPosting\StoreJobPostingRequest;
 use App\Http\Requests\JobPosting\UpdateJobPostingRequest;
 use App\Models\JobPosting;
 use App\Services\JobPostingService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,12 +19,15 @@ class JobPostingController extends Controller
     ) {}
 
     /**
-     * Show admin list of all job postings.
+     * Show admin list of all job postings with optional search and filters.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $filters = $request->only(['search', 'type', 'status']);
+
         return Inertia::render('JobPostings/Index', [
-            'jobPostings' => $this->jobPostingService->getPaginated(),
+            'jobPostings' => $this->jobPostingService->getPaginated($filters),
+            'filters' => $filters,
         ]);
     }
 
