@@ -8,6 +8,7 @@ import ClientsSection from '@/components/Welcome/ClientsSection.vue';
 import HeroSection from '@/components/Welcome/HeroSection.vue';
 import JobPostingsSection from '@/components/Welcome/JobPostingsSection.vue';
 import QualitySection from '@/components/Welcome/QualitySection.vue';
+import ContactSection from '@/components/Welcome/ContactSection.vue';
 import ServicesSection from '@/components/Welcome/ServicesSection.vue';
 import VisionMissionSection from '@/components/Welcome/VisionMissionSection.vue';
 </script>
@@ -23,6 +24,7 @@ import VisionMissionSection from '@/components/Welcome/VisionMissionSection.vue'
         <ClientsSection />
         <JobPostingsSection />
         <QualitySection />
+        <ContactSection />
     </main>
     <AppFooter />
 </template>
