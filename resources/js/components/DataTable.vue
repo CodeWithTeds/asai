@@ -51,14 +51,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 function alignClass(align?: string) {
-    if (align === 'center') {
-        return 'text-center';
-    }
-
-    if (align === 'right') {
-        return 'text-right';
-    }
-
+    if (align === 'center') return 'text-center';
+    if (align === 'right') return 'text-right';
     return 'text-left';
 }
 
@@ -68,38 +62,45 @@ function getVisibleActions(row: Record<string, any>) {
 </script>
 
 <template>
-    <div class="overflow-hidden rounded-xl border border-border">
-        <table class="w-full text-sm">
-            <thead>
-                <tr class="bg-muted/50">
+    <div class="overflow-hidden rounded-xl border border-border bg-card shadow-xs">
+        <table class="w-full table-fixed text-sm">
+            <!-- Table header -->
+            <thead class="bg-muted/50">
+                <tr class="border-b border-border">
                     <th
                         v-for="col in columns"
                         :key="col.key"
                         :class="[
                             alignClass(col.align),
-                            'px-5 py-3 text-left text-xs font-semibold text-muted-foreground',
+                            'px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80',
                         ]"
                         :style="col.width ? { width: col.width } : undefined"
                     >
                         {{ col.label }}
                     </th>
-                    <th v-if="actions.length > 0" class="w-10 px-3 py-3"></th>
+                    <th v-if="actions.length > 0" class="w-12 px-4 py-3" />
                 </tr>
             </thead>
-            <tbody>
+
+            <!-- Table body -->
+            <tbody class="divide-y divide-border/60">
+                <!-- Empty state -->
                 <tr v-if="rows.length === 0">
                     <td
                         :colspan="columns.length + (actions.length > 0 ? 1 : 0)"
-                        class="px-5 py-14 text-center text-muted-foreground"
+                        class="px-5 py-20 text-center"
                     >
-                        {{ emptyMessage }}
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="text-sm text-muted-foreground">{{ emptyMessage }}</span>
+                        </div>
                     </td>
                 </tr>
 
+                <!-- Data rows -->
                 <tr
                     v-for="(row, idx) in rows"
                     :key="row.id ?? idx"
-                    :class="[idx % 2 === 1 ? 'bg-muted/30' : 'bg-card']"
+                    class="group bg-card transition-colors duration-100 hover:bg-muted/30"
                 >
                     <td
                         v-for="col in columns"
@@ -115,27 +116,24 @@ function getVisibleActions(row: Record<string, any>) {
                         </slot>
                     </td>
 
+                    <!-- Actions column -->
                     <td
                         v-if="actions.length > 0"
-                        class="px-3 py-3.5 text-center"
+                        class="px-4 py-3.5 text-right"
                     >
                         <DropdownMenu v-if="getVisibleActions(row).length > 0">
                             <DropdownMenuTrigger as-child>
                                 <button
-                                    class="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                                    class="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/60 transition-colors hover:bg-muted hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                                 >
-                                    <Ellipsis class="h-4 w-4 rotate-90" />
+                                    <Ellipsis class="h-4 w-4" />
                                 </button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" class="w-36">
                                 <DropdownMenuItem
                                     v-for="action in getVisibleActions(row)"
                                     :key="action.label"
-                                    :class="
-                                        action.variant === 'destructive'
-                                            ? 'text-destructive focus:text-destructive'
-                                            : ''
-                                    "
+                                    :variant="action.variant"
                                     @click="action.handler(row)"
                                 >
                                     {{ action.label }}
@@ -147,7 +145,8 @@ function getVisibleActions(row: Record<string, any>) {
             </tbody>
         </table>
 
-        <div v-if="lastPage > 1" class="border-t border-border bg-card px-5">
+        <!-- Pagination -->
+        <div v-if="lastPage > 1" class="border-t border-border bg-muted/30 px-5">
             <Pagination
                 :current-page="currentPage"
                 :last-page="lastPage"

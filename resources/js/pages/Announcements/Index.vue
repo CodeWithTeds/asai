@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Head, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { Head, usePage, router } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
+import { Plus, Globe, Calendar, Zap, Newspaper, BellRing } from 'lucide-vue-next';
 import DataTable from '@/components/DataTable.vue';
+import Filterable from '@/components/Filterable.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useInitials } from '@/composables/useInitials';
@@ -20,7 +22,10 @@ type PaginatedAnnouncements = {
     links: { url: string | null; label: string; active: boolean }[];
 };
 
-defineProps<{ announcements: PaginatedAnnouncements }>();
+const props = defineProps<{
+    announcements: PaginatedAnnouncements;
+    filters?: { search?: string; type?: string; status?: string };
+}>();
 
 const { getInitials } = useInitials();
 const authUserId = computed(() => usePage().props.auth.user?.id);
@@ -35,6 +40,7 @@ defineOptions({
     },
 });
 
+// Modal state
 const showCreateModal = ref(false);
 const showEditModal = ref(false);
 const showDeleteModal = ref(false);
@@ -50,11 +56,91 @@ function openDelete(row: Record<string, any>) {
     showDeleteModal.value = true;
 }
 
-function formatDate(date: string | null) {
-    if (!date) {
-        return '—';
-    }
+// Search & filter state (seeded from server props)
+const search = ref(props.filters?.search ?? '');
+const activeFilters = ref<Record<string, string>>({
+    type: props.filters?.type ?? '',
+    status: props.filters?.status ?? '',
+});
 
+// Keep state synchronized with server props (crucial for Inertia page transitions & browser navigation)
+watch(
+    () => props.filters,
+    (newFilters) => {
+        search.value = newFilters?.search ?? '';
+        activeFilters.value = {
+            type: newFilters?.type ?? '',
+            status: newFilters?.status ?? '',
+        };
+    },
+    { deep: true }
+);
+
+function applyFilters() {
+    router.get(
+        index().url,
+        {
+            search: search.value || undefined,
+            type: activeFilters.value.type || undefined,
+            status: activeFilters.value.status || undefined,
+        },
+        { preserveState: true, preserveScroll: true, replace: true },
+    );
+}
+
+function handleSearch(val: string) {
+    search.value = val;
+    applyFilters();
+}
+
+function handleFilters(val: Record<string, string>) {
+    activeFilters.value = val;
+    applyFilters();
+}
+
+// Filter groups definition
+const filterGroups = [
+    {
+        key: 'type',
+        label: 'Type',
+        options: [
+            { label: 'General', value: 'general' },
+            { label: 'Event', value: 'event' },
+            { label: 'Activity', value: 'activity' },
+            { label: 'News', value: 'news' },
+            { label: 'Alert', value: 'alert' },
+        ],
+    },
+    {
+        key: 'status',
+        label: 'Status',
+        options: [
+            { label: 'Active', value: 'active' },
+            { label: 'Inactive', value: 'inactive' },
+        ],
+    },
+];
+
+const columns = [
+    { key: 'title', label: 'Title', width: '220px' },
+    { key: 'creator', label: 'Created By', width: '160px' },
+    { key: 'type', label: 'Type', width: '120px' },
+    { key: 'schedule', label: 'Schedule', width: '200px' },
+    { key: 'status', label: 'Status', width: '100px' },
+];
+
+const actions = [
+    { label: 'Edit', handler: openEdit, show: isOwner },
+    {
+        label: 'Delete',
+        variant: 'destructive' as const,
+        handler: openDelete,
+        show: isOwner,
+    },
+];
+
+function formatDate(date: string | null) {
+    if (!date) return '—';
     return new Date(date).toLocaleDateString('en-PH', {
         year: 'numeric',
         month: 'short',
@@ -72,43 +158,56 @@ function formatType(type: string) {
         news: 'News',
         alert: 'Alert',
     };
-
     return labels[type] ?? type;
 }
 
-const columns = [
-    { key: 'title', label: 'Title' },
-    { key: 'creator', label: 'Created By' },
-    { key: 'type', label: 'Type' },
-    { key: 'schedule', label: 'Schedule' },
-    { key: 'status', label: 'Status' },
-];
+// Type icon map — one lucide icon per type
+const typeIcons: Record<string, any> = {
+    general: Globe,
+    event: Calendar,
+    activity: Zap,
+    news: Newspaper,
+    alert: BellRing,
+};
 
-const actions = [
-    { label: 'Edit', handler: openEdit, show: isOwner },
-    {
-        label: 'Delete',
-        variant: 'destructive' as const,
-        handler: openDelete,
-        show: isOwner,
-    },
-];
+// Type color map — solid flat chips, no border (matches reference image)
+const typeColors: Record<string, string> = {
+    general: 'bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-400',
+    event: 'bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-400',
+    activity: 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400',
+    news: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400',
+    alert: 'bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-400',
+};
 </script>
 
 <template>
     <Head title="Announcements" />
 
-    <div class="flex flex-col gap-6 p-4">
+    <div class="flex flex-col gap-5 p-4">
         <!-- Page header -->
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-xl font-semibold">Announcements</h1>
-                <p class="text-sm text-muted-foreground">
-                    Manage public announcements shown on the welcome page.
-                </p>
-            </div>
-            <Button @click="showCreateModal = true">New Announcement</Button>
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight text-foreground">Announcements</h1>
+            <p class="mt-0.5 text-sm text-muted-foreground">
+                Manage public announcements shown on the welcome page.
+            </p>
         </div>
+
+        <!-- Search, Filters & Action toolbar -->
+        <Filterable
+            :search="search"
+            :filters="activeFilters"
+            :filter-groups="filterGroups"
+            search-placeholder="Search announcements…"
+            @update:search="handleSearch"
+            @update:filters="handleFilters"
+        >
+            <template #actions>
+                <Button size="sm" @click="showCreateModal = true">
+                    <Plus class="h-4 w-4" />
+                    Add New
+                </Button>
+            </template>
+        </Filterable>
 
         <!-- Data Table -->
         <DataTable
@@ -120,26 +219,20 @@ const actions = [
             :per-page="announcements.per_page"
             :total="announcements.total"
             :links="announcements.links"
-            empty-message="No announcements yet."
+            empty-message="No announcements found."
         >
             <!-- Title + body preview -->
             <template #cell-title="{ row }">
-                <div>
-                    <div class="font-semibold text-foreground">
-                        {{ row.title }}
-                    </div>
-                    <div
-                        class="mt-0.5 max-w-[220px] truncate text-xs text-muted-foreground"
-                    >
-                        {{ row.body }}
-                    </div>
+                <div class="w-full overflow-hidden">
+                    <div class="truncate font-semibold text-foreground">{{ row.title }}</div>
+                    <div class="mt-0.5 truncate text-xs text-muted-foreground">{{ row.body }}</div>
                 </div>
             </template>
 
             <!-- Creator with avatar -->
             <template #cell-creator="{ row }">
                 <div class="flex items-center gap-2.5">
-                    <Avatar class="h-8 w-8">
+                    <Avatar class="h-7 w-7 shrink-0">
                         <AvatarImage
                             v-if="row.creator.avatar"
                             :src="row.creator.avatar"
@@ -149,31 +242,28 @@ const actions = [
                             {{ getInitials(row.creator.name) }}
                         </AvatarFallback>
                     </Avatar>
-                    <span class="font-medium">{{
-                        isOwner(row) ? 'You' : row.creator.name
-                    }}</span>
+                    <span class="text-sm font-medium text-foreground">
+                        {{ isOwner(row) ? 'You' : row.creator.name }}
+                    </span>
                 </div>
             </template>
 
             <!-- Type badge -->
             <template #cell-type="{ row }">
                 <span
-                    class="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground"
+                    :class="typeColors[row.type] ?? 'bg-muted/60 text-muted-foreground'"
+                    class="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-semibold"
                 >
+                    <component :is="typeIcons[row.type]" class="h-3 w-3 shrink-0" />
                     {{ formatType(row.type) }}
                 </span>
             </template>
 
-            <!-- Schedule (starts_at / expires_at combined) -->
+            <!-- Schedule (starts_at / expires_at) -->
             <template #cell-schedule="{ row }">
-                <div>
-                    <div class="font-medium text-foreground">
-                        {{ formatDate(row.starts_at) }}
-                    </div>
-                    <div
-                        v-if="row.expires_at"
-                        class="mt-0.5 text-xs text-muted-foreground"
-                    >
+                <div class="text-sm">
+                    <div class="font-medium text-foreground">{{ formatDate(row.starts_at) }}</div>
+                    <div v-if="row.expires_at" class="mt-0.5 text-xs text-muted-foreground">
                         until {{ formatDate(row.expires_at) }}
                     </div>
                 </div>
@@ -184,11 +274,15 @@ const actions = [
                 <span
                     :class="
                         row.status === 'active'
-                            ? 'border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-400'
-                            : 'border-border bg-muted text-muted-foreground'
+                            ? 'text-green-700 dark:text-green-400'
+                            : 'text-muted-foreground'
                     "
-                    class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize"
+                    class="inline-flex items-center gap-1.5 text-xs font-medium capitalize"
                 >
+                    <span
+                        :class="row.status === 'active' ? 'bg-green-500 dark:bg-green-400' : 'bg-muted-foreground/50'"
+                        class="h-1.5 w-1.5 rounded-full"
+                    />
                     {{ row.status }}
                 </span>
             </template>

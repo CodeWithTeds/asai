@@ -57,13 +57,29 @@ class AnnouncementService
     }
 
     /**
-     * Return paginated list for admin management
+     * Return paginated list for admin management, with optional search and filters.
      */
-    public function getPaginated(int $perPage = 15): LengthAwarePaginator
+    public function getPaginated(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        return Announcement::with('creator:id,name')
-            ->latest()
-            ->paginate($perPage);
+        $query = Announcement::with('creator:id,name')->latest();
+
+        if (! empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('body', 'like', "%{$search}%");
+            });
+        }
+
+        if (! empty($filters['type'])) {
+            $query->where('type', $filters['type']);
+        }
+
+        if (! empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        return $query->paginate($perPage)->withQueryString();
     }
 
     /**
