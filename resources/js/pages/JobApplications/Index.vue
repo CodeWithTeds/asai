@@ -112,7 +112,9 @@ const actions = [
     <div class="flex flex-col gap-5 p-4">
         <!-- Page header -->
         <div>
-            <h1 class="text-xl font-semibold tracking-tight text-foreground">Job Applications</h1>
+            <h1 class="text-xl font-semibold tracking-tight text-foreground">
+                Job Applications
+            </h1>
             <p class="mt-0.5 text-sm text-muted-foreground">
                 Review and manage applications submitted by job candidates.
             </p>
@@ -148,7 +150,9 @@ const actions = [
                     </div>
                     <div class="mt-0.5 truncate text-xs text-muted-foreground">
                         {{ row.applicant_email }}
-                        <span v-if="row.applicant_phone">· {{ row.applicant_phone }}</span>
+                        <span v-if="row.applicant_phone"
+                            >· {{ row.applicant_phone }}</span
+                        >
                     </div>
                 </div>
             </template>
@@ -179,7 +183,11 @@ const actions = [
                     class="inline-flex items-center gap-1.5 text-xs font-medium"
                 >
                     <span
-                        :class="row.has_license ? 'bg-green-500 dark:bg-green-400' : 'bg-muted-foreground/50'"
+                        :class="
+                            row.has_license
+                                ? 'bg-green-500 dark:bg-green-400'
+                                : 'bg-muted-foreground/50'
+                        "
                         class="h-1.5 w-1.5 rounded-full"
                     />
                     {{ row.has_license ? 'Licensed' : 'No License' }}

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, usePage, router } from '@inertiajs/vue3';
-import { computed, ref, watch } from 'vue';
 import { Plus, Briefcase, Clock, FileText } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 import DataTable from '@/components/DataTable.vue';
 import Filterable from '@/components/Filterable.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -138,7 +138,10 @@ const actions = [
 ];
 
 function formatDate(date: string | null) {
-    if (!date) return '—';
+    if (!date) {
+        return '—';
+    }
+
     return new Date(date).toLocaleDateString('en-PH', {
         year: 'numeric',
         month: 'short',
@@ -154,6 +157,7 @@ function formatType(type: string) {
         part_time: 'Part Time',
         contract: 'Contract',
     };
+
     return labels[type] ?? type;
 }
 
@@ -167,8 +171,10 @@ const typeIcons: Record<string, any> = {
 // Type color map
 const typeColors: Record<string, string> = {
     full_time: 'bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-400',
-    part_time: 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400',
-    contract: 'bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-400',
+    part_time:
+        'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400',
+    contract:
+        'bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-400',
 };
 </script>
 
@@ -178,7 +184,9 @@ const typeColors: Record<string, string> = {
     <div class="flex flex-col gap-5 p-4">
         <!-- Page header -->
         <div>
-            <h1 class="text-xl font-semibold tracking-tight text-foreground">Job Postings</h1>
+            <h1 class="text-xl font-semibold tracking-tight text-foreground">
+                Job Postings
+            </h1>
             <p class="mt-0.5 text-sm text-muted-foreground">
                 Manage job postings shown on the welcome page.
             </p>
@@ -216,8 +224,12 @@ const typeColors: Record<string, string> = {
             <!-- Title + description preview -->
             <template #cell-title="{ row }">
                 <div class="w-full overflow-hidden">
-                    <div class="truncate font-semibold text-foreground">{{ row.title }}</div>
-                    <div class="mt-0.5 truncate text-xs text-muted-foreground">{{ row.description }}</div>
+                    <div class="truncate font-semibold text-foreground">
+                        {{ row.title }}
+                    </div>
+                    <div class="mt-0.5 truncate text-xs text-muted-foreground">
+                        {{ row.description }}
+                    </div>
                 </div>
             </template>
 
@@ -243,10 +255,16 @@ const typeColors: Record<string, string> = {
             <!-- Type badge -->
             <template #cell-type="{ row }">
                 <span
-                    :class="typeColors[row.type] ?? 'bg-muted/60 text-muted-foreground'"
+                    :class="
+                        typeColors[row.type] ??
+                        'bg-muted/60 text-muted-foreground'
+                    "
                     class="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-semibold"
                 >
-                    <component :is="typeIcons[row.type]" class="h-3 w-3 shrink-0" />
+                    <component
+                        :is="typeIcons[row.type]"
+                        class="h-3 w-3 shrink-0"
+                    />
                     {{ formatType(row.type) }}
                 </span>
             </template>
@@ -254,8 +272,13 @@ const typeColors: Record<string, string> = {
             <!-- Schedule (starts_at / expires_at) -->
             <template #cell-schedule="{ row }">
                 <div class="text-sm">
-                    <div class="font-medium text-foreground">{{ formatDate(row.starts_at) }}</div>
-                    <div v-if="row.expires_at" class="mt-0.5 text-xs text-muted-foreground">
+                    <div class="font-medium text-foreground">
+                        {{ formatDate(row.starts_at) }}
+                    </div>
+                    <div
+                        v-if="row.expires_at"
+                        class="mt-0.5 text-xs text-muted-foreground"
+                    >
                         until {{ formatDate(row.expires_at) }}
                     </div>
                 </div>
@@ -272,7 +295,11 @@ const typeColors: Record<string, string> = {
                     class="inline-flex items-center gap-1.5 text-xs font-medium capitalize"
                 >
                     <span
-                        :class="row.status === 'open' ? 'bg-green-500 dark:bg-green-400' : 'bg-muted-foreground/50'"
+                        :class="
+                            row.status === 'open'
+                                ? 'bg-green-500 dark:bg-green-400'
+                                : 'bg-muted-foreground/50'
+                        "
                         class="h-1.5 w-1.5 rounded-full"
                     />
                     {{ row.status }}

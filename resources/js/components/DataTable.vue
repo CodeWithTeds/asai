@@ -51,8 +51,14 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 function alignClass(align?: string) {
-    if (align === 'center') return 'text-center';
-    if (align === 'right') return 'text-right';
+    if (align === 'center') {
+        return 'text-center';
+    }
+
+    if (align === 'right') {
+        return 'text-right';
+    }
+
     return 'text-left';
 }
 
@@ -62,7 +68,9 @@ function getVisibleActions(row: Record<string, any>) {
 </script>
 
 <template>
-    <div class="overflow-hidden rounded-xl border border-border bg-card shadow-xs">
+    <div
+        class="overflow-hidden rounded-xl border border-border bg-card shadow-xs"
+    >
         <table class="w-full table-fixed text-sm">
             <!-- Table header -->
             <thead class="bg-muted/50">
@@ -72,7 +80,7 @@ function getVisibleActions(row: Record<string, any>) {
                         :key="col.key"
                         :class="[
                             alignClass(col.align),
-                            'px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80',
+                            'px-5 py-3 text-[11px] font-semibold tracking-wider text-muted-foreground/80 uppercase',
                         ]"
                         :style="col.width ? { width: col.width } : undefined"
                     >
@@ -91,7 +99,9 @@ function getVisibleActions(row: Record<string, any>) {
                         class="px-5 py-20 text-center"
                     >
                         <div class="flex flex-col items-center gap-1">
-                            <span class="text-sm text-muted-foreground">{{ emptyMessage }}</span>
+                            <span class="text-sm text-muted-foreground">{{
+                                emptyMessage
+                            }}</span>
                         </div>
                     </td>
                 </tr>
@@ -146,7 +156,10 @@ function getVisibleActions(row: Record<string, any>) {
         </table>
 
         <!-- Pagination -->
-        <div v-if="lastPage > 1" class="border-t border-border bg-muted/30 px-5">
+        <div
+            v-if="lastPage > 1"
+            class="border-t border-border bg-muted/30 px-5"
+        >
             <Pagination
                 :current-page="currentPage"
                 :last-page="lastPage"
