@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { CheckCircle2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { useScrollReveal } from '@/composables/useScrollReveal';
-import { CheckCircle2 } from 'lucide-vue-next';
 
 const { containerRef } = useScrollReveal();
 
@@ -46,7 +46,9 @@ function validate() {
 }
 
 function handleSubmit() {
-    if (!validate()) return;
+    if (!validate()) {
+        return;
+    }
 
     isSubmitting.value = true;
 
@@ -65,7 +67,11 @@ function handleSubmit() {
 </script>
 
 <template>
-    <section class="section contact-section" ref="containerRef" id="consultation">
+    <section
+        class="section contact-section"
+        ref="containerRef"
+        id="consultation"
+    >
         <!-- Premium Background Design: Grid and Glows -->
         <div class="bg-grid-overlay"></div>
         <div class="bg-glow bg-glow-blue"></div>
@@ -79,12 +85,12 @@ function handleSubmit() {
                     <span class="highlight">BUSINESS</span>
                 </h2>
                 <p class="contact-lead">
-                    Protect your assets, operations, and personnel with Annapolis Security Agency, Inc. (ASAI). 
-                    Reach out to our security specialists to discuss a tailored protection plan today.
+                    Protect your assets, operations, and personnel with
+                    Annapolis Security Agency, Inc. (ASAI). Reach out to our
+                    security specialists to discuss a tailored protection plan
+                    today.
                 </p>
-                <a href="#services" class="capabilities-link">
-                    LEARN MORE
-                </a>
+                <a href="#services" class="capabilities-link"> LEARN MORE </a>
             </div>
 
             <!-- Right Column: Form Inputs (directly on background) -->
@@ -96,12 +102,17 @@ function handleSubmit() {
                         <h4 class="success-title">Message Sent!</h4>
                     </div>
                     <p class="success-text">
-                        Thank you for reaching out. A security consultant will review your message and contact you shortly.
+                        Thank you for reaching out. A security consultant will
+                        review your message and contact you shortly.
                     </p>
                 </div>
 
                 <!-- Form State -->
-                <form v-else @submit.prevent="handleSubmit" class="contact-form">
+                <form
+                    v-else
+                    @submit.prevent="handleSubmit"
+                    class="contact-form"
+                >
                     <div class="form-group">
                         <input
                             type="text"
@@ -112,7 +123,9 @@ function handleSubmit() {
                             class="form-input"
                             :class="{ 'has-error': errors.name }"
                         />
-                        <span v-if="errors.name" class="error-text">{{ errors.name }}</span>
+                        <span v-if="errors.name" class="error-text">{{
+                            errors.name
+                        }}</span>
                     </div>
 
                     <div class="form-group">
@@ -125,7 +138,9 @@ function handleSubmit() {
                             class="form-input"
                             :class="{ 'has-error': errors.email }"
                         />
-                        <span v-if="errors.email" class="error-text">{{ errors.email }}</span>
+                        <span v-if="errors.email" class="error-text">{{
+                            errors.email
+                        }}</span>
                     </div>
 
                     <div class="form-group">
@@ -138,10 +153,16 @@ function handleSubmit() {
                             class="form-textarea"
                             :class="{ 'has-error': errors.message }"
                         ></textarea>
-                        <span v-if="errors.message" class="error-text">{{ errors.message }}</span>
+                        <span v-if="errors.message" class="error-text">{{
+                            errors.message
+                        }}</span>
                     </div>
 
-                    <button type="submit" class="btn-submit" :disabled="isSubmitting">
+                    <button
+                        type="submit"
+                        class="btn-submit"
+                        :disabled="isSubmitting"
+                    >
                         <span v-if="isSubmitting" class="spinner"></span>
                         <span v-else>SUBMIT</span>
                     </button>
@@ -167,9 +188,17 @@ function handleSubmit() {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: 
-        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    background-image:
+        linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.015) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.015) 1px,
+            transparent 1px
+        );
     background-size: 50px 50px;
     pointer-events: none;
     z-index: 1;
@@ -227,7 +256,11 @@ function handleSubmit() {
 }
 
 .contact-title .highlight {
-    background: linear-gradient(135deg, #ffffff 40%, var(--color-accent-soft) 100%);
+    background: linear-gradient(
+        135deg,
+        #ffffff 40%,
+        var(--color-accent-soft) 100%
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
