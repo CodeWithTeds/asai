@@ -141,11 +141,11 @@ function handleClose() {
     <BaseModal
         v-model:open="isOpen"
         title="Edit Job Posting"
-        size="2xl"
+        size="4xl"
         @update:open="handleClose"
     >
         <form
-            class="grid grid-cols-[1fr_200px] items-stretch gap-6"
+            class="grid min-h-full grid-cols-[1fr_360px] items-stretch gap-6"
             @submit.prevent="handleSubmit"
         >
             <!-- Left — Fields -->
@@ -173,10 +173,10 @@ function handleClose() {
                     <textarea
                         id="edit-description"
                         v-model="form.description"
-                        rows="3"
+                        rows="5"
                         placeholder="Role, responsibilities, and requirements..."
                         :disabled="form.processing"
-                        class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                        class="flex min-h-[140px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     />
                     <InputError :message="form.errors.description" />
                 </div>
@@ -260,13 +260,13 @@ function handleClose() {
                 <!-- Loading shimmer -->
                 <div
                     v-if="previewLoading"
-                    class="shimmer relative mt-2 min-h-[180px] w-full flex-1 overflow-hidden rounded-lg"
+                    class="shimmer relative mt-2 min-h-[320px] w-full flex-1 overflow-hidden rounded-lg"
                 />
 
                 <!-- Preview (new pick or existing server image) -->
                 <div
                     v-else-if="hasImage && displayUrl"
-                    class="relative mt-2 min-h-[180px] w-full flex-1 overflow-hidden rounded-lg border border-input bg-muted/40"
+                    class="relative mt-2 min-h-[320px] w-full flex-1 overflow-hidden rounded-lg border border-input bg-muted/40"
                 >
                     <img
                         :src="displayUrl"
@@ -287,7 +287,7 @@ function handleClose() {
                 <!-- Upload zone -->
                 <label
                     v-else
-                    class="relative mt-2 flex min-h-[180px] w-full flex-1 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-black/25 bg-black/[0.03] p-3 text-center text-muted-foreground transition-colors hover:border-black/40 hover:bg-black/[0.06]"
+                    class="relative mt-2 flex min-h-[320px] w-full flex-1 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-black/25 bg-black/[0.03] p-3 text-center text-muted-foreground transition-colors hover:border-black/40 hover:bg-black/[0.06]"
                     :class="{
                         'pointer-events-none cursor-not-allowed opacity-50':
                             form.processing,

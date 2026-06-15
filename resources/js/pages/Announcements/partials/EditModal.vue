@@ -139,11 +139,11 @@ function handleClose() {
         v-model:open="isOpen"
         title="Edit Announcement"
         description="Update the announcement details."
-        size="2xl"
+        size="4xl"
         @update:open="handleClose"
     >
         <form
-            class="grid grid-cols-[1fr_200px] items-stretch gap-6"
+            class="grid min-h-full grid-cols-[1fr_360px] items-stretch gap-6"
             @submit.prevent="handleSubmit"
         >
             <!-- Left — Fields -->
@@ -158,6 +158,7 @@ function handleClose() {
                         v-model="form.title"
                         placeholder="Announcement title"
                         :disabled="form.processing"
+                        class="h-10"
                     />
                     <InputError :message="form.errors.title" />
                 </div>
@@ -170,10 +171,10 @@ function handleClose() {
                     <textarea
                         id="edit-body"
                         v-model="form.body"
-                        rows="3"
+                        rows="6"
                         placeholder="Write your announcement..."
                         :disabled="form.processing"
-                        class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                        class="flex min-h-[190px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     />
                     <InputError :message="form.errors.body" />
                 </div>
@@ -188,7 +189,7 @@ function handleClose() {
                             id="edit-type"
                             v-model="form.type"
                             :disabled="form.processing"
-                            class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             <option value="general">General</option>
                             <option value="event">Event</option>
@@ -205,7 +206,7 @@ function handleClose() {
                             id="edit-status"
                             v-model="form.status"
                             :disabled="form.processing"
-                            class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
@@ -223,6 +224,7 @@ function handleClose() {
                             v-model="form.starts_at"
                             type="datetime-local"
                             :disabled="form.processing"
+                            class="h-10"
                         />
                         <InputError :message="form.errors.starts_at" />
                     </div>
@@ -234,6 +236,7 @@ function handleClose() {
                             v-model="form.expires_at"
                             type="datetime-local"
                             :disabled="form.processing"
+                            class="h-10"
                         />
                         <InputError :message="form.errors.expires_at" />
                     </div>
@@ -247,13 +250,13 @@ function handleClose() {
                 <!-- Loading shimmer -->
                 <div
                     v-if="previewLoading"
-                    class="shimmer relative mt-2 min-h-[180px] w-full flex-1 overflow-hidden rounded-lg"
+                    class="shimmer relative mt-2 min-h-[320px] w-full flex-1 overflow-hidden rounded-lg"
                 />
 
                 <!-- Preview (new pick or existing server image) -->
                 <div
                     v-else-if="hasImage && displayUrl"
-                    class="relative mt-2 min-h-[180px] w-full flex-1 overflow-hidden rounded-lg border border-input bg-muted/40"
+                    class="relative mt-2 min-h-[320px] w-full flex-1 overflow-hidden rounded-lg border border-input bg-muted/40"
                 >
                     <img
                         :src="displayUrl"
@@ -274,7 +277,7 @@ function handleClose() {
                 <!-- Upload zone -->
                 <label
                     v-else
-                    class="relative mt-2 flex min-h-[180px] w-full flex-1 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-black/25 bg-black/[0.03] p-3 text-center text-muted-foreground transition-colors hover:border-black/40 hover:bg-black/[0.06]"
+                    class="relative mt-2 flex min-h-[320px] w-full flex-1 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-black/25 bg-black/[0.03] p-3 text-center text-muted-foreground transition-colors hover:border-black/40 hover:bg-black/[0.06]"
                     :class="{
                         'pointer-events-none cursor-not-allowed opacity-50':
                             form.processing,
