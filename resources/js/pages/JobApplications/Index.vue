@@ -109,13 +109,13 @@ const actions = [
 <template>
     <Head title="Job Applications" />
 
-    <div class="flex flex-col gap-5 p-4">
+    <div class="flex flex-col gap-6 p-6">
         <!-- Page header -->
         <div>
-            <h1 class="text-xl font-semibold tracking-tight text-foreground">
+            <h1 class="text-2xl font-bold tracking-tight text-foreground">
                 Job Applications
             </h1>
-            <p class="mt-0.5 text-sm text-muted-foreground">
+            <p class="mt-1 text-sm text-muted-foreground">
                 Review and manage applications submitted by job candidates.
             </p>
         </div>
