@@ -7,7 +7,6 @@ import CapabilitiesSection from '@/components/Welcome/CapabilitiesSection.vue';
 import ClientsSection from '@/components/Welcome/ClientsSection.vue';
 import ContactSection from '@/components/Welcome/ContactSection.vue';
 import HeroSection from '@/components/Welcome/HeroSection.vue';
-import JobPostingsSection from '@/components/Welcome/JobPostingsSection.vue';
 import QualitySection from '@/components/Welcome/QualitySection.vue';
 import ServicesSection from '@/components/Welcome/ServicesSection.vue';
 import VisionMissionSection from '@/components/Welcome/VisionMissionSection.vue';
@@ -22,7 +21,6 @@ import VisionMissionSection from '@/components/Welcome/VisionMissionSection.vue'
         <CapabilitiesSection />
         <ServicesSection />
         <ClientsSection />
-        <JobPostingsSection />
         <QualitySection />
         <ContactSection />
     </main>

@@ -675,5 +675,5 @@ function handleClose() {
 </template>
 
 <style scoped>
-@import '../../../css/welcome/apply-modal.css';
+@import '../../../../css/welcome/apply-modal.css';
 </style>

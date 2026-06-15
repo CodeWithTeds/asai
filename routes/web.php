@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
 Route::inertia('/news', 'Announcements/Public')->name('news');
+Route::inertia('/careers', 'JobPostings/Public')->name('careers');
 
 Route::post('job-postings/{jobPosting}/apply', [JobApplicationController::class, 'store'])
     ->middleware('throttle:5,1')
@@ -28,4 +29,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('job-applications.resume');
 });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
