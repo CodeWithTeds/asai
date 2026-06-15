@@ -155,9 +155,10 @@ onMounted(() => {
 /* Eyebrow label */
 .vmv-eyebrow {
     display: inline-block;
+    font-family: var(--font-sans);
     font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
+    font-weight: 600;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--color-accent);
     margin-bottom: 1rem;
@@ -165,12 +166,13 @@ onMounted(() => {
 
 /* Heading */
 .vmv-heading {
-    font-size: clamp(2rem, 4.5vw, 3.2rem);
-    font-weight: 300;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
     color: #fff;
     line-height: 1.2;
     margin-bottom: 1.5rem;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
 }
 
 /* Vision list */
@@ -184,16 +186,18 @@ onMounted(() => {
 }
 
 .vmv-list li {
+    font-family: var(--font-sans);
     color: rgba(255, 255, 255, 0.85);
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     line-height: 1.7;
     padding-left: 0;
 }
 
 /* Mission text */
 .vmv-text {
+    font-family: var(--font-sans);
     color: rgba(255, 255, 255, 0.85);
-    font-size: 1rem;
+    font-size: 1.05rem;
     line-height: 1.8;
 }
 
@@ -206,6 +210,7 @@ onMounted(() => {
 
 .vmv-value-tag {
     display: inline-block;
+    font-family: var(--font-sans);
     padding: 0.6rem 1.4rem;
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 4px;
