@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobPostingController;
 use Illuminate\Support\Facades\Route;
@@ -13,7 +14,7 @@ Route::post('job-postings/{jobPosting}/apply', [JobApplicationController::class,
     ->name('job-postings.apply');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
 
     Route::resource('announcements', AnnouncementController::class)
         ->except(['show', 'create', 'edit']);
