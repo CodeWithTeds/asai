@@ -7,8 +7,20 @@ use App\Models\JobPosting;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;
 
+use App\Traits\HasVersionedCache;
+
 class JobApplicationService
 {
+    use HasVersionedCache;
+
+    /**
+     * Define the cache key prefix for versioning
+     */
+    protected function getCacheKeyPrefix(): string
+    {
+        return 'job_applications';
+    }
+
     /**
      * Create a new job application, storing the resume file securely.
      */
@@ -16,11 +28,15 @@ class JobApplicationService
     {
         $path = $resume->store('job-applications/resumes', 'local');
 
-        return JobApplication::create([
+        $application = JobApplication::create([
             ...$data,
             'job_posting_id' => $jobPosting->id,
             'resume_path' => $path,
         ]);
+
+        $this->clearCache();
+
+        return $application;
     }
 
     /**
