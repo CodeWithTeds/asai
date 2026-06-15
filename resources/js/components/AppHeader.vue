@@ -147,7 +147,11 @@ const rightNavItems: NavItem[] = [
                 </div>
 
                 <Link :href="dashboard()" class="flex items-center gap-x-2">
-                    <AppLogo />
+                    <AppLogo class="size-10" />
+                    <span
+                        class="text-base font-semibold text-[#0d1b4b] dark:text-white"
+                        >ASAI</span
+                    >
                 </Link>
 
                 <!-- Desktop Menu -->

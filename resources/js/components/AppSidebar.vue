@@ -10,12 +10,10 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as announcementsIndex } from '@/routes/announcements';
+import { index as jobApplicationsIndex } from '@/routes/job-applications';
 import { index as jobPostingsIndex } from '@/routes/job-postings';
 import type { NavItem } from '@/types';
 
@@ -37,7 +35,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Applications',
-        href: '/job-applications',
+        href: jobApplicationsIndex(),
         icon: FileText,
     },
 ];
@@ -49,16 +47,17 @@ const footerNavItems: NavItem[] = [
 
 <template>
     <Sidebar collapsible="icon" variant="inset">
-        <SidebarHeader>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
-                            <AppLogo />
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
+        <SidebarHeader
+            class="px-4 py-6 transition-all duration-200 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-2"
+        >
+            <Link
+                :href="dashboard()"
+                class="flex w-full items-center justify-center"
+            >
+                <AppLogo
+                    class="h-28 w-full max-w-[200px] transition-all duration-200 group-data-[collapsible=icon]:size-8"
+                />
+            </Link>
         </SidebarHeader>
 
         <SidebarContent>
