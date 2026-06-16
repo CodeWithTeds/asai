@@ -7,6 +7,7 @@ import {
     Zap,
     Newspaper,
     BellRing,
+    Gem,
 } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 import DataTable from '@/components/DataTable.vue';
@@ -111,11 +112,10 @@ const filterGroups = [
         key: 'type',
         label: 'Type',
         options: [
-            { label: 'General', value: 'general' },
             { label: 'Event', value: 'event' },
             { label: 'Activity', value: 'activity' },
             { label: 'News', value: 'news' },
-            { label: 'Alert', value: 'alert' },
+            { label: 'Promos', value: 'promos' },
         ],
     },
     {
@@ -162,11 +162,10 @@ function formatDate(date: string | null) {
 
 function formatType(type: string) {
     const labels: Record<string, string> = {
-        general: 'General',
         event: 'Event',
         activity: 'Activity',
         news: 'News',
-        alert: 'Alert',
+        promos: 'Promos',
     };
 
     return labels[type] ?? type;
@@ -174,21 +173,19 @@ function formatType(type: string) {
 
 // Type icon map — one lucide icon per type
 const typeIcons: Record<string, any> = {
-    general: Globe,
     event: Calendar,
     activity: Zap,
     news: Newspaper,
-    alert: BellRing,
+    promos: Gem,
 };
 
 // Type color map — solid flat chips, no border (matches reference image)
 const typeColors: Record<string, string> = {
-    general: 'bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-400',
     event: 'bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-400',
     activity:
         'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400',
     news: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400',
-    alert: 'bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-400',
+    promos: 'bg-pink-100 text-pink-700 dark:bg-pink-900/50 dark:text-pink-400',
 };
 </script>
 

@@ -191,11 +191,10 @@ function handleClose() {
                             :disabled="form.processing"
                             class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            <option value="general">General</option>
                             <option value="event">Event</option>
                             <option value="activity">Activity</option>
                             <option value="news">News</option>
-                            <option value="alert">Alert</option>
+                            <option value="promos">Promos</option>
                         </select>
                         <InputError :message="form.errors.type" />
                     </div>

@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('announcements', function (Blueprint $table) {
-            $table->string('type')->default(AnnouncementType::General->value)->after('body');
+            $table->string('type')->default(AnnouncementType::Event->value)->after('body');
             $table->string('image')->nullable()->after('type');
         });
     }

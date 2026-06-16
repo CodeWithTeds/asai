@@ -84,13 +84,11 @@ function getInitials(name: string) {
 }
 
 const typeColors: Record<string, string> = {
-    general:
-        'bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-400 border border-sky-200/40 dark:border-sky-800/30',
     event: 'bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-400 border border-violet-200/40 dark:border-violet-800/30',
     activity:
         'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200/40 dark:border-amber-800/30',
     news: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/40 dark:border-emerald-800/30',
-    alert: 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200/40 dark:border-rose-800/30',
+    promos: 'bg-pink-50 text-pink-700 dark:bg-pink-950/40 dark:text-pink-400 border border-pink-200/40 dark:border-pink-800/30',
 };
 
 const jobTypeColors: Record<string, string> = {

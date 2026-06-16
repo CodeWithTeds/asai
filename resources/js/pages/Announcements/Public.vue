@@ -41,20 +41,18 @@ const selectedType = ref(
 
 const types = [
     { value: 'all', label: 'All' },
-    { value: 'general', label: 'General' },
     { value: 'event', label: 'Events' },
     { value: 'activity', label: 'Activities' },
     { value: 'news', label: 'News' },
-    { value: 'alert', label: 'Alerts' },
+    { value: 'promos', label: 'Promos' },
 ];
 
 function formatTypeLabel(type: string) {
     const labels: Record<string, string> = {
-        general: 'General',
         event: 'Event',
         activity: 'Activity',
         news: 'News',
-        alert: 'Alert',
+        promos: 'Promos',
     };
 
     return labels[type] ?? type;
@@ -888,12 +886,6 @@ function handleSubscribe() {
     border: 1px solid transparent;
 }
 
-.type-badge.general {
-    background-color: #f3f4f6;
-    border-color: #e5e7eb;
-    color: #4b5563;
-}
-
 .type-badge.event {
     background-color: #eff6ff;
     border-color: #dbeafe;
@@ -912,10 +904,10 @@ function handleSubscribe() {
     color: #0f766e;
 }
 
-.type-badge.alert {
-    background-color: #fef2f2;
-    border-color: #fee2e2;
-    color: #b91c1c;
+.type-badge.promos {
+    background-color: #fdf2f8;
+    border-color: #fbcfe8;
+    color: #be185d;
 }
 
 /* Announcement Image */
