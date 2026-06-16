@@ -89,9 +89,7 @@ onMounted(() => {
 
 <style scoped>
 .hero {
-    height: 80vh;
-    min-height: 80vh;
-    max-height: 80vh;
+    min-height: calc(100vh - 100px);
     display: flex;
     align-items: center;
     padding: 2rem 4rem;
@@ -262,9 +260,6 @@ onMounted(() => {
 
 @media (min-width: 900px) {
     .hero {
-        height: 70vh;
-        min-height: 70vh;
-        max-height: 70vh;
         padding: 2rem 6rem;
     }
     .hero-grid {

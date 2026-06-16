@@ -6,6 +6,7 @@ import { ref } from 'vue';
 const mobileOpen = ref(false);
 
 const navLinks = [
+    { href: '/#top', label: 'Home', isAnchor: true },
     { href: '/#about', label: 'About Us', isAnchor: true },
     { href: '/#vision', label: 'Vision & Mission', isAnchor: true },
     { href: '/#capabilities', label: 'Capabilities', isAnchor: true },
