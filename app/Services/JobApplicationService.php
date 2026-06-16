@@ -6,8 +6,7 @@ use App\Models\JobApplication;
 use App\Models\JobPosting;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;
-
-use App\Traits\HasVersionedCache;
+use App\Concerns\HasVersionedCache;
 
 class JobApplicationService
 {

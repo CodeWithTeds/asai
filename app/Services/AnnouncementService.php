@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Announcement;
-use App\Traits\HasVersionedCache;
+use App\Concerns\HasVersionedCache;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;

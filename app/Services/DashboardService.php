@@ -5,8 +5,7 @@ namespace App\Services;
 use App\Models\Announcement;
 use App\Models\JobApplication;
 use App\Models\JobPosting;
-
-use App\Traits\HasVersionedCache;
+use App\Concerns\HasVersionedCache;
 use Illuminate\Support\Facades\Cache;
 
 class DashboardService
