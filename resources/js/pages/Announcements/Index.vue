@@ -1,14 +1,6 @@
 <script setup lang="ts">
 import { Head, usePage, router } from '@inertiajs/vue3';
-import {
-    Plus,
-    Globe,
-    Calendar,
-    Zap,
-    Newspaper,
-    BellRing,
-    Gem,
-} from 'lucide-vue-next';
+import { Plus, Calendar, Zap, Newspaper, Gem } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 import DataTable from '@/components/DataTable.vue';
 import Filterable from '@/components/Filterable.vue';

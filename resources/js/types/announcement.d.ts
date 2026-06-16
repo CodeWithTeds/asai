@@ -1,9 +1,5 @@
 export type AnnouncementStatus = 'active' | 'inactive';
-export type AnnouncementType =
-    | 'event'
-    | 'activity'
-    | 'news'
-    | 'promos';
+export type AnnouncementType = 'event' | 'activity' | 'news' | 'promos';
 
 export type Announcement = {
     id: number;
