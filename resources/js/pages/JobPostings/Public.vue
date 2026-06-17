@@ -219,7 +219,7 @@ onMounted(() => {
                     <p class="empty-title">No Active Openings</p>
                     <p class="empty-text">
                         We don't have any job openings right now. Follow us for
-                        future announcements or check back later!
+                        future updates or check back later!
                     </p>
                 </div>
             </div>

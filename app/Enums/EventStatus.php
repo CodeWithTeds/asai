@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum AnnouncementStatus: string
+enum EventStatus: string
 {
     case Active = 'active';
     case Inactive = 'inactive';

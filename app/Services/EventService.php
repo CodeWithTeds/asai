@@ -2,15 +2,15 @@
 
 namespace App\Services;
 
-use App\Models\Announcement;
 use App\Concerns\HasVersionedCache;
+use App\Models\Event;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
-class AnnouncementService
+class EventService
 {
     use HasVersionedCache;
 
@@ -19,23 +19,23 @@ class AnnouncementService
      */
     protected function getCacheKeyPrefix(): string
     {
-        return 'announcements';
+        return 'events';
     }
 
     /**
-     * Return all active announcements for public display
+     * Return all active events for public display
      */
     public function getActive(?string $search = null, ?string $type = null): Collection
     {
         $version = $this->getCacheVersion();
-        $cacheKey = "announcements:v{$version}:active:" . md5(($search ?? '') . ':' . ($type ?? ''));
+        $cacheKey = "events:v{$version}:active:" . md5(($search ?? '') . ':' . ($type ?? ''));
 
         $result = Cache::get($cacheKey);
 
         if (! ($result instanceof Collection)) {
             Cache::forget($cacheKey);
 
-            $query = Announcement::active()
+            $query = Event::active()
                 ->select('id', 'title', 'body', 'type', 'image', 'starts_at', 'expires_at', 'created_at');
 
             if (! empty($search)) {
@@ -61,7 +61,7 @@ class AnnouncementService
      */
     public function getPaginated(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        $query = Announcement::with('creator:id,name')->latest();
+        $query = Event::with('creator:id,name')->latest();
 
         if (! empty($filters['search'])) {
             $search = $filters['search'];
@@ -83,65 +83,65 @@ class AnnouncementService
     }
 
     /**
-     * Create a new announcement, storing any uploaded image
+     * Create a new event, storing any uploaded image
      */
-    public function create(array $data, int $createdBy, ?UploadedFile $image = null): Announcement
+    public function create(array $data, int $createdBy, ?UploadedFile $image = null): Event
     {
         if ($image) {
-            $data['image'] = $image->store('announcements/images', 'public');
+            $data['image'] = $image->store('events/images', 'public');
         }
 
-        $announcement = Announcement::create([
+        $event = Event::create([
             ...$data,
             'created_by' => $createdBy
         ]);
 
         $this->clearCache();
 
-        return $announcement;
+        return $event;
     }
 
     /**
-     * Update an existing announcement, replacing or removing the image as requested
+     * Update an existing event, replacing or removing the image as requested
      */
-    public function update(Announcement $announcement, array $data, ?UploadedFile $image = null): Announcement
+    public function update(Event $event, array $data, ?UploadedFile $image = null): Event
     {
         if ($image) {
             // New file uploaded — swap out the old one
-            $this->deleteImage($announcement);
-            $data['image'] = $image->store('announcements/images', 'public');
+            $this->deleteImage($event);
+            $data['image'] = $image->store('events/images', 'public');
         } elseif (! empty($data['remove_image'])) {
             // User explicitly cleared the image with no replacement
-            $this->deleteImage($announcement);
+            $this->deleteImage($event);
             $data['image'] = null;
         }
 
         // Remove the flag before saving — not a real DB column
         unset($data['remove_image']);
 
-        $announcement->update($data);
+        $event->update($data);
         $this->clearCache();
 
-        return $announcement->fresh();
+        return $event->fresh();
     }
 
     /**
-     * Delete an announcement and its associated image from disk
+     * Delete an event and its associated image from disk
      */
-    public function delete(Announcement $announcement): void
+    public function delete(Event $event): void
     {
-        $this->deleteImage($announcement);
-        $announcement->delete();
+        $this->deleteImage($event);
+        $event->delete();
         $this->clearCache();
     }
 
     /**
      * Remove the image from disk if one exists
      */
-    private function deleteImage(Announcement $announcement): void
+    private function deleteImage(Event $event): void
     {
-        if ($announcement->image) {
-            Storage::disk('public')->delete($announcement->image);
+        if ($event->image) {
+            Storage::disk('public')->delete($event->image);
         }
     }
 }

@@ -1,6 +1,6 @@
 export * from './auth';
 export * from './navigation';
 export * from './ui';
-export * from './announcement';
+export * from './event';
 export * from './job-posting';
 export * from './job-applications';

@@ -14,8 +14,9 @@ import {
 import { computed, ref, watch } from 'vue';
 import AppFooter from '@/components/Welcome/AppFooter.vue';
 import AppHeader from '@/components/Welcome/AppHeader.vue';
+import { events as eventsUrl } from '@/routes';
 
-type Announcement = {
+type Event = {
     id: number;
     title: string;
     body: string;
@@ -26,9 +27,9 @@ type Announcement = {
     created_at: string;
 };
 
-// Retrieve globally shared announcements
-const announcements = computed<Announcement[]>(
-    () => (usePage().props.announcements as Announcement[]) ?? [],
+// Retrieve globally shared Events
+const events = computed<Event[]>(
+    () => (usePage().props.events as Event[]) ?? [],
 );
 
 // State
@@ -64,7 +65,7 @@ watch([searchQuery, selectedType], ([newQuery, newType]) => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
         router.get(
-            '/news',
+            eventsUrl(),
             {
                 search: newQuery || undefined,
                 type: newType !== 'all' ? newType : undefined,
@@ -83,7 +84,7 @@ const isSubscribed = ref(false);
 const subscribeError = ref('');
 
 // Format date matching the mockup
-function formatAnnouncementDate(dateStr: string) {
+function formatEventDate(dateStr: string) {
     if (!dateStr) {
         return '';
     }
@@ -105,10 +106,10 @@ function formatAnnouncementDate(dateStr: string) {
     });
 }
 
-// Filtered announcements list
-const filteredAnnouncements = computed(() => announcements.value);
+// Filtered Events list
+const filteredEvents = computed(() => events.value);
 
-// Toggle expand announcement
+// Toggle expand Event
 function toggleExpand(id: number) {
     if (expandedId.value === id) {
         expandedId.value = null;
@@ -134,14 +135,14 @@ function handleSubscribe() {
 
 <template>
     <Head>
-        <title>Announcements & Latest News | ASAI</title>
+        <title>Events & Latest News | ASAI</title>
         <meta
             name="description"
-            content="Stay updated with the latest news, announcements, activities, and events from Annapolis Security Agency, Inc. (ASAI)."
+            content="Stay updated with the latest news, Events, activities, and events from Annapolis Security Agency, Inc. (ASAI)."
         />
     </Head>
 
-    <div class="announcements-page-wrapper">
+    <div class="events-page-wrapper">
         <!-- Main Site Header -->
         <AppHeader />
 
@@ -153,10 +154,10 @@ function handleSubscribe() {
                         <Megaphone class="megaphone-icon" />
                     </div>
                     <div class="title-search-wrapper">
-                        <h1 class="hero-title">Announcements</h1>
+                        <h1 class="hero-title">Events</h1>
                         <div class="search-input-group">
                             <input
-                                id="announcements-search"
+                                id="events-search"
                                 v-model="searchQuery"
                                 type="text"
                                 placeholder="Search articles"
@@ -182,7 +183,7 @@ function handleSubscribe() {
                     <span>Home</span>
                 </Link>
                 <ChevronRight :size="12" class="breadcrumb-separator" />
-                <span class="breadcrumb-active">Announcements</span>
+                <span class="breadcrumb-active">Events</span>
             </nav>
 
             <!-- Filter Tabs -->
@@ -200,30 +201,30 @@ function handleSubscribe() {
                 </button>
             </div>
 
-            <!-- Announcements List -->
-            <div class="announcements-container">
+            <!-- Events List -->
+            <div class="events-container">
                 <TransitionGroup
                     name="list-anim"
                     tag="div"
-                    class="announcements-list"
-                    v-if="filteredAnnouncements.length > 0"
+                    class="events-list"
+                    v-if="filteredEvents.length > 0"
                 >
                     <article
-                        v-for="item in filteredAnnouncements"
+                        v-for="item in filteredEvents"
                         :key="item.id"
-                        class="announcement-item"
+                        class="event-item"
                         :class="{ expanded: expandedId === item.id }"
                     >
                         <div
-                            :id="`announcement-row-${item.id}`"
-                            class="announcement-row"
+                            :id="`event-row-${item.id}`"
+                            class="event-row"
                             @click="toggleExpand(item.id)"
                         >
                             <!-- Left Column: Date & Time -->
-                            <div class="announcement-date-col">
-                                <span class="announcement-date">{{
-                                    formatAnnouncementDate(
-                                        item.created_at || item.starts_at,
+                            <div class="event-date-col">
+                                <span class="event-date">{{
+                                    formatEventDate(
+                                        item.created_at || item.starts_at || '',
                                     )
                                 }}</span>
                                 <span class="type-badge" :class="item.type">
@@ -232,18 +233,18 @@ function handleSubscribe() {
                             </div>
 
                             <!-- Right Column: Content Intro -->
-                            <div class="announcement-content-col">
-                                <h3 class="announcement-title">
+                            <div class="event-content-col">
+                                <h3 class="event-title">
                                     {{ item.title }}
                                 </h3>
                                 <p
-                                    class="announcement-snippet"
+                                    class="event-snippet"
                                     v-if="expandedId !== item.id"
                                 >
                                     {{ item.body }}
                                 </p>
                                 <button
-                                    :id="`announcement-toggle-btn-${item.id}`"
+                                    :id="`event-toggle-btn-${item.id}`"
                                     class="toggle-indicator-btn"
                                     aria-label="Read more"
                                 >
@@ -266,18 +267,18 @@ function handleSubscribe() {
 
                         <!-- Expandable full body text -->
                         <div
-                            class="announcement-body-expanded"
+                            class="event-body-expanded"
                             v-if="expandedId === item.id"
                         >
                             <div class="body-inner">
                                 <div
                                     v-if="item.image"
-                                    class="announcement-image-wrapper"
+                                    class="event-image-wrapper"
                                 >
                                     <img
                                         :src="`/storage/${item.image}`"
                                         :alt="item.title"
-                                        class="announcement-image"
+                                        class="event-image"
                                     />
                                 </div>
                                 <p
@@ -299,14 +300,14 @@ function handleSubscribe() {
                     <div class="empty-icon-box">
                         <Search :size="32" />
                     </div>
-                    <h3 class="empty-title">No Announcements Found</h3>
+                    <h3 class="empty-title">No Events Found</h3>
                     <p class="empty-text" v-if="searchQuery">
-                        We couldn't find any announcements matching "{{
+                        We couldn't find any Events matching "{{
                             searchQuery
                         }}".
                     </p>
                     <p class="empty-text" v-else>
-                        We don't have any announcements right now. Check back
+                        We don't have any Events right now. Check back
                         later!
                     </p>
                     <button
@@ -383,7 +384,7 @@ function handleSubscribe() {
 </template>
 
 <style scoped>
-.announcements-page-wrapper {
+.events-page-wrapper {
     background: var(--color-bg);
     min-height: 100vh;
     display: flex;
@@ -519,28 +520,28 @@ function handleSubscribe() {
     margin-bottom: 4rem;
 }
 
-/* Announcements List */
-.announcements-container {
+/* Events List */
+.events-container {
     position: relative;
 }
 
-.announcements-list {
+.events-list {
     display: flex;
     flex-direction: column;
     gap: 0;
 }
 
-.announcement-item {
+.event-item {
     background: var(--color-bg-elevated);
     border-bottom: 1px solid var(--color-border);
     transition: all 0.25s ease;
 }
 
-.announcement-item:first-of-type {
+.event-item:first-of-type {
     border-top: 1px solid var(--color-border);
 }
 
-.announcement-row {
+.event-row {
     display: flex;
     padding: 1.75rem 1rem;
     cursor: pointer;
@@ -548,17 +549,17 @@ function handleSubscribe() {
     transition: background-color 0.2s ease;
 }
 
-.announcement-row:hover {
+.event-row:hover {
     background-color: rgba(29, 33, 157, 0.02);
 }
 
 /* Left Col: Date styling */
-.announcement-date-col {
+.event-date-col {
     width: 140px;
     flex-shrink: 0;
 }
 
-.announcement-date {
+.event-date {
     font-size: 0.85rem;
     font-weight: 700;
     color: var(--color-text-muted);
@@ -567,14 +568,14 @@ function handleSubscribe() {
 }
 
 /* Right Col: Content */
-.announcement-content-col {
+.event-content-col {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-.announcement-title {
+.event-title {
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--color-primary-dark);
@@ -583,11 +584,11 @@ function handleSubscribe() {
     transition: color 0.2s ease;
 }
 
-.announcement-row:hover .announcement-title {
+.event-row:hover .event-title {
     color: var(--color-primary-soft);
 }
 
-.announcement-snippet {
+.event-snippet {
     font-size: 0.88rem;
     color: var(--color-text-muted);
     line-height: 1.6;
@@ -614,7 +615,7 @@ function handleSubscribe() {
 }
 
 /* Expanded body details */
-.announcement-body-expanded {
+.event-body-expanded {
     background: rgba(29, 33, 157, 0.01);
     border-top: 1px dashed rgba(74, 95, 128, 0.1);
     padding: 0 1rem 1.75rem 11.75rem;
@@ -817,17 +818,17 @@ function handleSubscribe() {
         align-items: center;
     }
 
-    .announcement-row {
+    .event-row {
         flex-direction: column;
         gap: 0.75rem;
         padding: 1.5rem 0.5rem;
     }
 
-    .announcement-date-col {
+    .event-date-col {
         width: auto;
     }
 
-    .announcement-body-expanded {
+    .event-body-expanded {
         padding: 0 0.5rem 1.5rem;
     }
 
@@ -910,8 +911,8 @@ function handleSubscribe() {
     color: #be185d;
 }
 
-/* Announcement Image */
-.announcement-image-wrapper {
+/* Event Image */
+.event-image-wrapper {
     margin-bottom: 1.25rem;
     border-radius: 12px;
     overflow: hidden;
@@ -920,7 +921,7 @@ function handleSubscribe() {
     background-color: rgba(0, 0, 0, 0.01);
 }
 
-.announcement-image {
+.event-image {
     width: 100%;
     height: auto;
     max-height: 400px;

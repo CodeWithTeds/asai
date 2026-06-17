@@ -13,7 +13,7 @@ const navLinks = [
     { href: '/#services', label: 'Services', isAnchor: true },
     { href: '/#clients', label: 'Clients', isAnchor: true },
     { href: '/careers', label: 'Careers', isAnchor: false },
-    { href: '/news', label: 'Announcements', isAnchor: false },
+    { href: '/events', label: 'Events', isAnchor: false },
 ];
 
 function handleNavClick(

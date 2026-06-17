@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\AnnouncementService;
+use App\Services\EventService;
 use App\Services\JobPostingService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -52,7 +52,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'announcements' => app(AnnouncementService::class)->getActive($search, $type),
+            'events' => app(EventService::class)->getActive($search, $type),
             'jobPostings' => app(JobPostingService::class)->getActive(),
         ];
     }

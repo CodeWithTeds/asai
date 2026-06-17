@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\AnnouncementType;
+use App\Enums\EventType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,8 +12,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('announcements', function (Blueprint $table) {
-            $table->string('type')->default(AnnouncementType::Event->value)->after('body');
+        Schema::table('events', function (Blueprint $table) {
+            $table->string('type')->default(EventType::Event->value)->after('body');
             $table->string('image')->nullable()->after('type');
         });
     }
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('announcements', function (Blueprint $table) {
+        Schema::table('events', function (Blueprint $table) {
             $table->dropColumn(['type', 'image']);
         });
     }

@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum AnnouncementType: string
+enum EventType: string
 {
     case Event = 'event';
     case Activity = 'activity';

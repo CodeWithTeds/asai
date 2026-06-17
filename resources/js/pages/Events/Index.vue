@@ -7,14 +7,14 @@ import Filterable from '@/components/Filterable.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useInitials } from '@/composables/useInitials';
-import { index } from '@/routes/announcements';
-import type { Announcement } from '@/types';
+import { index } from '@/routes/events/manage';
+import type { Event } from '@/types';
 import CreateModal from './partials/CreateModal.vue';
 import DeleteModal from './partials/DeleteModal.vue';
 import EditModal from './partials/EditModal.vue';
 
-type PaginatedAnnouncements = {
-    data: Announcement[];
+type PaginatedEvents = {
+    data: Event[];
     current_page: number;
     last_page: number;
     per_page: number;
@@ -23,7 +23,7 @@ type PaginatedAnnouncements = {
 };
 
 const props = defineProps<{
-    announcements: PaginatedAnnouncements;
+    events: PaginatedEvents;
     filters?: { search?: string; type?: string; status?: string };
 }>();
 
@@ -36,7 +36,7 @@ function isOwner(row: Record<string, any>) {
 
 defineOptions({
     layout: {
-        breadcrumbs: [{ title: 'Announcements', href: index().url }],
+        breadcrumbs: [{ title: 'Events', href: index().url }],
     },
 });
 
@@ -44,15 +44,15 @@ defineOptions({
 const showCreateModal = ref(false);
 const showEditModal = ref(false);
 const showDeleteModal = ref(false);
-const selectedAnnouncement = ref<Announcement | null>(null);
+const selectedEvent = ref<Event | null>(null);
 
 function openEdit(row: Record<string, any>) {
-    selectedAnnouncement.value = row as Announcement;
+    selectedEvent.value = row as Event;
     showEditModal.value = true;
 }
 
 function openDelete(row: Record<string, any>) {
-    selectedAnnouncement.value = row as Announcement;
+    selectedEvent.value = row as Event;
     showDeleteModal.value = true;
 }
 
@@ -182,16 +182,16 @@ const typeColors: Record<string, string> = {
 </script>
 
 <template>
-    <Head title="Announcements" />
+    <Head title="Events" />
 
     <div class="flex flex-col gap-6 p-6">
         <!-- Page header -->
         <div>
             <h1 class="text-2xl font-bold tracking-tight text-foreground">
-                Announcements
+                Events
             </h1>
             <p class="mt-1 text-sm text-muted-foreground">
-                Manage public announcements shown on the welcome page.
+                Manage public events shown on the welcome page.
             </p>
         </div>
 
@@ -200,7 +200,7 @@ const typeColors: Record<string, string> = {
             :search="search"
             :filters="activeFilters"
             :filter-groups="filterGroups"
-            search-placeholder="Search announcements…"
+            search-placeholder="Search events…"
             @update:search="handleSearch"
             @update:filters="handleFilters"
         >
@@ -215,14 +215,14 @@ const typeColors: Record<string, string> = {
         <!-- Data Table -->
         <DataTable
             :columns="columns"
-            :rows="announcements.data"
+            :rows="events.data"
             :actions="actions"
-            :current-page="announcements.current_page"
-            :last-page="announcements.last_page"
-            :per-page="announcements.per_page"
-            :total="announcements.total"
-            :links="announcements.links"
-            empty-message="No announcements found."
+            :current-page="events.current_page"
+            :last-page="events.last_page"
+            :per-page="events.per_page"
+            :total="events.total"
+            :links="events.links"
+            empty-message="No Events found."
         >
             <!-- Title + body preview -->
             <template #cell-title="{ row }">
@@ -315,14 +315,14 @@ const typeColors: Record<string, string> = {
     <CreateModal v-model:open="showCreateModal" />
 
     <EditModal
-        v-if="selectedAnnouncement"
+        v-if="selectedEvent"
         v-model:open="showEditModal"
-        :announcement="selectedAnnouncement"
+        :event="selectedEvent"
     />
 
     <DeleteModal
-        v-if="selectedAnnouncement"
+        v-if="selectedEvent"
         v-model:open="showDeleteModal"
-        :announcement="selectedAnnouncement"
+        :event="selectedEvent"
     />
 </template>

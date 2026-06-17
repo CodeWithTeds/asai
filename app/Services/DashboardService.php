@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Announcement;
+use App\Models\Event;
 use App\Models\JobApplication;
 use App\Models\JobPosting;
 use App\Concerns\HasVersionedCache;
@@ -25,11 +25,11 @@ class DashboardService
      */
     protected function getCacheVersion(): int
     {
-        $announcementVersion = (int) Cache::get('announcements:cache_version', 1);
+        $eventVersion = (int) Cache::get('events:cache_version', 1);
         $jobPostingVersion = (int) Cache::get('job_postings:cache_version', 1);
         $jobApplicationVersion = (int) Cache::get('job_applications:cache_version', 1);
 
-        return crc32("{$announcementVersion}_{$jobPostingVersion}_{$jobApplicationVersion}");
+        return crc32("{$eventVersion}_{$jobPostingVersion}_{$jobApplicationVersion}");
     }
 
     /**
@@ -45,9 +45,9 @@ class DashboardService
         return Cache::remember($cacheKey, now()->addMinutes(60), function () {
             return [
                 'stats' => [
-                    'announcements' => [
-                        'total' => Announcement::count(),
-                        'active' => Announcement::active()->count(),
+                    'events' => [
+                        'total' => Event::count(),
+                        'active' => Event::active()->count(),
                     ],
                     'job_postings' => [
                         'total' => JobPosting::count(),
@@ -57,17 +57,17 @@ class DashboardService
                         'total' => JobApplication::count(),
                     ],
                 ],
-                'recent_announcements' => Announcement::with('creator:id,name')
+                'recent_events' => Event::with('creator:id,name')
                     ->latest()
                     ->limit(5)
                     ->get()
-                    ->map(fn ($announcement) => [
-                        'id' => $announcement->id,
-                        'title' => $announcement->title,
-                        'type' => $announcement->type->value ?? $announcement->type,
-                        'status' => $announcement->status->value ?? $announcement->status,
-                        'creator_name' => $announcement->creator->name ?? 'System',
-                        'created_at' => $announcement->created_at->toIso8601String(),
+                    ->map(fn ($event) => [
+                        'id' => $event->id,
+                        'title' => $event->title,
+                        'type' => $event->type->value ?? $event->type,
+                        'status' => $event->status->value ?? $event->status,
+                        'creator_name' => $event->creator->name ?? 'System',
+                        'created_at' => $event->created_at->toIso8601String(),
                     ])->toArray(),
                 'recent_job_postings' => JobPosting::with('creator:id,name')
                     ->latest()

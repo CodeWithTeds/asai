@@ -12,7 +12,7 @@ import {
     SidebarHeader,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { index as announcementsIndex } from '@/routes/announcements';
+import { index as eventsIndex } from '@/routes/events/manage';
 import { index as jobApplicationsIndex } from '@/routes/job-applications';
 import { index as jobPostingsIndex } from '@/routes/job-postings';
 import type { NavItem } from '@/types';
@@ -24,8 +24,8 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Announcements',
-        href: announcementsIndex(),
+        title: 'Events',
+        href: eventsIndex(),
         icon: Megaphone,
     },
     {

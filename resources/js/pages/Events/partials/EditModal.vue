@@ -8,9 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import { update } from '@/routes/announcements';
+import { update } from '@/routes/events/manage';
 
-type Announcement = {
+type Event = {
     id: number;
     title: string;
     body: string;
@@ -22,7 +22,7 @@ type Announcement = {
 };
 
 type Props = {
-    announcement: Announcement;
+    event: Event;
 };
 
 const props = defineProps<Props>();
@@ -37,12 +37,12 @@ function toLocalInput(date: string | null): string {
 }
 
 const form = useForm({
-    title: props.announcement.title,
-    body: props.announcement.body,
-    type: props.announcement.type,
-    status: props.announcement.status,
-    starts_at: toLocalInput(props.announcement.starts_at),
-    expires_at: toLocalInput(props.announcement.expires_at),
+    title: props.event.title,
+    body: props.event.body,
+    type: props.event.type,
+    status: props.event.status,
+    starts_at: toLocalInput(props.event.starts_at),
+    expires_at: toLocalInput(props.event.expires_at),
     image: null as File | null,
     remove_image: false,
 });
@@ -62,8 +62,8 @@ const displayUrl = computed<string | null>(() => {
         return null;
     }
 
-    return props.announcement.image
-        ? `/storage/${props.announcement.image}`
+    return props.event.image
+        ? `/storage/${props.event.image}`
         : null;
 });
 
@@ -71,7 +71,7 @@ const hasImage = computed(
     () => previewLoading.value || displayUrl.value !== null,
 );
 
-function handleFileChange(event: Event) {
+function handleFileChange(event: globalThis.Event) {
     const file = (event.target as HTMLInputElement).files?.[0] ?? null;
 
     if (!file) {
@@ -111,7 +111,7 @@ function clearImage() {
 }
 
 function handleSubmit() {
-    form.post(update(props.announcement.id).url, {
+    form.post(update(props.event.id).url, {
         forceFormData: true,
         headers: { 'X-HTTP-Method-Override': 'PUT' } as any,
         onSuccess: () => {
@@ -137,8 +137,8 @@ function handleClose() {
 <template>
     <BaseModal
         v-model:open="isOpen"
-        title="Edit Announcement"
-        description="Update the announcement details."
+        title="Edit Event"
+        description="Update the event details."
         size="4xl"
         @update:open="handleClose"
     >
@@ -156,7 +156,7 @@ function handleClose() {
                     <Input
                         id="edit-title"
                         v-model="form.title"
-                        placeholder="Announcement title"
+                        placeholder="Event title"
                         :disabled="form.processing"
                         class="h-10"
                     />
@@ -172,7 +172,7 @@ function handleClose() {
                         id="edit-body"
                         v-model="form.body"
                         rows="6"
-                        placeholder="Write your announcement..."
+                        placeholder="Write your event..."
                         :disabled="form.processing"
                         class="flex min-h-[190px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     />

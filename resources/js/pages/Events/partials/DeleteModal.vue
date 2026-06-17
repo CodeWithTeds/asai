@@ -2,15 +2,15 @@
 import { useForm } from '@inertiajs/vue3';
 import BaseModal from '@/components/BaseModal.vue';
 import { Button } from '@/components/ui/button';
-import { destroy } from '@/routes/announcements';
+import { destroy } from '@/routes/events/manage';
 
-type Announcement = {
+type Event = {
     id: number;
     title: string;
 };
 
 type Props = {
-    announcement: Announcement;
+    event: Event;
 };
 
 const props = defineProps<Props>();
@@ -19,7 +19,7 @@ const isOpen = defineModel<boolean>('open');
 const form = useForm({});
 
 function handleDelete() {
-    form.delete(destroy(props.announcement.id).url, {
+    form.delete(destroy(props.event.id).url, {
         onSuccess: () => {
             isOpen.value = false;
         },
@@ -30,8 +30,8 @@ function handleDelete() {
 <template>
     <BaseModal
         v-model:open="isOpen"
-        title="Delete Announcement"
-        :description="`Are you sure you want to delete &quot;${props.announcement.title}&quot;? This action cannot be undone.`"
+        title="Delete Event"
+        :description="`Are you sure you want to delete &quot;${props.event.title}&quot;? This action cannot be undone.`"
         size="sm"
     >
         <!-- Footer -->

@@ -11,7 +11,7 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { dashboard } from '@/routes';
-import { index as announcementsIndex } from '@/routes/announcements';
+import { index as eventsIndex } from '@/routes/events/manage';
 import { index as jobApplicationsIndex } from '@/routes/job-applications';
 import { index as jobPostingsIndex } from '@/routes/job-postings';
 
@@ -28,7 +28,7 @@ defineOptions({
 
 defineProps<{
     stats: {
-        announcements: {
+        events: {
             total: number;
             active: number;
         };
@@ -40,7 +40,7 @@ defineProps<{
             total: number;
         };
     };
-    recent_announcements: Array<{
+    recent_events: Array<{
         id: number;
         title: string;
         type: string;
@@ -168,13 +168,13 @@ const jobTypeColors: Record<string, string> = {
                 </div>
             </div>
 
-            <!-- Announcements Card -->
+            <!-- Events Card -->
             <div
                 class="group relative overflow-hidden rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-sidebar-border/40"
             >
                 <div class="flex items-center justify-between">
                     <span class="text-sm font-medium text-muted-foreground"
-                        >Active Announcements</span
+                        >Active Events</span
                     >
                     <div
                         class="rounded-lg bg-amber-50 p-2.5 text-amber-600 transition-colors duration-200 group-hover:bg-amber-100 dark:bg-amber-950/50 dark:text-amber-400"
@@ -184,10 +184,10 @@ const jobTypeColors: Record<string, string> = {
                 </div>
                 <div class="mt-4">
                     <h3 class="text-3xl font-bold text-foreground">
-                        {{ stats.announcements.active }}
+                        {{ stats.events.active }}
                     </h3>
                     <p class="mt-1.5 text-xs text-muted-foreground">
-                        {{ stats.announcements.total }} total announcements
+                        {{ stats.events.total }} total events
                         posted
                     </p>
                 </div>
@@ -284,7 +284,7 @@ const jobTypeColors: Record<string, string> = {
                 </div>
             </div>
 
-            <!-- Right Column: Recent Announcements & Job Postings -->
+            <!-- Right Column: Recent Events & Job Postings -->
             <div class="flex flex-col gap-6 lg:col-span-5 xl:col-span-4">
                 <!-- Recent Job Postings -->
                 <div
@@ -362,7 +362,7 @@ const jobTypeColors: Record<string, string> = {
                     </div>
                 </div>
 
-                <!-- Recent Announcements -->
+                <!-- Recent Events -->
                 <div
                     class="rounded-xl border border-sidebar-border/70 bg-card p-5 dark:border-sidebar-border/40"
                 >
@@ -371,7 +371,7 @@ const jobTypeColors: Record<string, string> = {
                     >
                         <div>
                             <h2 class="text-md font-semibold text-foreground">
-                                Recent Announcements
+                                Recent Events
                             </h2>
                             <p class="text-[11px] text-muted-foreground">
                                 Public updates and alert feeds.
@@ -383,7 +383,7 @@ const jobTypeColors: Record<string, string> = {
                             as-child
                             class="h-8 text-xs font-semibold"
                         >
-                            <Link :href="announcementsIndex()">
+                            <Link :href="eventsIndex()">
                                 Manage
                                 <ChevronRight class="ml-1 h-3.5 w-3.5" />
                             </Link>
@@ -392,46 +392,46 @@ const jobTypeColors: Record<string, string> = {
 
                     <div class="mt-4 space-y-3.5">
                         <div
-                            v-if="recent_announcements.length === 0"
+                            v-if="recent_events.length === 0"
                             class="py-6 text-center text-xs text-muted-foreground"
                         >
-                            No announcements published yet.
+                            No events published yet.
                         </div>
 
                         <div
-                            v-for="ann in recent_announcements"
-                            :key="ann.id"
+                            v-for="evt in recent_events"
+                            :key="evt.id"
                             class="flex flex-col gap-1.5 rounded-lg border border-sidebar-border/40 bg-neutral-50/40 p-3 transition-colors duration-150 hover:bg-neutral-50 dark:border-sidebar-border/20 dark:bg-neutral-900/10 dark:hover:bg-neutral-900/30"
                         >
                             <div class="flex items-start justify-between gap-2">
                                 <h4
                                     class="line-clamp-1 text-sm font-semibold text-foreground"
                                 >
-                                    {{ ann.title }}
+                                    {{ evt.title }}
                                 </h4>
                                 <span
                                     :class="
-                                        typeColors[ann.type] ??
+                                        typeColors[evt.type] ??
                                         'bg-muted text-[10px] text-muted-foreground'
                                     "
                                     class="shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-medium capitalize"
                                 >
-                                    {{ ann.type }}
+                                    {{ evt.type }}
                                 </span>
                             </div>
                             <div
                                 class="flex items-center justify-between text-[10px] text-muted-foreground"
                             >
-                                <span>By {{ ann.creator_name }}</span>
+                                <span>By {{ evt.creator_name }}</span>
                                 <span
                                     class="font-medium capitalize"
                                     :class="
-                                        ann.status === 'active'
+                                        evt.status === 'active'
                                             ? 'text-green-600 dark:text-green-400'
                                             : 'text-neutral-500'
                                     "
                                 >
-                                    {{ ann.status }}
+                                    {{ evt.status }}
                                 </span>
                             </div>
                         </div>

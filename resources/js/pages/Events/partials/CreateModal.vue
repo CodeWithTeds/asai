@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import { store } from '@/routes/announcements';
+import { store } from '@/routes/events/manage';
 
 const isOpen = defineModel<boolean>('open');
 
@@ -91,8 +91,8 @@ function handleClose() {
 <template>
     <BaseModal
         v-model:open="isOpen"
-        title="Create Announcement"
-        description="Fill in the details for the new announcement."
+        title="Create Event"
+        description="Fill in the details for the new event."
         size="4xl"
         @update:open="handleClose"
     >
@@ -110,7 +110,7 @@ function handleClose() {
                     <Input
                         id="create-title"
                         v-model="form.title"
-                        placeholder="Announcement title"
+                        placeholder="Event title"
                         :disabled="form.processing"
                         class="h-10"
                     />
@@ -126,7 +126,7 @@ function handleClose() {
                         id="create-body"
                         v-model="form.body"
                         rows="6"
-                        placeholder="Write your announcement..."
+                        placeholder="Write your event..."
                         :disabled="form.processing"
                         class="flex min-h-[190px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     />

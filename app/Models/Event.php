@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Enums\AnnouncementStatus;
-use App\Enums\AnnouncementType;
-use App\Policies\AnnouncementPolicy;
+use App\Enums\EventStatus;
+use App\Enums\EventType;
+use App\Policies\EventPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,25 +12,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable(['title', 'body', 'type', 'image', 'status', 'starts_at', 'expires_at', 'created_by'])]
-#[UsePolicy(AnnouncementPolicy::class)]
-class Announcement extends Model
+#[UsePolicy(EventPolicy::class)]
+class Event extends Model
 {
     protected function casts(): array
     {
         return [
-            'status' => AnnouncementStatus::class,
-            'type' => AnnouncementType::class,
+            'status' => EventStatus::class,
+            'type' => EventType::class,
             'starts_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
     }
 
     /**
-     * Filter to only announcements currently visible to the public
+     * Filter to only events currently visible to the public
      */
     public function scopeActive(Builder $query): void
     {
-        $query->where('status', AnnouncementStatus::Active)
+        $query->where('status', EventStatus::Active)
             ->where(fn (Builder $q) => $q
                 ->whereNull('starts_at')
                 ->orWhere('starts_at', '<=', now())
@@ -42,7 +42,7 @@ class Announcement extends Model
     }
 
     /**
-     * The admin who created this announcement
+     * The admin who created this event
      */
     public function creator(): BelongsTo
     {
