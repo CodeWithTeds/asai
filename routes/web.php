@@ -19,7 +19,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('events/manage', EventController::class)
         ->except(['show', 'create', 'edit'])
-        ->names('events.manage');
+        ->names('events.manage')
+        ->parameters(['manage' => 'event']);
 
     Route::resource('job-postings', JobPostingController::class)
         ->except(['show', 'create', 'edit']);
