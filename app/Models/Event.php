@@ -10,8 +10,9 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['title', 'body', 'type', 'image', 'status', 'starts_at', 'expires_at', 'created_by'])]
+#[Fillable(['title', 'body', 'type', 'status', 'starts_at', 'expires_at', 'created_by'])]
 #[UsePolicy(EventPolicy::class)]
 class Event extends Model
 {
@@ -47,5 +48,13 @@ class Event extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * The images associated with this event.
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(EventImage::class);
     }
 }

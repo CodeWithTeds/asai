@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
 import { XIcon, ImagePlusIcon } from 'lucide-vue-next';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import BaseModal from '@/components/BaseModal.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ type Event = {
     title: string;
     body: string;
     type: string;
-    image: string | null;
+    images: Array<{ id: number; image_path: string }>;
     status: string;
     starts_at: string | null;
     expires_at: string | null;
@@ -43,71 +43,66 @@ const form = useForm({
     status: props.event.status,
     starts_at: toLocalInput(props.event.starts_at),
     expires_at: toLocalInput(props.event.expires_at),
-    image: null as File | null,
-    remove_image: false,
+    images: [] as File[],
+    remove_images: [] as number[],
 });
 
-// Image preview state
+// Image states
 const fileInput = ref<HTMLInputElement | null>(null);
-const previewUrl = ref<string | null>(null);
-const previewLoading = ref(false);
+const previews = ref<Array<{ url: string; file: File }>>([]);
+const serverImages = ref([...(props.event.images ?? [])]);
 
-// Preview priority: local > server > nothing
-const displayUrl = computed<string | null>(() => {
-    if (previewUrl.value) {
-        return previewUrl.value;
-    }
-
-    if (form.remove_image) {
-        return null;
-    }
-
-    return props.event.image
-        ? `/storage/${props.event.image}`
-        : null;
-});
-
-const hasImage = computed(
-    () => previewLoading.value || displayUrl.value !== null,
+// Sync form and local state when event prop changes
+watch(
+    () => props.event,
+    (newEvent) => {
+        serverImages.value = [...(newEvent?.images ?? [])];
+        form.title = newEvent.title;
+        form.body = newEvent.body;
+        form.type = newEvent.type;
+        form.status = newEvent.status;
+        form.starts_at = toLocalInput(newEvent.starts_at);
+        form.expires_at = toLocalInput(newEvent.expires_at);
+        form.images = [];
+        form.remove_images = [];
+        previews.value = [];
+    },
+    { deep: true },
 );
 
 function handleFileChange(event: globalThis.Event) {
-    const file = (event.target as HTMLInputElement).files?.[0] ?? null;
-
-    if (!file) {
+    const files = (event.target as HTMLInputElement).files;
+    if (!files) {
         return;
     }
 
-    form.image = file;
-    form.remove_image = false;
-    previewLoading.value = true;
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        form.images.push(file);
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        // Shimmer for 400ms before preview
-        setTimeout(() => {
-            previewUrl.value = e.target?.result as string;
-            previewLoading.value = false;
-        }, 400);
-    };
-    reader.readAsDataURL(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previews.value.push({
+                url: e.target?.result as string,
+                file: file,
+            });
+        };
+        reader.readAsDataURL(file);
+    }
 }
 
-function clearImage() {
-    if (previewUrl.value) {
-        // Drop new file pick, restore server image
-        previewUrl.value = null;
-        form.image = null;
+function removeServerImage(id: number, index: number) {
+    form.remove_images.push(id);
+    serverImages.value.splice(index, 1);
+}
 
-        if (fileInput.value) {
-            fileInput.value.value = '';
-        }
-    } else {
-        // Mark server image for removal
-        form.remove_image = true;
+function removeNewImage(index: number) {
+    form.images.splice(index, 1);
+    previews.value.splice(index, 1);
+
+    if (fileInput.value) {
+        fileInput.value.value = '';
     }
-
-    previewLoading.value = false;
 }
 
 function handleSubmit() {
@@ -116,6 +111,7 @@ function handleSubmit() {
         headers: { 'X-HTTP-Method-Override': 'PUT' } as any,
         onSuccess: () => {
             isOpen.value = false;
+            previews.value = [];
         },
     });
 }
@@ -123,10 +119,9 @@ function handleSubmit() {
 function handleClose() {
     isOpen.value = false;
     form.clearErrors();
-    previewUrl.value = null;
-    previewLoading.value = false;
-    form.remove_image = false;
-    form.image = null;
+    form.reset();
+    previews.value = [];
+    serverImages.value = [...(props.event.images ?? [])];
 
     if (fileInput.value) {
         fileInput.value.value = '';
@@ -242,54 +237,37 @@ function handleClose() {
                 </div>
             </div>
 
-            <!-- Right — Image -->
+            <!-- Right — Images -->
             <div class="flex flex-col overflow-hidden">
-                <Label class="mb-1.5 block">Image</Label>
+                <Label class="mb-1.5 block">Event Gallery</Label>
 
-                <!-- Loading shimmer -->
-                <div
-                    v-if="previewLoading"
-                    class="shimmer relative mt-2 min-h-[320px] w-full flex-1 overflow-hidden rounded-lg"
-                />
-
-                <!-- Preview (new pick or existing server image) -->
-                <div
-                    v-else-if="hasImage && displayUrl"
-                    class="relative mt-2 min-h-[320px] w-full flex-1 overflow-hidden rounded-lg border border-input bg-muted/40"
-                >
-                    <img
-                        :src="displayUrl"
-                        alt="Image preview"
-                        class="absolute inset-0 h-full w-full object-contain"
-                    />
-                    <button
-                        type="button"
-                        :disabled="form.processing"
-                        class="absolute top-1.5 right-1.5 flex size-6 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80 disabled:opacity-50"
-                        aria-label="Remove image"
-                        @click="clearImage"
-                    >
-                        <XIcon class="size-3.5" />
-                    </button>
-                </div>
-
-                <!-- Upload zone -->
+                <!-- Large Placeholder when no images are added -->
                 <label
-                    v-else
-                    class="relative mt-2 flex min-h-[320px] w-full flex-1 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-black/25 bg-black/[0.03] p-3 text-center text-muted-foreground transition-colors hover:border-black/40 hover:bg-black/[0.06]"
+                    v-if="serverImages.length === 0 && previews.length === 0"
+                    class="relative mt-2 flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground/25 bg-muted/20 p-6 text-center transition-all duration-300 hover:border-violet-500/50 hover:bg-violet-500/[0.02] dark:hover:bg-violet-500/[0.01]"
                     :class="{
-                        'pointer-events-none cursor-not-allowed opacity-50':
-                            form.processing,
+                        'pointer-events-none opacity-50': form.processing,
                     }"
                 >
-                    <ImagePlusIcon class="mb-2 size-7 opacity-40" />
-                    <span class="text-sm font-medium">Upload image</span>
-                    <span class="mt-0.5 text-xs opacity-60"
-                        >JPG, PNG or WebP · max 2 MB</span
+                    <div
+                        class="flex size-12 items-center justify-center rounded-full bg-violet-100 text-violet-600 dark:bg-violet-950/40 dark:text-violet-400"
+                    >
+                        <ImagePlusIcon class="size-6" />
+                    </div>
+                    <span class="mt-3 text-sm font-semibold text-foreground"
+                        >No images added</span
+                    >
+                    <span class="mt-1 text-xs text-muted-foreground"
+                        >Click to upload event photos (JPG, PNG or WebP)</span
+                    >
+                    <span
+                        class="mt-4 rounded-md bg-foreground/5 px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
+                        >max 2 MB per file</span
                     >
                     <input
                         ref="fileInput"
                         type="file"
+                        multiple
                         accept="image/jpeg,image/png,image/webp"
                         class="sr-only"
                         :disabled="form.processing"
@@ -297,7 +275,91 @@ function handleClose() {
                     />
                 </label>
 
-                <InputError :message="form.errors.image" />
+                <!-- Previews Grid + Small trigger inside when images exist -->
+                <div v-else class="mt-2 max-h-[360px] overflow-y-auto pr-1">
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <!-- Server Images -->
+                        <div
+                            v-for="(img, idx) in serverImages"
+                            :key="`server-${img.id}`"
+                            class="group relative aspect-video overflow-hidden rounded-lg border border-input bg-muted/40"
+                        >
+                            <img
+                                :src="`/storage/${img.image_path}`"
+                                alt="Event image"
+                                class="h-full w-full object-cover"
+                            />
+                            <button
+                                type="button"
+                                :disabled="form.processing"
+                                class="absolute top-1.5 right-1.5 flex size-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-all duration-200 group-hover:opacity-100 hover:bg-black/80 disabled:opacity-50"
+                                aria-label="Remove image"
+                                @click="removeServerImage(img.id, idx)"
+                            >
+                                <XIcon class="size-3.5" />
+                            </button>
+                        </div>
+
+                        <!-- New uploads Previews -->
+                        <div
+                            v-for="(prev, idx) in previews"
+                            :key="`new-${idx}`"
+                            class="group relative aspect-video overflow-hidden rounded-lg border border-input bg-muted/40"
+                        >
+                            <img
+                                :src="prev.url"
+                                alt="New image preview"
+                                class="h-full w-full object-cover"
+                            />
+                            <span
+                                class="absolute bottom-1.5 left-1.5 rounded bg-blue-600/80 px-1 py-0.5 text-[8px] font-semibold text-white uppercase"
+                                >New</span
+                            >
+                            <button
+                                type="button"
+                                :disabled="form.processing"
+                                class="absolute top-1.5 right-1.5 flex size-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-all duration-200 group-hover:opacity-100 hover:bg-black/80 disabled:opacity-50"
+                                aria-label="Remove image"
+                                @click="removeNewImage(idx)"
+                            >
+                                <XIcon class="size-3.5" />
+                            </button>
+                        </div>
+
+                        <!-- Small Add photo trigger card -->
+                        <label
+                            class="relative flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/20 bg-muted/10 text-center transition-all duration-200 hover:border-violet-500/40 hover:bg-violet-500/[0.01]"
+                            :class="{
+                                'pointer-events-none opacity-50':
+                                    form.processing,
+                            }"
+                        >
+                            <ImagePlusIcon
+                                class="size-5 text-muted-foreground opacity-60"
+                            />
+                            <span
+                                class="mt-1 text-[11px] font-medium text-muted-foreground"
+                                >Add photo</span
+                            >
+                            <input
+                                type="file"
+                                multiple
+                                accept="image/jpeg,image/png,image/webp"
+                                class="sr-only"
+                                :disabled="form.processing"
+                                @change="handleFileChange"
+                            />
+                        </label>
+                    </div>
+                </div>
+
+                <InputError :message="form.errors.images" />
+                <InputError
+                    v-for="(err, key) in form.errors"
+                    :key="key"
+                    v-show="key.startsWith('images.')"
+                    :message="err"
+                />
             </div>
         </form>
 

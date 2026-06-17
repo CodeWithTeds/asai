@@ -39,7 +39,7 @@ class EventController extends Controller
         $this->eventService->create(
             $request->validated(),
             $request->user()->id,
-            $request->file('image')
+            $request->file('images')
         );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Event created.']);
@@ -55,7 +55,7 @@ class EventController extends Controller
         $this->eventService->update(
             $event,
             $request->validated(),
-            $request->file('image')
+            $request->file('images')
         );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Event updated.']);

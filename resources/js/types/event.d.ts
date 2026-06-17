@@ -6,7 +6,7 @@ export type Event = {
     title: string;
     body: string;
     type: EventType;
-    image: string | null;
+    images: Array<{ id: number; image_path: string }>;
     status: EventStatus;
     starts_at: string | null;
     expires_at: string | null;

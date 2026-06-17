@@ -14,6 +14,7 @@ import {
 import { computed, ref, watch } from 'vue';
 import AppFooter from '@/components/Welcome/AppFooter.vue';
 import AppHeader from '@/components/Welcome/AppHeader.vue';
+import EventCarousel from '@/components/Welcome/EventCarousel.vue';
 import { events as eventsUrl } from '@/routes';
 
 type Event = {
@@ -21,7 +22,7 @@ type Event = {
     title: string;
     body: string;
     type: string;
-    image: string | null;
+    images: Array<{ id: number; image_path: string }>;
     starts_at: string | null;
     expires_at: string | null;
     created_at: string;
@@ -271,16 +272,11 @@ function handleSubscribe() {
                             v-if="expandedId === item.id"
                         >
                             <div class="body-inner">
-                                <div
-                                    v-if="item.image"
-                                    class="event-image-wrapper"
-                                >
-                                    <img
-                                        :src="`/storage/${item.image}`"
-                                        :alt="item.title"
-                                        class="event-image"
-                                    />
-                                </div>
+                                <EventCarousel
+                                    v-if="item.images && item.images.length > 0"
+                                    :images="item.images"
+                                    :alt-text="item.title"
+                                />
                                 <p
                                     v-for="(paragraph, pIdx) in item.body.split(
                                         '\n',
@@ -307,8 +303,7 @@ function handleSubscribe() {
                         }}".
                     </p>
                     <p class="empty-text" v-else>
-                        We don't have any Events right now. Check back
-                        later!
+                        We don't have any Events right now. Check back later!
                     </p>
                     <button
                         v-if="searchQuery"

@@ -6,7 +6,6 @@ use App\Concerns\HasVersionedCache;
 use App\Models\Event;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
@@ -36,7 +35,8 @@ class EventService
             Cache::forget($cacheKey);
 
             $query = Event::active()
-                ->select('id', 'title', 'body', 'type', 'image', 'starts_at', 'expires_at', 'created_at');
+                ->with('images')
+                ->select('id', 'title', 'body', 'type', 'starts_at', 'expires_at', 'created_at');
 
             if (! empty($search)) {
                 $query->where(function ($q) use ($search) {
@@ -61,7 +61,7 @@ class EventService
      */
     public function getPaginated(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        $query = Event::with('creator:id,name')->latest();
+        $query = Event::with(['creator:id,name', 'images'])->latest();
 
         if (! empty($filters['search'])) {
             $search = $filters['search'];
@@ -83,18 +83,21 @@ class EventService
     }
 
     /**
-     * Create a new event, storing any uploaded image
+     * Create a new event, storing any uploaded images
      */
-    public function create(array $data, int $createdBy, ?UploadedFile $image = null): Event
+    public function create(array $data, int $createdBy, ?array $images = null): Event
     {
-        if ($image) {
-            $data['image'] = $image->store('events/images', 'public');
-        }
-
         $event = Event::create([
             ...$data,
             'created_by' => $createdBy
         ]);
+
+        if ($images) {
+            foreach ($images as $img) {
+                $path = $img->store('events/images', 'public');
+                $event->images()->create(['image_path' => $path]);
+            }
+        }
 
         $this->clearCache();
 
@@ -102,46 +105,54 @@ class EventService
     }
 
     /**
-     * Update an existing event, replacing or removing the image as requested
+     * Update an existing event, adding new images or removing selected ones
      */
-    public function update(Event $event, array $data, ?UploadedFile $image = null): Event
+    public function update(Event $event, array $data, ?array $images = null): Event
     {
-        if ($image) {
-            // New file uploaded — swap out the old one
-            $this->deleteImage($event);
-            $data['image'] = $image->store('events/images', 'public');
-        } elseif (! empty($data['remove_image'])) {
-            // User explicitly cleared the image with no replacement
-            $this->deleteImage($event);
-            $data['image'] = null;
+        // Handle image removals
+        if (! empty($data['remove_images'])) {
+            $imagesToRemove = $event->images()->whereIn('id', $data['remove_images'])->get();
+            foreach ($imagesToRemove as $img) {
+                Storage::disk('public')->delete($img->image_path);
+                $img->delete();
+            }
         }
 
-        // Remove the flag before saving — not a real DB column
-        unset($data['remove_image']);
+        // Remove the flag before saving
+        unset($data['remove_images']);
 
         $event->update($data);
+
+        // Handle new image uploads
+        if ($images) {
+            foreach ($images as $img) {
+                $path = $img->store('events/images', 'public');
+                $event->images()->create(['image_path' => $path]);
+            }
+        }
+
         $this->clearCache();
 
         return $event->fresh();
     }
 
     /**
-     * Delete an event and its associated image from disk
+     * Delete an event and all its associated images from disk and database
      */
     public function delete(Event $event): void
     {
-        $this->deleteImage($event);
+        $this->deleteImages($event);
         $event->delete();
         $this->clearCache();
     }
 
     /**
-     * Remove the image from disk if one exists
+     * Remove all images associated with the event from disk
      */
-    private function deleteImage(Event $event): void
+    private function deleteImages(Event $event): void
     {
-        if ($event->image) {
-            Storage::disk('public')->delete($event->image);
+        foreach ($event->images as $img) {
+            Storage::disk('public')->delete($img->image_path);
         }
     }
 }
