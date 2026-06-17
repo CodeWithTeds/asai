@@ -39,6 +39,7 @@ const previews = ref<Array<{ url: string; file: File }>>([]);
 
 function handleFileChange(event: Event) {
     const files = (event.target as HTMLInputElement).files;
+
     if (!files) {
         return;
     }

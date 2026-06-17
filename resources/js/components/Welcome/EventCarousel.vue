@@ -12,6 +12,7 @@ let timer: any = null;
 
 function startAutoPlay() {
     stopAutoPlay();
+
     if (props.images.length > 1) {
         timer = setInterval(nextSlide, 5000); // Auto-scroll every 5 seconds
     }

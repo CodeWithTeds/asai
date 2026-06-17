@@ -187,8 +187,7 @@ const jobTypeColors: Record<string, string> = {
                         {{ stats.events.active }}
                     </h3>
                     <p class="mt-1.5 text-xs text-muted-foreground">
-                        {{ stats.events.total }} total events
-                        posted
+                        {{ stats.events.total }} total events posted
                     </p>
                 </div>
             </div>

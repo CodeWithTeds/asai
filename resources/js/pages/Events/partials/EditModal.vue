@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
 import { XIcon, ImagePlusIcon } from 'lucide-vue-next';
-import { ref, computed, watch } from 'vue';
+import { ref, watch } from 'vue';
 import BaseModal from '@/components/BaseModal.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -72,6 +72,7 @@ watch(
 
 function handleFileChange(event: globalThis.Event) {
     const files = (event.target as HTMLInputElement).files;
+
     if (!files) {
         return;
     }
