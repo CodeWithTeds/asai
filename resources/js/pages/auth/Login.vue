@@ -36,7 +36,7 @@ defineProps<{
         {{ status }}
     </div>
 
-    <PasskeyVerify />
+    <!-- <PasskeyVerify /> -->
 
     <Form
         v-bind="store.form()"
@@ -46,7 +46,11 @@ defineProps<{
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="email">Email address</Label>
+                <Label
+                    for="email"
+                    class="text-sm font-medium text-slate-700 dark:text-slate-300"
+                    >Email address</Label
+                >
                 <Input
                     id="email"
                     type="email"
@@ -56,17 +60,22 @@ defineProps<{
                     :tabindex="1"
                     autocomplete="email"
                     placeholder="email@example.com"
+                    class="rounded-lg transition-all focus-visible:border-[#0d1b4b] focus-visible:ring-[#0d1b4b]/20"
                 />
                 <InputError :message="errors.email" />
             </div>
 
             <div class="grid gap-2">
                 <div class="flex items-center justify-between">
-                    <Label for="password">Password</Label>
+                    <Label
+                        for="password"
+                        class="text-sm font-medium text-slate-700 dark:text-slate-300"
+                        >Password</Label
+                    >
                     <TextLink
                         v-if="canResetPassword"
                         :href="request()"
-                        class="text-sm"
+                        class="text-xs font-medium text-[#0d1b4b] decoration-transparent transition-colors hover:text-[#c9a84c] hover:decoration-current dark:text-amber-400 dark:hover:text-amber-300"
                         :tabindex="5"
                     >
                         Forgot your password?
@@ -79,32 +88,49 @@ defineProps<{
                     :tabindex="2"
                     autocomplete="current-password"
                     placeholder="Password"
+                    class="rounded-lg transition-all focus-visible:border-[#0d1b4b] focus-visible:ring-[#0d1b4b]/20"
                 />
                 <InputError :message="errors.password" />
             </div>
 
             <div class="flex items-center justify-between">
-                <Label for="remember" class="flex items-center space-x-3">
-                    <Checkbox id="remember" name="remember" :tabindex="3" />
-                    <span>Remember me</span>
+                <Label
+                    for="remember"
+                    class="flex cursor-pointer items-center space-x-2.5"
+                >
+                    <Checkbox
+                        id="remember"
+                        name="remember"
+                        :tabindex="3"
+                        class="rounded-md transition-colors data-[state=checked]:border-[#0d1b4b] data-[state=checked]:bg-[#0d1b4b]"
+                    />
+                    <span
+                        class="text-sm text-slate-600 select-none dark:text-slate-400"
+                        >Remember me</span
+                    >
                 </Label>
             </div>
 
             <Button
                 type="submit"
-                class="mt-4 w-full"
+                class="mt-2 h-10 w-full cursor-pointer rounded-lg border-0 bg-[#0d1b4b] font-bold text-white shadow-md transition-all duration-200 hover:bg-[#0d1b4b]/90 focus-visible:ring-[#c9a84c]/50"
                 :tabindex="4"
                 :disabled="processing"
                 data-test="login-button"
             >
-                <Spinner v-if="processing" />
+                <Spinner v-if="processing" class="mr-2" />
                 Log in
             </Button>
         </div>
 
         <div class="text-center text-sm text-muted-foreground">
             Don't have an account?
-            <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
+            <TextLink
+                :href="register()"
+                :tabindex="5"
+                class="font-semibold text-[#0d1b4b] decoration-transparent hover:text-[#c9a84c] hover:decoration-current dark:text-amber-400 dark:hover:text-amber-300"
+                >Sign up</TextLink
+            >
         </div>
     </Form>
 </template>
