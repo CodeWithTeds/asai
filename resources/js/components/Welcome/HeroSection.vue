@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Head } from '@inertiajs/vue3';
 import { ArrowRight, ShieldCheck, Award, Users } from 'lucide-vue-next';
 import { onMounted, ref, onUnmounted } from 'vue';
 
@@ -10,6 +11,7 @@ const bgImages = [
 ];
 
 const currentImageIndex = ref(0);
+const loadedImages = ref<string[]>([]);
 let carouselInterval: any = null;
 
 onMounted(() => {
@@ -19,6 +21,15 @@ onMounted(() => {
             setTimeout(() => el.classList.add('hero-visible'), i * 120);
         });
     }, 100);
+
+    // Preload background images programmatically to cache them and prevent layout pop-in
+    bgImages.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+            loadedImages.value.push(src);
+        };
+    });
 
     // Change background image every 6 seconds
     carouselInterval = setInterval(() => {
@@ -35,14 +46,26 @@ onUnmounted(() => {
 </script>
 
 <template>
+    <Head>
+        <!-- Instruct the browser to preload the critical first background image immediately -->
+        <link rel="preload" as="image" href="/images/parralax1.jpg" />
+    </Head>
     <section id="top" class="hero">
         <div class="carousel-bg">
             <div
                 v-for="(img, index) in bgImages"
                 :key="img"
                 class="carousel-slide"
-                :class="{ active: currentImageIndex === index }"
-                :style="{ backgroundImage: `url(${img})` }"
+                :class="{
+                    active:
+                        currentImageIndex === index &&
+                        loadedImages.includes(img),
+                }"
+                :style="
+                    loadedImages.includes(img)
+                        ? { backgroundImage: `url(${img})` }
+                        : {}
+                "
             ></div>
         </div>
         <div class="hero-overlay"></div>
