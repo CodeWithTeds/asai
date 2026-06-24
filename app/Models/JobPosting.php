@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
 #[Fillable([
     'title',
     'description',
@@ -29,11 +31,28 @@ class JobPosting extends Model
     protected function casts(): array
     {
         return [
-            'status' => JobPostingStatus::class,
             'type' => JobPostingType::class,
             'starts_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Get the dynamic status of the job posting.
+     */
+    protected function status(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                if ($this->expires_at && $this->expires_at->isPast()) {
+                    return JobPostingStatus::Closed;
+                }
+                return is_string($value) ? JobPostingStatus::tryFrom($value) : $value;
+            },
+            set: function ($value) {
+                return $value instanceof JobPostingStatus ? $value->value : $value;
+            }
+        );
     }
 
     /**

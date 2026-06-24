@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\JobPosting;
 use App\Concerns\HasVersionedCache;
+use App\Enums\JobPostingStatus;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
@@ -77,7 +78,23 @@ class JobPostingService
         }
 
         if (! empty($filters['status'])) {
-            $query->where('status', $filters['status']);
+            $status = JobPostingStatus::tryFrom($filters['status']);
+
+            if ($status === JobPostingStatus::Open) {
+                $query->where('status', JobPostingStatus::Open)
+                    ->where(function ($q) {
+                        $q->whereNull('expires_at')
+                            ->orWhere('expires_at', '>=', now());
+                    });
+            } elseif ($status === JobPostingStatus::Closed) {
+                $query->where(function ($q) {
+                    $q->where('status', JobPostingStatus::Closed)
+                        ->orWhere(function ($sub) {
+                            $sub->whereNotNull('expires_at')
+                                ->where('expires_at', '<', now());
+                        });
+                });
+            }
         }
 
         return $query->paginate($perPage)->withQueryString();

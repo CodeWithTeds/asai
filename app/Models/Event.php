@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
 #[Fillable(['title', 'body', 'type', 'status', 'starts_at', 'expires_at', 'created_by'])]
 #[UsePolicy(EventPolicy::class)]
 class Event extends Model
@@ -19,11 +21,28 @@ class Event extends Model
     protected function casts(): array
     {
         return [
-            'status' => EventStatus::class,
             'type' => EventType::class,
             'starts_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Get the dynamic status of the event.
+     */
+    protected function status(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                if ($this->expires_at && $this->expires_at->isPast()) {
+                    return EventStatus::Inactive;
+                }
+                return is_string($value) ? EventStatus::tryFrom($value) : $value;
+            },
+            set: function ($value) {
+                return $value instanceof EventStatus ? $value->value : $value;
+            }
+        );
     }
 
     /**

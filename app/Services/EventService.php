@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Concerns\HasVersionedCache;
+use App\Enums\EventStatus;
 use App\Models\Event;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -76,7 +77,23 @@ class EventService
         }
 
         if (! empty($filters['status'])) {
-            $query->where('status', $filters['status']);
+            $status = EventStatus::tryFrom($filters['status']);
+
+            if ($status === EventStatus::Active) {
+                $query->where('status', EventStatus::Active)
+                    ->where(function ($q) {
+                        $q->whereNull('expires_at')
+                            ->orWhere('expires_at', '>=', now());
+                    });
+            } elseif ($status === EventStatus::Inactive) {
+                $query->where(function ($q) {
+                    $q->where('status', EventStatus::Inactive)
+                        ->orWhere(function ($sub) {
+                            $sub->whereNotNull('expires_at')
+                                ->where('expires_at', '<', now());
+                        });
+                });
+            }
         }
 
         return $query->paginate($perPage)->withQueryString();
