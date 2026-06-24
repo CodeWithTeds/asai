@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { ArrowRight, ShieldCheck, Award, Users } from 'lucide-vue-next';
-import { onMounted } from 'vue';
+import { onMounted, ref, onUnmounted } from 'vue';
 
-declare global {
-    interface Window {
-        particlesJS: any;
-    }
-}
+// Parallax background carousel images
+const bgImages = [
+    '/images/parralax1.jpg',
+    '/images/parralax2.jpg',
+    '/images/parralax3.jpg',
+];
+
+const currentImageIndex = ref(0);
+let carouselInterval: any = null;
 
 onMounted(() => {
     // Trigger hero animations after a short delay for smooth entrance
@@ -16,16 +20,32 @@ onMounted(() => {
         });
     }, 100);
 
-    // Initialize particles.js background
-    if (window.particlesJS && window.particlesJS.load) {
-        window.particlesJS.load('particles-js', '/particles-config.json');
+    // Change background image every 6 seconds
+    carouselInterval = setInterval(() => {
+        currentImageIndex.value =
+            (currentImageIndex.value + 1) % bgImages.length;
+    }, 6000);
+});
+
+onUnmounted(() => {
+    if (carouselInterval) {
+        clearInterval(carouselInterval);
     }
 });
 </script>
 
 <template>
     <section id="top" class="hero">
-        <div id="particles-js" class="particles-bg"></div>
+        <div class="carousel-bg">
+            <div
+                v-for="(img, index) in bgImages"
+                :key="img"
+                class="carousel-slide"
+                :class="{ active: currentImageIndex === index }"
+                :style="{ backgroundImage: `url(${img})` }"
+            ></div>
+        </div>
+        <div class="hero-overlay"></div>
         <div class="hero-grid">
             <div class="hero-content">
                 <span class="eyebrow hero-animate"
@@ -95,21 +115,59 @@ onMounted(() => {
     padding: 2rem 4rem;
     position: relative;
     overflow: hidden;
-    background: #0d1117;
+    background: #0d1117; /* Neutral dark theme fallback */
 }
 
-.particles-bg {
+.carousel-bg {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: 0;
+    overflow: hidden;
+}
+
+.carousel-slide {
+    position: absolute;
+    top: -20px; /* Bleed area to prevent white edges from filter: blur */
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition:
+        opacity 2s ease-in-out,
+        transform 6s ease-in-out;
+    filter: blur(3px) brightness(0.65); /* Blurred and slightly darkened image for optimal text readability */
+    transform: scale(1.08);
+}
+
+.carousel-slide.active {
+    opacity: 0.65; /* Blends beautiful parallax images with the solid #0d1117 background */
+    transform: scale(1);
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Neutral dark gradient overlay for optimal readability */
+    background: linear-gradient(
+        135deg,
+        rgba(13, 17, 23, 0.75) 0%,
+        rgba(13, 17, 23, 0.45) 100%
+    );
+    z-index: 1;
 }
 
 .hero-grid {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     display: grid;
     grid-template-columns: 1fr;
     gap: 3rem;
