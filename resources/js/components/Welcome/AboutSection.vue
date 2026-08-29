@@ -8,39 +8,39 @@ const milestones = [
     {
         icon: ScrollText,
         title: 'Established in 2014',
-        text: 'Founded by Senior Police Officer Atty. Urvi B. Pascual to deliver security and safety services.',
-        img: '/images/card1.png',
+        text: 'Founded by Senior Police Officer Atty. Urvi B. Pascual to deliver disciplined, licensed security services.',
+        img: '/images/image-4.jpg',
     },
     {
         icon: Building2,
-        title: 'SEC Registered',
-        text: 'Registered with the Securities and Exchange Commission under Number CS201809381.',
-        img: '/images/card2.png',
+        title: 'SEC Registered & PNP-SOSIA Certified',
+        text: 'Registered under SEC CS201809381 with regular in-service compliance, safety seminars, and SOP audits.',
+        img: '/images/image-8.jpg',
     },
     {
         icon: Handshake,
-        title: 'AsiaLink Affiliate',
-        text: 'Merged with the AsiaLink Group of Companies in 2018 to expand financial and network capabilities.',
-        img: '/images/card3.png',
+        title: 'AsiaLink Affiliate & Nationwide Reach',
+        text: 'Affiliated with the AsiaLink Group of Companies, providing robust financial backing and nationwide logistics.',
+        img: '/images/image-1.jpg',
     },
 ];
 
 const news = [
     {
-        date: 'May 26, 2026',
-        text: 'ASAI recognized for excellence in nationwide security operations across Luzon, Visayas, and Mindanao.',
+        date: 'August 2026',
+        text: 'ASAI tactical security unit completes live-fire marksmanship and safety qualifications at Tanayan Gun Range in Rizal.',
     },
     {
-        date: 'May 18, 2026',
-        text: 'ASAI reports 30% growth in client retention and expands to new sectors in Q1-2026.',
+        date: 'July 2026',
+        text: 'On-site emergency evacuation and first responder rescue training successfully conducted for industrial plant detachments.',
     },
     {
-        date: 'May 8, 2026',
-        text: 'ASAI highlights broad-based expansion, deploys new teams in Visayas and Mindanao regions.',
+        date: 'June 2026',
+        text: 'Security Detachment 104 completes updated gate access protocols and perimeter security mount at Republic Cement Norzagaray.',
     },
     {
-        date: 'May 8, 2026',
-        text: 'ASAI unveils new training facility partnership for K9 and aviation security units.',
+        date: 'May 2026',
+        text: 'Commercial and retail security detachment awarded disaster preparedness and customer safety readiness certifications.',
     },
 ];
 </script>

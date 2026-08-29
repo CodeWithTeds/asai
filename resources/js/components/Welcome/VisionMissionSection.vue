@@ -114,15 +114,15 @@ onMounted(() => {
 }
 
 .vmv-section--vision {
-    background-image: url('/images/parralax1.jpg');
+    background-image: url('/images/image-3.jpg');
 }
 
 .vmv-section--mission {
-    background-image: url('/images/parralax2.jpg');
+    background-image: url('/images/image-7.jpg');
 }
 
 .vmv-section--values {
-    background-image: url('/images/parralax3.jpg');
+    background-image: url('/images/image-2.jpg');
 }
 
 /* Dark overlay */

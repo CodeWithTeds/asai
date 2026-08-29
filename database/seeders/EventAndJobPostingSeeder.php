@@ -39,12 +39,17 @@ class EventAndJobPostingSeeder extends Seeder
 
         // 2. Copy Images to Public Storage Disk
         $imagesToCopy = [
-            'card1.png',
-            'card2.png',
-            'card3.png',
-            'parralax1.jpg',
-            'parralax2.jpg',
-            'parralax3.jpg',
+            'image-1.jpg',
+            'image-2.jpg',
+            'image-3.jpg',
+            'image-4.jpg',
+            'image-5.jpg',
+            'image-6.jpg',
+            'image-7.jpg',
+            'image-8.jpg',
+            'image-9.jpg',
+            'image-10.jpg',
+            'image-11.jpg',
             'hero.png',
             'logo.png',
         ];
@@ -69,9 +74,9 @@ class EventAndJobPostingSeeder extends Seeder
                 'starts_at' => now()->subDays(5),
                 'expires_at' => now()->addMonths(12),
                 'images' => [
-                    'events/parralax1.jpg',
-                    'events/card1.png'
-                ]
+                    'events/image-3.jpg',
+                    'events/image-1.jpg',
+                ],
             ],
             [
                 'title' => 'ASAI Annual Safety Summit and Security Assembly',
@@ -81,34 +86,34 @@ class EventAndJobPostingSeeder extends Seeder
                 'starts_at' => now()->subDays(2),
                 'expires_at' => now()->addMonths(6),
                 'images' => [
-                    'events/parralax2.jpg',
-                    'events/card2.png'
-                ]
+                    'events/image-8.jpg',
+                    'events/image-2.jpg',
+                ],
             ],
             [
-                'title' => 'Advanced Tactical & K9 Joint Exercises',
-                'body' => 'Our tactical response team and K9 detection units completed their specialized joint training program to elevate standard response capabilities for high-security areas.',
+                'title' => 'Tactical Marksmanship & Emergency Rescue Drills',
+                'body' => 'Our tactical response team and detachments completed specialized live-fire qualifications at Tanayan Gun Range and hands-on first responder evacuation drills.',
                 'type' => EventType::Activity,
                 'status' => EventStatus::Active,
                 'starts_at' => now(),
                 'expires_at' => now()->addMonths(3),
                 'images' => [
-                    'events/parralax3.jpg',
-                    'events/card3.png'
-                ]
+                    'events/image-6.jpg',
+                    'events/image-11.jpg',
+                ],
             ],
             [
-                'title' => 'Integrated Smart Security Package Promo',
-                'body' => 'Upgrade your facility protection with our bundled packages combining on-site guard deployment with smart CCTV monitoring solutions at exclusive package rates.',
+                'title' => 'Integrated Industrial Security Package Promo',
+                'body' => 'Upgrade your facility protection with our bundled packages combining on-site guard deployment with smart access control at exclusive package rates.',
                 'type' => EventType::Promos,
                 'status' => EventStatus::Active,
                 'starts_at' => now()->subDays(10),
                 'expires_at' => now()->addMonths(2),
                 'images' => [
-                    'events/hero.png',
-                    'events/logo.png'
-                ]
-            ]
+                    'events/image-7.jpg',
+                    'events/image-10.jpg',
+                ],
+            ],
         ];
 
         foreach ($eventsData as $data) {
@@ -135,7 +140,7 @@ class EventAndJobPostingSeeder extends Seeder
             [
                 'title' => 'Licensed Security Officer (LSO)',
                 'description' => 'We are seeking licensed security guards for immediate deployment at high-end commercial establishments in Metro Manila. Requirements: Valid security license, high school diploma, and clean background records.',
-                'cover_image' => 'job-postings/covers/card1.png',
+                'cover_image' => 'job-postings/covers/image-4.jpg',
                 'location' => 'Metro Manila',
                 'type' => JobPostingType::FullTime,
                 'status' => JobPostingStatus::Open,
@@ -145,7 +150,7 @@ class EventAndJobPostingSeeder extends Seeder
             [
                 'title' => 'VIP Executive Protection Specialist',
                 'description' => 'Looking for qualified personal protection specialists. Prior military or executive security escort experience is required. Candidates must have advanced defensive driving skills and tactical training certificates.',
-                'cover_image' => 'job-postings/covers/parralax1.jpg',
+                'cover_image' => 'job-postings/covers/image-5.jpg',
                 'location' => 'Cebu City',
                 'type' => JobPostingType::FullTime,
                 'status' => JobPostingStatus::Open,
@@ -153,10 +158,10 @@ class EventAndJobPostingSeeder extends Seeder
                 'expires_at' => now()->addMonths(4),
             ],
             [
-                'title' => 'K9 Handler & Security Escort',
-                'description' => 'Coordinate with detection canine units at major transport terminals. Requires a certified K9 handling course completion and experience in emergency crowd management.',
-                'cover_image' => 'job-postings/covers/card2.png',
-                'location' => 'Davao City',
+                'title' => 'Industrial Plant & Gate Security Guard',
+                'description' => 'Coordinate with plant safety officers for gate access control and perimeter patrols at industrial complexes. Requires valid security license and safety awareness.',
+                'cover_image' => 'job-postings/covers/image-10.jpg',
+                'location' => 'Norzagaray, Bulacan',
                 'type' => JobPostingType::FullTime,
                 'status' => JobPostingStatus::Open,
                 'starts_at' => now()->subDays(5),
@@ -165,7 +170,7 @@ class EventAndJobPostingSeeder extends Seeder
             [
                 'title' => 'Security Operations Supervisor',
                 'description' => 'Responsible for checking guard compliance on duty, managing schedules, organizing briefing sessions, and conducting field inspections. Candidates must have at least 3 years of supervisory experience.',
-                'cover_image' => 'job-postings/covers/parralax2.jpg',
+                'cover_image' => 'job-postings/covers/image-3.jpg',
                 'location' => 'Clark, Pampanga',
                 'type' => JobPostingType::FullTime,
                 'status' => JobPostingStatus::Open,
@@ -173,9 +178,9 @@ class EventAndJobPostingSeeder extends Seeder
                 'expires_at' => now()->addMonths(8),
             ],
             [
-                'title' => 'CCTV Surveillance & Control Room Operator',
-                'description' => 'Monitor surveillance feeds, identify security breaches, and alert field officers. Must have basic computing capabilities and solid analytical thinking.',
-                'cover_image' => 'job-postings/covers/card3.png',
+                'title' => 'Retail / Mall Security Marshal',
+                'description' => 'Customer assistance, access screening, and loss prevention for commercial shopping malls. Must be alert and courteous with good communication skills.',
+                'cover_image' => 'job-postings/covers/image-2.jpg',
                 'location' => 'Makati City',
                 'type' => JobPostingType::PartTime,
                 'status' => JobPostingStatus::Open,
@@ -185,7 +190,7 @@ class EventAndJobPostingSeeder extends Seeder
             [
                 'title' => 'Night Shift Facility Security Marshal',
                 'description' => 'Secure warehousing and industrial complexes during night shifts. Perform regular gate checks, patrol logs, and manage visitor entries.',
-                'cover_image' => 'job-postings/covers/parralax3.jpg',
+                'cover_image' => 'job-postings/covers/image-7.jpg',
                 'location' => 'Laguna Technopark',
                 'type' => JobPostingType::Contract,
                 'status' => JobPostingStatus::Open,
@@ -195,7 +200,7 @@ class EventAndJobPostingSeeder extends Seeder
             [
                 'title' => 'Corporate Lobby Security Specialist',
                 'description' => 'Manage front-desk entry logging and visitor badges at corporate headquarters. Requires excellent interpersonal and communication skills.',
-                'cover_image' => 'job-postings/covers/hero.png',
+                'cover_image' => 'job-postings/covers/image-5.jpg',
                 'location' => 'BGC, Taguig',
                 'type' => JobPostingType::FullTime,
                 'status' => JobPostingStatus::Open,
@@ -203,10 +208,10 @@ class EventAndJobPostingSeeder extends Seeder
                 'expires_at' => now()->addMonths(5),
             ],
             [
-                'title' => 'Temporary Security Marshal (Event Base)',
-                'description' => 'Crowd management and ticket marshal positions for our upcoming trade exhibits. Contract duration is 3-5 days. Training will be provided.',
-                'cover_image' => 'job-postings/covers/logo.png',
-                'location' => 'Pasay City',
+                'title' => 'Field Operations Security Officer',
+                'description' => 'Field deployment and infrastructure protection support. Requires physical agility, readiness, and active security license.',
+                'cover_image' => 'job-postings/covers/image-1.jpg',
+                'location' => 'Tanay, Rizal',
                 'type' => JobPostingType::Contract,
                 'status' => JobPostingStatus::Open,
                 'starts_at' => now(),

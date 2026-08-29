@@ -3,11 +3,12 @@ import { Head } from '@inertiajs/vue3';
 import { ArrowRight, ShieldCheck, Award, Users } from 'lucide-vue-next';
 import { onMounted, ref, onUnmounted } from 'vue';
 
-// Parallax background carousel images
+// Background carousel images from authentic ASAI operations
 const bgImages = [
-    '/images/parralax1.jpg',
-    '/images/parralax2.jpg',
-    '/images/parralax3.jpg',
+    '/images/image-3.jpg',
+    '/images/image-5.jpg',
+    '/images/image-7.jpg',
+    '/images/image-1.jpg',
 ];
 
 const currentImageIndex = ref(0);
@@ -48,7 +49,7 @@ onUnmounted(() => {
 <template>
     <Head>
         <!-- Instruct the browser to preload the critical first background image immediately -->
-        <link rel="preload" as="image" href="/images/parralax1.jpg" />
+        <link rel="preload" as="image" href="/images/image-3.jpg" />
     </Head>
     <section id="top" class="hero">
         <div class="carousel-bg">
