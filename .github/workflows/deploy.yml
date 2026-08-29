@@ -1,4 +1,4 @@
-name: Deploy to Hostinger (Split Structure)
+name: Deploy to Hostinger
 
 on:
   push:
@@ -37,22 +37,20 @@ jobs:
       - name: Build Vite Assets
         run: npm run build
 
-      # Step 1: Upload backend core files to /laravel/ (outside public_html)
-      - name: Sync Laravel Core to /laravel/
+      - name: Sync Project to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
-          server-dir: laravel/
+          server-dir: ./
           exclude: |
             **/.git*
             **/.git*/**
             **/.github/**
             **/node_modules/**
             **/tests/**
-            public/**
             .env
             .env.example
             .editorconfig
@@ -65,14 +63,3 @@ jobs:
             storage/framework/cache/data/*
             storage/framework/sessions/*
             storage/framework/views/*
-
-      # Step 2: Upload public assets & index.php to public_html/
-      - name: Sync Public Assets to public_html/
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          local-dir: public/
-          server-dir: public_html/
