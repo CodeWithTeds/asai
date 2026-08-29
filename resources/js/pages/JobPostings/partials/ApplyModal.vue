@@ -58,6 +58,11 @@ function nextStep() {
 
         if (!form.applicant_phone) {
             form.setError('applicant_phone', 'Phone number is required.');
+        } else if (!/^09\d{9}$/.test(form.applicant_phone)) {
+            form.setError(
+                'applicant_phone',
+                'Phone number must be 11 digits starting with 09 and contain no spaces.',
+            );
         }
 
         if (!form.residential_address) {
@@ -330,7 +335,9 @@ function handleClose() {
                                 <input
                                     id="apply-phone"
                                     v-model="form.applicant_phone"
-                                    placeholder="e.g. 0917 123 4567"
+                                    type="tel"
+                                    maxlength="11"
+                                    placeholder="e.g. 09171234567"
                                     :disabled="form.processing"
                                     class="form-input"
                                     required
