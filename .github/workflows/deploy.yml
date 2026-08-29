@@ -1,13 +1,10 @@
-name: Fast Deploy to Hostinger (ZIP Stream)
+name: Direct Deploy to Hostinger
 
 on:
   push:
     branches:
       - main
   workflow_dispatch:
-
-env:
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
 jobs:
   web-deploy:
@@ -49,59 +46,65 @@ jobs:
             -x "tests*" \
             -x ".env*" \
             -x "HOSTINGER_DEPLOYMENT_GUIDE.md" \
+            -x "asai_export.sql" \
             -x "storage/logs/*" \
             -x "storage/framework/cache/data/*" \
             -x "storage/framework/sessions/*" \
             -x "storage/framework/views/*"
 
-      - name: Create Unzip Helper Script
+      - name: Create Unzip Helper Script in public folder
         run: |
-          cat << 'EOF' > extract.php
+          mkdir -p public
+          cat << 'EOF' > public/extract.php
           <?php
           $token = $_GET['token'] ?? '';
           if ($token !== 'asai-deploy-key-2026') {
               http_response_code(403);
-              die('Forbidden');
+              die('Forbidden: Invalid Token');
           }
 
-          $zipFile = __DIR__ . '/deploy.zip';
+          $targetDir = dirname(__DIR__);
+          $zipFile = $targetDir . '/deploy.zip';
+
+          if (!file_exists($zipFile)) {
+              $zipFile = __DIR__ . '/deploy.zip';
+          }
+
           if (!file_exists($zipFile)) {
               http_response_code(404);
-              die('deploy.zip not found');
+              die('Error: deploy.zip not found on server');
           }
 
           $zip = new ZipArchive;
           if ($zip->open($zipFile) === TRUE) {
-              $zip->extractTo(__DIR__);
+              $zip->extractTo($targetDir);
               $zip->close();
               @unlink($zipFile);
               @unlink(__FILE__);
+              // Automatically clear old cached route/config files so changes take effect immediately
+              foreach (glob($targetDir . '/bootstrap/cache/*.php') as $cachedFile) {
+                  @unlink($cachedFile);
+              }
               echo 'DEPLOY_SUCCESS';
           } else {
               http_response_code(500);
-              echo 'FAILED_TO_UNZIP';
+              die('Error: Failed to extract zip');
           }
           EOF
 
-      - name: Upload ZIP Package to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftp
-          security: loose
-          timeout: 60000
-          server-dir: domains/annapolissecurity.ph/public_html/
-          dangerous-clean-slate: false
-          exclude: |
-            **/*
-            !deploy.zip
-            !extract.php
+      - name: Upload Files to Hostinger via cURL FTP
+        run: |
+          echo "Uploading deploy.zip to Hostinger..."
+          curl -k --ssl-reqd -T deploy.zip -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" "ftp://${{ secrets.FTP_SERVER }}:21/domains/annapolissecurity.ph/public_html/deploy.zip"
+          echo "Uploading public/extract.php to Hostinger..."
+          curl -k --ssl-reqd -T public/extract.php -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" "ftp://${{ secrets.FTP_SERVER }}:21/domains/annapolissecurity.ph/public_html/public/extract.php"
 
       - name: Trigger Remote Unzip on Hostinger
         run: |
-          echo "Triggering extraction in public_html..."
-          RESPONSE=$(curl -s -k "https://annapolissecurity.ph/extract.php?token=asai-deploy-key-2026" || true)
-          echo "Response: $RESPONSE"
+          echo "Triggering remote extraction on Hostinger..."
+          RESPONSE=$(curl -s -k "https://annapolissecurity.ph/extract.php?token=asai-deploy-key-2026")
+          echo "Server Response: $RESPONSE"
+          if [[ "$RESPONSE" != *"DEPLOY_SUCCESS"* ]]; then
+            echo "ERROR: Extraction did not report DEPLOY_SUCCESS! Got: $RESPONSE"
+            exit 1
+          fi
