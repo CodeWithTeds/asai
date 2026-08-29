@@ -47,6 +47,7 @@ jobs:
             -x ".env*" \
             -x "HOSTINGER_DEPLOYMENT_GUIDE.md" \
             -x "asai_export.sql" \
+            -x "public/storage/*" \
             -x "storage/app/public/*" \
             -x "storage/logs/*" \
             -x "storage/framework/cache/data/*" \
@@ -76,17 +77,6 @@ jobs:
               die('Error: deploy.zip not found on server');
           }
 
-          // Recover orphaned backup from a previous failed deploy
-          $uploadsDir = $targetDir . '/storage/app/public';
-          if (!is_dir($uploadsDir)) {
-              foreach (glob($targetDir . '/_storage_backup_*') as $orphan) {
-                  if (is_dir($orphan)) {
-                      @rename($orphan, $uploadsDir);
-                      break;
-                  }
-              }
-          }
-
           $zip = new ZipArchive;
           if ($zip->open($zipFile) === TRUE) {
               $zip->extractTo($targetDir);
@@ -94,10 +84,32 @@ jobs:
               @unlink($zipFile);
               @unlink(__FILE__);
 
-              // Create storage symlink if the host supports it
-              $publicStorageLink = $targetDir . '/public/storage';
-              if (function_exists('symlink') && !file_exists($publicStorageLink) && is_dir($uploadsDir)) {
-                  @symlink($uploadsDir, $publicStorageLink);
+              // Sync any existing files from storage/app/public to public/storage
+              $srcDir = $targetDir . '/storage/app/public';
+              $dstDir = $targetDir . '/public/storage';
+
+              if (is_dir($srcDir)) {
+                  if (!is_dir($dstDir)) {
+                      @mkdir($dstDir, 0755, true);
+                  }
+                  $iterator = new RecursiveIteratorIterator(
+                      new RecursiveDirectoryIterator($srcDir, RecursiveDirectoryIterator::SKIP_DOTS),
+                      RecursiveIteratorIterator::SELF_FIRST
+                  );
+                  foreach ($iterator as $item) {
+                      $subPath = $iterator->getSubPathname();
+                      $target = $dstDir . '/' . $subPath;
+                      if ($item->isDir()) {
+                          if (!is_dir($target)) {
+                              @mkdir($target, 0755, true);
+                          }
+                      } else {
+                          if (!is_dir(dirname($target))) {
+                              @mkdir(dirname($target), 0755, true);
+                          }
+                          @copy($item->getPathname(), $target);
+                      }
+                  }
               }
 
               // Clear cached route/config files so changes take effect immediately

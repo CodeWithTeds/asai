@@ -31,37 +31,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('job-applications.resume');
 });
 
-// Temporary debug route — REMOVE after fixing
-Route::get('/storage-debug', function () {
-    $storagePath = storage_path('app/public');
-    $basePath = base_path();
-    $publicPath = public_path();
-
-    $eventsDir = storage_path('app/public/events/images');
-    $files = is_dir($eventsDir) ? scandir($eventsDir) : ['DIR NOT FOUND'];
-
-    // Check for orphaned backup
-    $backups = glob(base_path('_storage_backup_*'));
-
-    return response()->json([
-        'base_path' => $basePath,
-        'storage_path' => $storagePath,
-        'public_path' => $publicPath,
-        'storage_app_public_exists' => is_dir($storagePath),
-        'events_images_dir_exists' => is_dir($eventsDir),
-        'events_images_files' => $files,
-        'orphaned_backups' => $backups,
-        'public_storage_link_exists' => file_exists(public_path('storage')),
-    ]);
-});
-
-// Serve storage files directly without requiring symlink
+// Direct storage file server fallback for shared hosting environments
 Route::get('/storage/{path}', function (string $path) {
-    $filePath = storage_path('app/public/' . $path);
-    if (! file_exists($filePath)) {
-        abort(404);
+    $publicFilePath = public_path('storage/' . $path);
+    if (file_exists($publicFilePath) && is_file($publicFilePath)) {
+        return response()->file($publicFilePath);
     }
-    return response()->file($filePath);
+
+    $storageFilePath = storage_path('app/public/' . $path);
+    if (file_exists($storageFilePath) && is_file($storageFilePath)) {
+        return response()->file($storageFilePath);
+    }
+
+    abort(404);
 })->where('path', '.*')->name('storage.serve');
 
 require __DIR__ . '/settings.php';
