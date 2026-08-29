@@ -151,7 +151,7 @@ function handleLogoClick(e: Event) {
     position: sticky;
     top: 0;
     z-index: 50;
-    height: 100px;
+    height: 76px;
     background: #0d1b4b;
     display: flex;
     align-items: center;
@@ -166,8 +166,8 @@ function handleLogoClick(e: Event) {
     align-items: center;
     height: 100%;
     background: #fff;
-    padding: 0 3rem 0 1.5rem;
-    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 100%, 0 100%);
+    padding: 0 1.75rem 0 1rem;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 100%, 0 100%);
     text-decoration: none;
     flex-shrink: 0;
     overflow: visible;
@@ -176,12 +176,12 @@ function handleLogoClick(e: Event) {
 }
 
 .brand-logo {
-    height: 140px;
+    height: 84px;
     width: auto;
     display: block;
     position: relative;
-    top: 10px;
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+    top: 4px;
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.15));
 }
 
 .brand-text {
@@ -288,12 +288,12 @@ function handleLogoClick(e: Event) {
 /* Mobile nav */
 .nav-mobile {
     position: absolute;
-    top: 100px;
+    top: 76px;
     left: 0;
     right: 0;
     background: #0d1b4b;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1rem 1.5rem 1.5rem;
+    padding: 1rem 1.25rem 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
@@ -310,6 +310,10 @@ function handleLogoClick(e: Event) {
     color: rgba(255, 255, 255, 0.8);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     text-decoration: none;
+}
+
+.nav-link-mobile:hover {
+    color: #c9a84c;
 }
 
 .cta-mobile {
@@ -343,6 +347,21 @@ function handleLogoClick(e: Event) {
 }
 
 @media (min-width: 900px) {
+    .site-header {
+        height: 100px;
+    }
+
+    .brand-zone {
+        padding: 0 3rem 0 1.5rem;
+        clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 100%, 0 100%);
+    }
+
+    .brand-logo {
+        height: 140px;
+        top: 10px;
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+    }
+
     .nav-desktop {
         display: flex;
     }
@@ -353,6 +372,10 @@ function handleLogoClick(e: Event) {
 
     .menu-toggle {
         display: none;
+    }
+
+    .nav-mobile {
+        top: 100px;
     }
 }
 </style>

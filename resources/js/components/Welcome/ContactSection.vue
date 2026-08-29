@@ -174,9 +174,9 @@ function handleSubmit() {
 
 <style scoped>
 .contact-section {
-    background: #080914; /* Brand Navy-Black Base */
+    background: #080914;
     color: #ffffff;
-    padding: 7rem 0;
+    padding: 4rem 0;
     overflow: hidden;
     position: relative;
 }
@@ -216,14 +216,14 @@ function handleSubmit() {
 }
 
 .bg-glow-blue {
-    background: #1d219d; /* Brand royal blue glow */
+    background: #1d219d;
     top: -200px;
     left: -200px;
     opacity: 0.16;
 }
 
 .bg-glow-gold {
-    background: #daa520; /* Brand gold glow */
+    background: #daa520;
     bottom: -200px;
     right: -200px;
     opacity: 0.09;
@@ -234,7 +234,7 @@ function handleSubmit() {
     z-index: 2;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 4rem;
+    gap: 2.5rem;
     align-items: center;
 }
 
@@ -246,12 +246,12 @@ function handleSubmit() {
 
 .contact-title {
     font-family: var(--font-sans);
-    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    font-size: clamp(1.75rem, 6vw, 3.2rem);
     font-weight: 800;
     line-height: 1.15;
     letter-spacing: -0.02em;
     color: #ffffff;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     text-transform: uppercase;
 }
 
@@ -266,23 +266,23 @@ function handleSubmit() {
 }
 
 .contact-lead {
-    font-size: 1rem;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.7);
     max-width: 480px;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .capabilities-link {
     display: inline-flex;
     align-items: center;
     color: #ffffff;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     border-bottom: 2px solid rgba(255, 255, 255, 0.25);
-    padding-bottom: 6px;
+    padding-bottom: 5px;
     transition: all 0.3s ease;
 }
 
@@ -299,7 +299,7 @@ function handleSubmit() {
 .contact-form {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
     max-width: 500px;
     margin: 0 auto;
 }
@@ -307,7 +307,7 @@ function handleSubmit() {
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    gap: 0.3rem;
     width: 100%;
 }
 
@@ -317,8 +317,8 @@ function handleSubmit() {
     background: #ffffff;
     border: 1px solid transparent;
     border-radius: var(--radius-sm);
-    padding: 0.9rem 1.15rem;
-    font-size: 0.95rem;
+    padding: 0.8rem 1rem;
+    font-size: 0.92rem;
     color: #111827;
     outline: none;
     transition: all 0.25s ease;
@@ -342,26 +342,26 @@ function handleSubmit() {
 
 .error-text {
     color: #f87171;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 500;
 }
 
-/* Tan Submit Button - Mockup Aligned */
+/* Tan Submit Button */
 .btn-submit {
     align-self: flex-start;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #ebdcb9; /* Beige/Tan */
-    color: #080914; /* Navy text */
-    font-size: 0.85rem;
+    background: #ebdcb9;
+    color: #080914;
+    font-size: 0.82rem;
     font-weight: 700;
-    letter-spacing: 0.2em;
-    padding: 0.95rem 2.25rem;
+    letter-spacing: 0.18em;
+    padding: 0.85rem 2rem;
     border-radius: var(--radius-sm);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
-    min-width: 140px;
+    min-width: 130px;
     border: none;
 }
 
@@ -380,11 +380,18 @@ function handleSubmit() {
     cursor: not-allowed;
 }
 
+@media (max-width: 480px) {
+    .btn-submit {
+        width: 100%;
+        align-self: stretch;
+    }
+}
+
 /* Success State styling */
 .success-alert {
     background: rgba(218, 165, 32, 0.08);
     border: 1px solid rgba(218, 165, 32, 0.25);
-    padding: 2rem;
+    padding: 1.5rem 1.25rem;
     border-radius: var(--radius-md);
     animation: fadeIn 0.4s ease-out;
     max-width: 500px;
@@ -394,8 +401,8 @@ function handleSubmit() {
 .success-header {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
+    gap: 0.65rem;
+    margin-bottom: 0.5rem;
 }
 
 .success-icon {
@@ -403,14 +410,14 @@ function handleSubmit() {
 }
 
 .success-title {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: #ffffff;
 }
 
 .success-text {
-    font-size: 0.92rem;
-    line-height: 1.6;
+    font-size: 0.88rem;
+    line-height: 1.55;
     color: rgba(255, 255, 255, 0.75);
 }
 
@@ -440,7 +447,52 @@ function handleSubmit() {
     }
 }
 
+@media (min-width: 768px) {
+    .contact-lead {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .capabilities-link {
+        font-size: 0.85rem;
+        letter-spacing: 0.18em;
+        padding-bottom: 6px;
+    }
+
+    .contact-form {
+        gap: 1.25rem;
+    }
+
+    .form-input,
+    .form-textarea {
+        padding: 0.9rem 1.15rem;
+        font-size: 0.95rem;
+    }
+
+    .btn-submit {
+        font-size: 0.85rem;
+        letter-spacing: 0.2em;
+        padding: 0.95rem 2.25rem;
+        min-width: 140px;
+    }
+
+    .success-alert {
+        padding: 2rem;
+    }
+
+    .success-title {
+        font-size: 1.1rem;
+    }
+
+    .success-text {
+        font-size: 0.92rem;
+    }
+}
+
 @media (min-width: 900px) {
+    .contact-section {
+        padding: 7rem 0;
+    }
     .contact-grid {
         grid-template-columns: 1.1fr 1fr;
         gap: 6rem;

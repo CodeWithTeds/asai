@@ -85,7 +85,7 @@ const clients = Array.from({ length: 34 }, (_, i) => {
 <style scoped>
 .clients-section {
     background: var(--color-bg-elevated);
-    padding: 5rem 1.5rem;
+    padding: 3.5rem 1.25rem;
 }
 
 .clients-container {
@@ -95,12 +95,13 @@ const clients = Array.from({ length: 34 }, (_, i) => {
 
 .clients-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
 }
 
 .clients-info-cell {
-    padding: 1rem 0;
+    grid-column: 1 / -1;
+    padding: 0.5rem 0 1.25rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -108,9 +109,9 @@ const clients = Array.from({ length: 34 }, (_, i) => {
 
 .clients-desc-wrapper {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
     align-items: flex-start;
-    margin-top: 1.25rem;
+    margin-top: 1rem;
 }
 
 .clients-desc-pointer {
@@ -119,7 +120,7 @@ const clients = Array.from({ length: 34 }, (_, i) => {
 }
 
 .clients-desc-text {
-    font-size: 1rem;
+    font-size: 0.92rem;
     color: var(--color-text-muted);
     line-height: 1.6;
 }
@@ -132,8 +133,8 @@ const clients = Array.from({ length: 34 }, (_, i) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    height: 90px;
+    padding: 0.75rem;
+    height: 75px;
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     z-index: 1;
@@ -149,8 +150,8 @@ const clients = Array.from({ length: 34 }, (_, i) => {
 }
 
 .client-logo-img {
-    max-width: 70%;
-    max-height: 60%;
+    max-width: 75%;
+    max-height: 65%;
     object-fit: contain;
 }
 
@@ -169,20 +170,33 @@ const clients = Array.from({ length: 34 }, (_, i) => {
 
 /* Responsive grid layouts */
 @media (min-width: 640px) {
+    .clients-section {
+        padding: 5rem 1.5rem;
+    }
+
     .clients-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 1.25rem;
+    }
+
+    .client-logo-card {
+        height: 90px;
+        padding: 1rem;
+    }
+
+    .clients-desc-text {
+        font-size: 1rem;
     }
 }
 
 @media (min-width: 768px) {
     .clients-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 1.5rem;
     }
 
     .clients-info-cell {
-        grid-column: 1 / span 3;
+        grid-column: 1 / span 4;
         padding-bottom: 2rem;
     }
 

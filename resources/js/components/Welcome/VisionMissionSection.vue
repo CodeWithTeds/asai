@@ -104,13 +104,14 @@ onMounted(() => {
 
 .vmv-section {
     position: relative;
-    min-height: 100vh;
+    min-height: auto;
+    padding: 4rem 1.25rem;
     display: flex;
     align-items: center;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-attachment: scroll;
 }
 
 .vmv-section--vision {
@@ -129,7 +130,7 @@ onMounted(() => {
 .vmv-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.75);
+    background: rgba(0, 0, 0, 0.78);
     z-index: 1;
 }
 
@@ -138,8 +139,8 @@ onMounted(() => {
     position: relative;
     z-index: 2;
     max-width: 600px;
-    padding: 4rem 2rem;
-    margin-left: 5%;
+    padding: 0;
+    margin-left: 0;
     opacity: 0;
     transform: translateY(40px);
     transition:
@@ -156,22 +157,22 @@ onMounted(() => {
 .vmv-eyebrow {
     display: inline-block;
     font-family: var(--font-sans);
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--color-accent);
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 /* Heading */
 .vmv-heading {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: clamp(1.6rem, 5.5vw, 2.75rem);
     font-weight: 800;
     color: #fff;
     line-height: 1.2;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
     letter-spacing: -0.02em;
 }
 
@@ -182,14 +183,14 @@ onMounted(() => {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.65rem;
 }
 
 .vmv-list li {
     font-family: var(--font-sans);
     color: rgba(255, 255, 255, 0.85);
-    font-size: 1.05rem;
-    line-height: 1.7;
+    font-size: 0.95rem;
+    line-height: 1.65;
     padding-left: 0;
 }
 
@@ -197,27 +198,27 @@ onMounted(() => {
 .vmv-text {
     font-family: var(--font-sans);
     color: rgba(255, 255, 255, 0.85);
-    font-size: 1.05rem;
-    line-height: 1.8;
+    font-size: 0.95rem;
+    line-height: 1.7;
 }
 
 /* Values tags */
 .vmv-values-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .vmv-value-tag {
     display: inline-block;
     font-family: var(--font-sans);
-    padding: 0.6rem 1.4rem;
+    padding: 0.5rem 1.1rem;
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 4px;
     color: #fff;
-    font-size: 0.95rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     transition:
         background 0.3s ease,
         border-color 0.3s ease;
@@ -229,9 +230,49 @@ onMounted(() => {
 }
 
 @media (min-width: 768px) {
+    .vmv-section {
+        min-height: 100vh;
+        padding: 0;
+        background-attachment: fixed;
+    }
+
     .vmv-content {
         padding: 6rem 4rem;
         margin-left: 8%;
+    }
+
+    .vmv-eyebrow {
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        margin-bottom: 1rem;
+    }
+
+    .vmv-heading {
+        margin-bottom: 1.5rem;
+    }
+
+    .vmv-list {
+        gap: 0.75rem;
+    }
+
+    .vmv-list li {
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    .vmv-text {
+        font-size: 1.05rem;
+        line-height: 1.8;
+    }
+
+    .vmv-values-list {
+        gap: 0.75rem;
+    }
+
+    .vmv-value-tag {
+        padding: 0.6rem 1.4rem;
+        font-size: 0.95rem;
+        font-weight: 500;
     }
 }
 

@@ -246,8 +246,14 @@ onMounted(() => {
     position: relative;
     background: linear-gradient(150deg, #f0f4ff 0%, #fafbff 40%, #f5f8ff 100%);
     border-bottom: 1px solid var(--color-border);
-    padding: 3.5rem 0 3.5rem;
+    padding: 2.25rem 0;
     overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .careers-hero {
+        padding: 3.5rem 0;
+    }
 }
 
 .hero-blob {
@@ -258,19 +264,36 @@ onMounted(() => {
 }
 
 .hero-blob-1 {
-    width: 480px;
-    height: 480px;
+    width: 320px;
+    height: 320px;
     background: rgba(29, 33, 157, 0.06);
-    top: -120px;
-    right: -80px;
+    top: -80px;
+    right: -40px;
+}
+
+@media (min-width: 768px) {
+    .hero-blob-1 {
+        width: 480px;
+        height: 480px;
+        top: -120px;
+        right: -80px;
+    }
 }
 
 .hero-blob-2 {
-    width: 320px;
-    height: 320px;
+    width: 240px;
+    height: 240px;
     background: rgba(201, 168, 76, 0.07);
-    bottom: -100px;
+    bottom: -60px;
     left: 5%;
+}
+
+@media (min-width: 768px) {
+    .hero-blob-2 {
+        width: 320px;
+        height: 320px;
+        bottom: -100px;
+    }
 }
 
 .hero-body {
@@ -286,13 +309,20 @@ onMounted(() => {
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 0.4rem 1rem;
+    padding: 0.35rem 0.9rem;
     border-radius: 100px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     transition:
         background 0.3s ease,
         color 0.3s ease,
         border-color 0.3s ease;
+}
+
+@media (min-width: 768px) {
+    .hero-badge {
+        margin-bottom: 1.5rem;
+        padding: 0.4rem 1rem;
+    }
 }
 
 .hero-badge--open {
@@ -308,26 +338,34 @@ onMounted(() => {
 }
 
 .hero-heading {
-    font-size: 2.2rem;
+    font-size: clamp(1.6rem, 5.5vw, 2.4rem);
     font-weight: 800;
     color: var(--color-primary-dark);
     letter-spacing: -0.01em;
     line-height: 1.15;
-    margin: 0 0 1rem;
+    margin: 0 0 0.75rem;
 }
 
 .hero-desc {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     color: var(--color-text-muted);
-    line-height: 1.65;
+    line-height: 1.6;
     max-width: 520px;
-    margin: 0 0 2.5rem;
+    margin: 0 0 1.75rem;
+}
+
+@media (min-width: 768px) {
+    .hero-desc {
+        font-size: 1.05rem;
+        line-height: 1.65;
+        margin: 0 0 2.5rem;
+    }
 }
 
 .hero-stats {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.25rem;
 }
 
 .hero-stat {
@@ -337,15 +375,21 @@ onMounted(() => {
 }
 
 .hero-stat-num {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: 900;
     color: var(--color-primary-dark);
     letter-spacing: -0.02em;
     line-height: 1;
 }
 
+@media (min-width: 768px) {
+    .hero-stat-num {
+        font-size: 1.5rem;
+    }
+}
+
 .hero-stat-label {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
     color: var(--color-text-muted);
     text-transform: uppercase;
@@ -354,7 +398,7 @@ onMounted(() => {
 
 .hero-stat-divider {
     width: 1px;
-    height: 36px;
+    height: 32px;
     background: var(--color-border);
 }
 
@@ -362,20 +406,38 @@ onMounted(() => {
 .job-postings-section {
     background: var(--color-bg);
     flex: 1;
-    padding: 3.5rem 0 6rem;
+    padding: 2.25rem 0 4rem;
+}
+
+@media (min-width: 768px) {
+    .job-postings-section {
+        padding: 3.5rem 0 6rem;
+    }
 }
 
 .job-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
-    /* Equal row heights — each track stretches to match the tallest card */
+    gap: 1.25rem;
     grid-auto-rows: 1fr;
     opacity: 0;
     transform: translateY(30px);
     transition:
         opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s,
         transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+}
+
+@media (min-width: 640px) {
+    .job-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .job-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 .job-postings-section.is-visible .job-grid {
@@ -389,13 +451,20 @@ onMounted(() => {
     flex-direction: column;
     background: var(--color-bg-elevated);
     border: 1px solid var(--color-border);
-    border-radius: 24px;
-    padding: 10px;
+    border-radius: 18px;
+    padding: 8px;
     overflow: hidden;
     transition:
         transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
         box-shadow 0.3s ease,
         border-color 0.3s ease;
+}
+
+@media (min-width: 768px) {
+    .job-card {
+        border-radius: 24px;
+        padding: 10px;
+    }
 }
 
 .job-card:hover {
@@ -408,16 +477,24 @@ onMounted(() => {
 .job-card-top {
     position: relative;
     width: 100%;
-    height: 220px;
-    border-radius: 18px;
+    height: 180px;
+    border-radius: 14px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    padding: 1.5rem;
+    padding: 1.2rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .job-card-top {
+        height: 220px;
+        padding: 1.5rem;
+        border-radius: 18px;
+    }
 }
 
 /* Dark overlay for readability */
@@ -445,18 +522,25 @@ onMounted(() => {
 .job-date-badge {
     background: #ffffff;
     color: #0f172a;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    padding: 0.35rem 0.9rem;
+    padding: 0.3rem 0.75rem;
     border-radius: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 768px) {
+    .job-date-badge {
+        font-size: 0.72rem;
+        padding: 0.35rem 0.9rem;
+    }
 }
 
 .job-card-icon-circle {
     background: #ffffff;
     color: var(--color-primary);
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -465,30 +549,44 @@ onMounted(() => {
     flex-shrink: 0;
 }
 
+@media (min-width: 768px) {
+    .job-card-icon-circle {
+        width: 32px;
+        height: 32px;
+    }
+}
+
 /* Middle Content (Company & Title) */
 .job-card-top-content {
     position: relative;
     z-index: 2;
     margin-top: auto;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.6rem;
 }
 
 .job-company {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: rgba(255, 255, 255, 0.8);
     display: block;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.2rem;
 }
 
 .job-card-title {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #ffffff;
     line-height: 1.3;
     margin: 0;
+    word-break: break-word;
+}
+
+@media (min-width: 768px) {
+    .job-card-title {
+        font-size: 1.25rem;
+    }
 }
 
 /* Tags / Pills */
@@ -497,7 +595,7 @@ onMounted(() => {
     z-index: 2;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.35rem;
 }
 
 .job-tag {
@@ -505,9 +603,9 @@ onMounted(() => {
     backdrop-filter: blur(4px);
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 600;
-    padding: 0.25rem 0.75rem;
+    padding: 0.2rem 0.65rem;
     border-radius: 20px;
     text-transform: capitalize;
 }
@@ -517,20 +615,26 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 1.25rem 0.75rem 0.5rem;
+    padding: 1rem 0.65rem 0.4rem;
+}
+
+@media (min-width: 768px) {
+    .job-card-bottom {
+        padding: 1.25rem 0.75rem 0.5rem;
+    }
 }
 
 .job-card-desc {
     font-size: 0.85rem;
     color: var(--color-text-muted);
-    line-height: 1.6;
+    line-height: 1.55;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
     flex: 1;
-    height: 2.7rem;
+    word-break: break-word;
 }
 
 /* Footer / Action row */
@@ -539,23 +643,23 @@ onMounted(() => {
     justify-content: space-between;
     align-items: center;
     margin-top: auto;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .job-meta-info {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.1rem;
 }
 
 .job-meta-title {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 800;
     color: var(--color-primary-dark);
 }
 
 .job-meta-sub {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--color-text-muted);
     font-weight: 500;
 }
@@ -564,10 +668,10 @@ onMounted(() => {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.6rem 1.3rem;
+    padding: 0.55rem 1.15rem;
     background: var(--color-primary);
     color: #ffffff;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 700;
     border-radius: 24px;
     border: none;
@@ -591,7 +695,7 @@ onMounted(() => {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 4rem 2rem;
+    padding: 3rem 1.5rem;
     max-width: 480px;
     margin: 0 auto;
     opacity: 0;
@@ -599,6 +703,12 @@ onMounted(() => {
     transition:
         opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s,
         transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+}
+
+@media (min-width: 768px) {
+    .empty-state {
+        padding: 4rem 2rem;
+    }
 }
 
 .job-postings-section.is-visible .empty-state {
@@ -610,37 +720,32 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 72px;
-    height: 72px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: rgba(29, 33, 157, 0.05);
     color: var(--color-primary);
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .empty-icon-wrapper {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 1.25rem;
+    }
 }
 
 .empty-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--color-primary-dark);
     margin-bottom: 0.5rem;
 }
 
 .empty-text {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     color: var(--color-text-muted);
-    line-height: 1.6;
-}
-
-/* Responsive */
-@media (min-width: 640px) {
-    .job-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (min-width: 1024px) {
-    .job-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
+    line-height: 1.55;
 }
 </style>

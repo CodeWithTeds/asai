@@ -10,38 +10,71 @@
     width: 100%;
     max-width: var(--container-max);
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .container {
+        padding: 0 1.5rem;
+    }
 }
 
 .section {
-    padding: 5rem 0;
+    padding: 3.5rem 0;
+}
+
+@media (min-width: 768px) {
+    .section {
+        padding: 5rem 0;
+    }
 }
 
 .section-title {
-    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
     margin-bottom: 0.75rem;
+    line-height: 1.2;
 }
 
 .section-eyebrow {
     display: inline-block;
     font-family: var(--font-sans);
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--color-accent);
     margin-bottom: 0.5rem;
 }
 
+@media (min-width: 768px) {
+    .section-eyebrow {
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+    }
+}
+
 .section-lead {
     color: var(--color-text-muted);
     max-width: 720px;
-    font-size: 1.05rem;
+    font-size: 0.95rem;
+    line-height: 1.65;
+}
+
+@media (min-width: 768px) {
+    .section-lead {
+        font-size: 1.05rem;
+    }
 }
 
 .section-header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2.25rem;
+}
+
+@media (min-width: 768px) {
+    .section-header {
+        margin-bottom: 3rem;
+    }
 }
 
 .section-header.center {
@@ -53,8 +86,17 @@
     margin: 0.75rem auto 0;
 }
 
-@media (max-width: 768px) {
-    .section {
-        padding: 3.5rem 0;
-    }
+/* Hide scrollbars globally across all browser engines */
+.no-scrollbar,
+.cards-track {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+}
+
+.no-scrollbar::-webkit-scrollbar,
+.cards-track::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
 }

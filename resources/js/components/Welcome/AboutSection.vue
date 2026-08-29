@@ -115,7 +115,7 @@ const news = [
 <style scoped>
 .about-section {
     background: #f5f7fa;
-    padding: 5rem 1.5rem;
+    padding: 3.5rem 1.25rem;
 }
 
 .about-container {
@@ -125,34 +125,35 @@ const news = [
 
 .about-header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2.5rem;
 }
 
 .about-header .section-title {
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: clamp(1.6rem, 5vw, 2.75rem);
+    line-height: 1.2;
 }
 
 .about-header .section-lead {
     max-width: 700px;
     margin: 0.75rem auto 0;
     color: var(--color-text-muted);
-    font-size: 1.1rem;
-    line-height: 1.7;
+    font-size: 0.95rem;
+    line-height: 1.65;
 }
 
 /* Two-column grid */
 .about-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 3rem;
-    margin-bottom: 3rem;
+    gap: 2.5rem;
+    margin-bottom: 2.5rem;
 }
 
 .col-heading {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: var(--color-primary-dark);
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
 }
 
 /* Left column - milestone cards */
@@ -165,7 +166,7 @@ const news = [
 .milestone-card {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.85rem;
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
@@ -182,8 +183,8 @@ const news = [
 }
 
 .milestone-card-img {
-    width: 110px;
-    height: 80px;
+    width: 90px;
+    height: 75px;
     flex-shrink: 0;
     overflow: hidden;
 }
@@ -200,21 +201,22 @@ const news = [
 }
 
 .milestone-card-info {
-    padding: 0.75rem 1rem 0.75rem 0;
+    padding: 0.6rem 0.85rem 0.6rem 0;
 }
 
 .milestone-card-title {
     display: block;
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--color-primary-dark);
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.2rem;
+    line-height: 1.3;
 }
 
 .milestone-card-text {
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     color: var(--color-text-muted);
-    line-height: 1.5;
+    line-height: 1.45;
 }
 
 /* Right column - news */
@@ -224,7 +226,7 @@ const news = [
 }
 
 .news-item {
-    padding: 1.25rem 0;
+    padding: 1rem 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
@@ -238,28 +240,29 @@ const news = [
 
 .news-date {
     display: block;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    color: var(--color-text-muted);
-    margin-bottom: 0.3rem;
+    color: var(--color-accent);
+    margin-bottom: 0.25rem;
 }
 
 .news-text {
-    font-size: 1.05rem;
+    font-size: 0.92rem;
     color: var(--color-text);
-    line-height: 1.6;
+    line-height: 1.55;
 }
 
 /* Motto */
 .motto {
     text-align: center;
     font-style: italic;
-    font-size: 1.15rem;
+    font-size: 0.95rem;
     color: var(--color-primary);
     max-width: 760px;
     margin: 0 auto;
-    padding-top: 2rem;
+    padding-top: 1.75rem;
     border-top: 1px solid rgba(0, 0, 0, 0.08);
+    line-height: 1.6;
 }
 
 /* Responsive */
@@ -268,9 +271,67 @@ const news = [
         padding: 5rem 2.5rem;
     }
 
+    .about-header {
+        margin-bottom: 3rem;
+    }
+
+    .about-header .section-lead {
+        font-size: 1.1rem;
+        line-height: 1.7;
+    }
+
     .about-grid {
         grid-template-columns: 1.2fr 1fr;
         gap: 4rem;
+        margin-bottom: 3rem;
+    }
+
+    .col-heading {
+        font-size: 1.5rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .milestone-card {
+        gap: 1rem;
+    }
+
+    .milestone-card-img {
+        width: 110px;
+        height: 80px;
+    }
+
+    .milestone-card-info {
+        padding: 0.75rem 1rem 0.75rem 0;
+    }
+
+    .milestone-card-title {
+        font-size: 1.05rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .milestone-card-text {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .news-item {
+        padding: 1.25rem 0;
+    }
+
+    .news-date {
+        font-size: 0.9rem;
+        color: var(--color-text-muted);
+        margin-bottom: 0.3rem;
+    }
+
+    .news-text {
+        font-size: 1.05rem;
+        line-height: 1.6;
+    }
+
+    .motto {
+        font-size: 1.15rem;
+        padding-top: 2rem;
     }
 }
 

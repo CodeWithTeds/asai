@@ -268,7 +268,7 @@ const capabilities = [
 .capabilities-section {
     width: 100%;
     background: var(--color-bg);
-    padding: 5rem 1.5rem;
+    padding: 3.5rem 1.25rem;
 }
 
 .cap-container {
@@ -280,17 +280,19 @@ const capabilities = [
 /* Header */
 .cap-header {
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 2.5rem;
 }
 
 .cap-header .section-title {
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: clamp(1.6rem, 5vw, 2.75rem);
     color: var(--color-primary-dark);
+    line-height: 1.2;
 }
 
 .cap-subtitle {
     color: var(--color-text-muted);
-    font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+    font-size: 0.95rem;
+    line-height: 1.6;
     margin-top: 0.5rem;
     max-width: 600px;
     margin-left: auto;
@@ -301,7 +303,7 @@ const capabilities = [
 .cap-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1.25rem;
 }
 
 /* Base Card Style */
@@ -309,11 +311,11 @@ const capabilities = [
     position: relative;
     background: #ffffff;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: 2.25rem 2rem;
+    border-radius: var(--radius-md);
+    padding: 1.5rem 1.25rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
     overflow: hidden;
     transition:
         transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
@@ -323,8 +325,8 @@ const capabilities = [
 }
 
 .cap-card:hover {
-    transform: translateY(-8px) scale(1.015);
-    box-shadow: 0 20px 40px var(--color-shadow);
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 16px 36px var(--color-shadow);
     border-color: rgba(29, 33, 157, 0.15);
 }
 
@@ -340,24 +342,24 @@ const capabilities = [
 .cap-card-icon {
     background: var(--color-primary);
     color: #ffffff;
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 48px;
-    height: 48px;
+    width: 42px;
+    height: 42px;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: 0 4px 12px rgba(29, 33, 157, 0.1);
 }
 
 .cap-card:hover .cap-card-icon {
-    transform: scale(1.1) rotate(4deg);
+    transform: scale(1.08) rotate(4deg);
 }
 
 .cap-card-number {
     font-family: var(--font-display);
-    color: rgba(74, 95, 128, 0.1);
-    font-size: 2.5rem;
+    color: rgba(74, 95, 128, 0.12);
+    font-size: 2rem;
     font-weight: 900;
     line-height: 1;
     user-select: none;
@@ -368,14 +370,14 @@ const capabilities = [
 
 .cap-card:hover .cap-card-number {
     transform: translateY(-2px);
-    color: rgba(184, 134, 11, 0.18);
+    color: rgba(184, 134, 11, 0.2);
 }
 
 /* Card Content Area */
 .cap-card-content {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.5rem;
     position: relative;
     z-index: 2;
     flex-grow: 1;
@@ -384,7 +386,7 @@ const capabilities = [
 .cap-card-title {
     font-family: var(--font-sans);
     color: var(--color-primary-dark);
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 800;
     line-height: 1.35;
     transition: color 0.3s ease;
@@ -396,8 +398,8 @@ const capabilities = [
 
 .cap-card-text {
     color: var(--color-text-muted);
-    font-size: 0.95rem;
-    line-height: 1.65;
+    font-size: 0.9rem;
+    line-height: 1.6;
 }
 
 /* Background Graphics Placement */

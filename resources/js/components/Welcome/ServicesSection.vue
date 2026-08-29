@@ -191,7 +191,7 @@ onMounted(() => {
                     <ChevronLeft :size="20" />
                 </button>
 
-                <div class="cards-track" ref="trackRef">
+                <div class="cards-track no-scrollbar" ref="trackRef">
                     <TransitionGroup name="card-remove">
                         <div
                             v-for="s in visibleServices"
@@ -231,7 +231,8 @@ onMounted(() => {
 <style scoped>
 .services-section {
     position: relative;
-    min-height: 100vh;
+    min-height: auto;
+    padding: 3.5rem 0;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -253,7 +254,9 @@ onMounted(() => {
 
 .services-text {
     color: #fff;
-    max-width: 600px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     opacity: 0;
     transform: translateX(-40px);
     transition:
@@ -269,9 +272,10 @@ onMounted(() => {
 .services-carousel {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    justify-self: end;
+    gap: 0.4rem;
+    width: 100%;
     max-width: 100%;
+    min-width: 0;
     opacity: 0;
     transform: translateX(40px);
     transition:
@@ -296,9 +300,9 @@ onMounted(() => {
     inset: 0;
     background: linear-gradient(
         to bottom,
-        rgba(0, 0, 0, 0.7) 0%,
-        rgba(0, 0, 0, 0.5) 50%,
-        rgba(0, 0, 0, 0.8) 100%
+        rgba(0, 0, 0, 0.75) 0%,
+        rgba(0, 0, 0, 0.6) 50%,
+        rgba(0, 0, 0, 0.85) 100%
     );
     transition: opacity 0.4s ease;
 }
@@ -356,24 +360,30 @@ onMounted(() => {
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 4rem 1.5rem;
+    padding: 0 1.25rem;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 2rem;
     align-items: center;
+    box-sizing: border-box;
 }
 
 /* Text */
 .services-title {
-    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-size: clamp(1.4rem, 5.5vw, 3rem);
+    line-height: 1.2;
     color: #fff;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.6rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .services-lead {
-    font-size: clamp(1rem, 1.3vw, 1.15rem);
-    color: rgba(255, 255, 255, 0.75);
-    line-height: 1.7;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.65;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 /* Carousel */
@@ -381,10 +391,10 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #fff;
@@ -396,8 +406,8 @@ onMounted(() => {
 }
 
 .carousel-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.15);
+    background: rgba(255, 255, 255, 0.22);
+    transform: scale(1.1);
     box-shadow: 0 4px 16px rgba(221, 179, 96, 0.25);
 }
 
@@ -409,18 +419,22 @@ onMounted(() => {
     -webkit-overflow-scrolling: touch;
     padding: 0.5rem 0;
     flex: 1;
+    min-width: 0;
     perspective: 1000px;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
 }
 
 .cards-track::-webkit-scrollbar {
+    width: 0;
     height: 0;
     display: none;
 }
 
 .svc-card {
     position: relative;
-    flex: 0 0 200px;
-    min-width: 200px;
+    flex: 0 0 150px;
+    min-width: 150px;
     aspect-ratio: 3 / 4;
     border-radius: var(--radius-md);
     overflow: hidden;
@@ -434,7 +448,7 @@ onMounted(() => {
 }
 
 .svc-card:hover {
-    transform: translateY(-6px) scale(1.04);
+    transform: translateY(-4px) scale(1.03);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
     border-color: rgba(221, 179, 96, 0.4);
 }
@@ -465,16 +479,16 @@ onMounted(() => {
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 0.85rem;
+    padding: 0.65rem;
     background: linear-gradient(
         to top,
-        rgba(0, 0, 0, 0.85) 0%,
+        rgba(0, 0, 0, 0.88) 0%,
         transparent 100%
     );
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    transform: translateY(4px);
+    gap: 0.35rem;
+    transform: translateY(2px);
     transition: transform 0.3s ease;
 }
 
@@ -488,27 +502,63 @@ onMounted(() => {
 }
 
 .svc-card-label {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
     color: #fff;
-    line-height: 1.3;
+    line-height: 1.25;
 }
 
 /* Responsive */
 @media (min-width: 768px) {
+    .services-section {
+        min-height: 100vh;
+        padding: 0;
+    }
+
     .services-inner {
-        grid-template-columns: 1fr auto;
+        grid-template-columns: minmax(0, 1fr) auto;
         padding: 5rem 2.5rem;
         gap: 3rem;
     }
 
+    .services-text {
+        max-width: 600px;
+    }
+
+    .services-title {
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        margin-bottom: 0.75rem;
+    }
+
+    .services-lead {
+        font-size: clamp(1rem, 1.3vw, 1.15rem);
+        line-height: 1.7;
+    }
+
     .services-carousel {
         max-width: 660px;
+        gap: 0.5rem;
+    }
+
+    .carousel-btn {
+        width: 40px;
+        height: 40px;
     }
 
     .svc-card {
         flex: 0 0 200px;
         min-width: 200px;
+    }
+
+    .svc-card-content {
+        padding: 0.85rem;
+        gap: 0.4rem;
+        transform: translateY(4px);
+    }
+
+    .svc-card-label {
+        font-size: 0.75rem;
+        line-height: 1.3;
     }
 }
 

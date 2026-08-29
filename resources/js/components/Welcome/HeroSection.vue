@@ -133,13 +133,13 @@ onUnmounted(() => {
 
 <style scoped>
 .hero {
-    min-height: calc(100vh - 100px);
+    min-height: calc(100vh - 76px);
     display: flex;
     align-items: center;
-    padding: 2rem 4rem;
+    padding: 2.5rem 1.25rem 3rem;
     position: relative;
     overflow: hidden;
-    background: #0d1117; /* Neutral dark theme fallback */
+    background: #0d1117;
 }
 
 .carousel-bg {
@@ -154,7 +154,7 @@ onUnmounted(() => {
 
 .carousel-slide {
     position: absolute;
-    top: -20px; /* Bleed area to prevent white edges from filter: blur */
+    top: -20px;
     left: -20px;
     right: -20px;
     bottom: -20px;
@@ -165,12 +165,12 @@ onUnmounted(() => {
     transition:
         opacity 2s ease-in-out,
         transform 6s ease-in-out;
-    filter: blur(3px) brightness(0.65); /* Blurred and slightly darkened image for optimal text readability */
+    filter: blur(3px) brightness(0.65);
     transform: scale(1.08);
 }
 
 .carousel-slide.active {
-    opacity: 0.65; /* Blends beautiful parallax images with the solid #0d1117 background */
+    opacity: 0.65;
     transform: scale(1);
 }
 
@@ -180,11 +180,10 @@ onUnmounted(() => {
     left: 0;
     width: 100%;
     height: 100%;
-    /* Neutral dark gradient overlay for optimal readability */
     background: linear-gradient(
         135deg,
-        rgba(13, 17, 23, 0.75) 0%,
-        rgba(13, 17, 23, 0.45) 100%
+        rgba(13, 17, 23, 0.85) 0%,
+        rgba(13, 17, 23, 0.6) 100%
     );
     z-index: 1;
 }
@@ -194,7 +193,7 @@ onUnmounted(() => {
     z-index: 2;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 2.5rem;
     align-items: center;
     max-width: 1400px;
     margin: 0 auto;
@@ -215,10 +214,7 @@ onUnmounted(() => {
 }
 
 .hero-visual {
-    order: 2;
-    position: relative;
-    display: flex;
-    justify-content: flex-end;
+    display: none;
 }
 
 .hero-img {
@@ -234,16 +230,17 @@ onUnmounted(() => {
 
 .eyebrow {
     display: inline-block;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-accent);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.6rem;
 }
 
 .hero-title {
-    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-size: clamp(1.75rem, 5.5vw, 3rem);
+    line-height: 1.18;
     margin-bottom: 1rem;
     color: #ffffff;
 }
@@ -253,28 +250,31 @@ onUnmounted(() => {
 }
 
 .hero-lead {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    line-height: 1.65;
     max-width: 560px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
 }
 
 .hero-cta {
     display: flex;
     gap: 0.75rem;
     flex-wrap: wrap;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .btn-primary {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     background: var(--color-primary);
     color: #fff;
     padding: 0.85rem 1.4rem;
     border-radius: var(--radius-sm);
     font-weight: 600;
+    font-size: 0.9rem;
     transition:
         background-color 0.25s ease,
         transform 0.25s ease,
@@ -290,9 +290,11 @@ onUnmounted(() => {
 .btn-ghost {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     padding: 0.85rem 1.4rem;
     border-radius: var(--radius-sm);
     font-weight: 600;
+    font-size: 0.9rem;
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.3);
     background: transparent;
@@ -308,19 +310,26 @@ onUnmounted(() => {
     box-shadow: 0 6px 20px rgba(184, 134, 11, 0.2);
 }
 
+@media (max-width: 480px) {
+    .btn-primary,
+    .btn-ghost {
+        width: 100%;
+    }
+}
+
 .hero-stats {
     list-style: none;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1.25rem;
-    padding-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .hero-stats li {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.85rem;
 }
 
 .stat-icon {
@@ -332,16 +341,37 @@ onUnmounted(() => {
     display: block;
     font-weight: 700;
     color: #ffffff;
-    font-size: 0.85rem;
+    font-size: 0.92rem;
+    line-height: 1.25;
 }
 
 .hero-stats span {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.6);
+    display: block;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.35;
+}
+
+@media (min-width: 640px) {
+    .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .hero {
+        padding: 3rem 2.5rem;
+    }
+    .eyebrow {
+        font-size: 0.85rem;
+    }
 }
 
 @media (min-width: 900px) {
     .hero {
+        min-height: calc(100vh - 100px);
         padding: 2rem 6rem;
     }
     .hero-grid {
@@ -355,8 +385,15 @@ onUnmounted(() => {
         justify-content: center;
     }
     .hero-visual {
+        display: flex;
         order: 2;
         justify-content: flex-end;
+        max-width: 480px;
+        margin: 0;
+    }
+    .hero-stats {
+        gap: 1.5rem;
+        padding-top: 2rem;
     }
 }
 </style>
