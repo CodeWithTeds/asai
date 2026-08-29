@@ -47,6 +47,7 @@ jobs:
             -x ".env*" \
             -x "HOSTINGER_DEPLOYMENT_GUIDE.md" \
             -x "asai_export.sql" \
+            -x "storage/app/public/*" \
             -x "storage/logs/*" \
             -x "storage/framework/cache/data/*" \
             -x "storage/framework/sessions/*" \
@@ -75,13 +76,31 @@ jobs:
               die('Error: deploy.zip not found on server');
           }
 
+          // Recover orphaned backup from a previous failed deploy
+          $uploadsDir = $targetDir . '/storage/app/public';
+          if (!is_dir($uploadsDir)) {
+              foreach (glob($targetDir . '/_storage_backup_*') as $orphan) {
+                  if (is_dir($orphan)) {
+                      @rename($orphan, $uploadsDir);
+                      break;
+                  }
+              }
+          }
+
           $zip = new ZipArchive;
           if ($zip->open($zipFile) === TRUE) {
               $zip->extractTo($targetDir);
               $zip->close();
               @unlink($zipFile);
               @unlink(__FILE__);
-              // Automatically clear old cached route/config files so changes take effect immediately
+
+              // Create storage symlink if the host supports it
+              $publicStorageLink = $targetDir . '/public/storage';
+              if (function_exists('symlink') && !file_exists($publicStorageLink) && is_dir($uploadsDir)) {
+                  @symlink($uploadsDir, $publicStorageLink);
+              }
+
+              // Clear cached route/config files so changes take effect immediately
               foreach (glob($targetDir . '/bootstrap/cache/*.php') as $cachedFile) {
                   @unlink($cachedFile);
               }
