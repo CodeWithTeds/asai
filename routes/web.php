@@ -31,4 +31,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('job-applications.resume');
 });
 
+// Serve storage files directly without requiring symlink
+Route::get('/storage/{path}', function (string $path) {
+    $filePath = storage_path('app/public/' . $path);
+    if (! file_exists($filePath)) {
+        abort(404);
+    }
+    return response()->file($filePath);
+})->where('path', '.*')->name('storage.serve');
+
 require __DIR__ . '/settings.php';
