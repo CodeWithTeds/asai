@@ -1,4 +1,4 @@
-name: Deploy to Hostinger
+name: Fast Deploy to Hostinger (ZIP Stream)
 
 on:
   push:
@@ -11,7 +11,7 @@ env:
 
 jobs:
   web-deploy:
-    name: Build and Deploy via FTP
+    name: Build, Package and Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -40,7 +40,50 @@ jobs:
       - name: Build Vite Assets
         run: npm run build
 
-      - name: Sync Project to Hostinger
+      - name: Package Project into deploy.zip
+        run: |
+          zip -rq deploy.zip . \
+            -x ".git*" \
+            -x ".github*" \
+            -x "node_modules*" \
+            -x "tests*" \
+            -x ".env*" \
+            -x "HOSTINGER_DEPLOYMENT_GUIDE.md" \
+            -x "storage/logs/*" \
+            -x "storage/framework/cache/data/*" \
+            -x "storage/framework/sessions/*" \
+            -x "storage/framework/views/*"
+
+      - name: Create Unzip Helper Script
+        run: |
+          cat << 'EOF' > extract.php
+          <?php
+          $token = $_GET['token'] ?? '';
+          if ($token !== 'asai-deploy-key-2026') {
+              http_response_code(403);
+              die('Forbidden');
+          }
+
+          $zipFile = __DIR__ . '/deploy.zip';
+          if (!file_exists($zipFile)) {
+              http_response_code(404);
+              die('deploy.zip not found');
+          }
+
+          $zip = new ZipArchive;
+          if ($zip->open($zipFile) === TRUE) {
+              $zip->extractTo(__DIR__);
+              $zip->close();
+              @unlink($zipFile);
+              @unlink(__FILE__);
+              echo 'DEPLOY_SUCCESS';
+          } else {
+              http_response_code(500);
+              echo 'FAILED_TO_UNZIP';
+          }
+          EOF
+
+      - name: Upload ZIP Package to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -50,22 +93,15 @@ jobs:
           protocol: ftp
           security: loose
           timeout: 60000
-          server-dir: ./
+          server-dir: domains/annapolissecurity.ph/public_html/
+          dangerous-clean-slate: false
           exclude: |
-            **/.git*
-            **/.git*/**
-            **/.github/**
-            **/node_modules/**
-            **/tests/**
-            .env
-            .env.example
-            .editorconfig
-            .prettierrc
-            .prettierignore
-            .eslintrc*
-            tsconfig.json
-            phpunit.xml
-            storage/logs/*
-            storage/framework/cache/data/*
-            storage/framework/sessions/*
-            storage/framework/views/*
+            **/*
+            !deploy.zip
+            !extract.php
+
+      - name: Trigger Remote Unzip on Hostinger
+        run: |
+          echo "Triggering extraction in public_html..."
+          RESPONSE=$(curl -s -k "https://annapolissecurity.ph/extract.php?token=asai-deploy-key-2026" || true)
+          echo "Response: $RESPONSE"
