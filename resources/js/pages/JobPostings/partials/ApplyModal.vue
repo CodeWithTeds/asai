@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { useForm, usePage } from '@inertiajs/vue3';
+import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { apply } from '@/routes/job-postings';
 
 type JobPosting = {
@@ -12,6 +12,7 @@ type JobPosting = {
     type: string;
 };
 
+const page = usePage();
 const isOpen = defineModel<boolean>('open');
 
 const props = defineProps<{
@@ -35,9 +36,78 @@ const form = useForm({
     resume: null as File | null,
     cover_letter: '',
     references: '',
+    cf_turnstile_response: '',
 });
 
 const fileInput = ref<HTMLInputElement | null>(null);
+const turnstileContainer = ref<HTMLElement | null>(null);
+const turnstileWidgetId = ref<string | null>(null);
+
+declare global {
+    interface Window {
+        turnstile?: {
+            render: (
+                container: string | HTMLElement,
+                options: {
+                    sitekey: string;
+                    action?: string;
+                    callback?: (token: string) => void;
+                    'error-callback'?: () => void;
+                    'expired-callback'?: () => void;
+                    theme?: 'light' | 'dark' | 'auto';
+                },
+            ) => string;
+            reset: (widgetId?: string) => void;
+            remove: (widgetId: string) => void;
+        };
+    }
+}
+
+function renderTurnstile() {
+    nextTick(() => {
+        if (!turnstileContainer.value || !window.turnstile) {
+            return;
+        }
+
+        const siteKey =
+            (page.props.turnstile_site_key as string) ||
+            import.meta.env.VITE_TURNSTILE_SITE_KEY ||
+            '1x00000000000000000000AA';
+
+        if (turnstileWidgetId.value) {
+            window.turnstile.reset(turnstileWidgetId.value);
+            return;
+        }
+
+        turnstileWidgetId.value = window.turnstile.render(
+            turnstileContainer.value,
+            {
+                sitekey: siteKey,
+                action: 'apply',
+                callback: (token: string) => {
+                    form.cf_turnstile_response = token;
+                    form.clearErrors('cf_turnstile_response');
+                },
+                'error-callback': () => {
+                    form.cf_turnstile_response = '';
+                },
+                'expired-callback': () => {
+                    form.cf_turnstile_response = '';
+                },
+            },
+        );
+    });
+}
+
+watch(
+    [isOpen, currentStep],
+    ([open, step]) => {
+        if (open && step === 4) {
+            renderTurnstile();
+        }
+    },
+    { flush: 'post' },
+);
 
 function handleFileChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0] ?? null;
@@ -153,6 +223,11 @@ function handleSubmit() {
             }
         },
         onError: (errors) => {
+            if (turnstileWidgetId.value && window.turnstile) {
+                window.turnstile.reset(turnstileWidgetId.value);
+                form.cf_turnstile_response = '';
+            }
+
             if (
                 errors.applicant_name ||
                 errors.applicant_email ||
@@ -172,7 +247,8 @@ function handleSubmit() {
             } else if (
                 errors.resume ||
                 errors.cover_letter ||
-                errors.references
+                errors.references ||
+                errors.cf_turnstile_response
             ) {
                 currentStep.value = 4;
             }
@@ -186,10 +262,21 @@ function handleClose() {
     form.clearErrors();
     currentStep.value = 1;
 
+    if (turnstileWidgetId.value && window.turnstile) {
+        window.turnstile.reset(turnstileWidgetId.value);
+        form.cf_turnstile_response = '';
+    }
+
     if (fileInput.value) {
         fileInput.value.value = '';
     }
 }
+
+onBeforeUnmount(() => {
+    if (turnstileWidgetId.value && window.turnstile) {
+        window.turnstile.remove(turnstileWidgetId.value);
+    }
+});
 </script>
 
 <template>
@@ -609,7 +696,7 @@ function handleClose() {
                                 </p>
                             </div>
 
-                            <!-- References -->
+                            <!-- Character References -->
                             <div class="form-group">
                                 <label for="apply-references" class="form-label"
                                     >Character References</label
@@ -627,6 +714,20 @@ function handleClose() {
                                     class="error-msg"
                                 >
                                     {{ form.errors.references }}
+                                </p>
+                            </div>
+
+                            <!-- Cloudflare Turnstile Verification -->
+                            <div class="turnstile-wrapper">
+                                <div
+                                    ref="turnstileContainer"
+                                    class="turnstile-box"
+                                ></div>
+                                <p
+                                    v-if="form.errors.cf_turnstile_response"
+                                    class="error-msg text-center"
+                                >
+                                    {{ form.errors.cf_turnstile_response }}
                                 </p>
                             </div>
                         </div>
@@ -683,4 +784,19 @@ function handleClose() {
 
 <style scoped>
 @import '../../../../css/welcome/apply-modal.css';
+
+.turnstile-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+    margin-bottom: 0.25rem;
+    min-height: 65px;
+}
+
+.turnstile-box {
+    display: flex;
+    justify-content: center;
+}
 </style>

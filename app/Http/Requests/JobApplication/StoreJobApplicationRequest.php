@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\JobApplication;
 
+use App\Rules\Turnstile;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -46,6 +47,7 @@ class StoreJobApplicationRequest extends FormRequest
             'resume' => ['required', 'file', 'mimes:pdf,docx', 'max:5120'],
             'cover_letter' => ['nullable', 'string', 'max:5000'],
             'references' => ['nullable', 'string', 'max:2000'],
+            'cf_turnstile_response' => ['required', 'string', new Turnstile('apply')],
         ];
     }
 
@@ -61,6 +63,7 @@ class StoreJobApplicationRequest extends FormRequest
             'applicant_phone.required' => 'The phone number is required.',
             'applicant_phone.size' => 'The phone number must be exactly 11 digits.',
             'applicant_phone.regex' => 'The phone number must be 11 digits starting with 09 and contain no spaces.',
+            'cf_turnstile_response.required' => 'Please complete the security verification.',
         ];
     }
 }

@@ -52,6 +52,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'turnstile_site_key' => config('services.turnstile.site_key'),
             'events' => app(EventService::class)->getActive($search, $type),
             'jobPostings' => app(JobPostingService::class)->getActive(),
         ];

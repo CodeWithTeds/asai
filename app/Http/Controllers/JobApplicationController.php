@@ -50,7 +50,7 @@ class JobApplicationController extends Controller
     {
         $this->jobApplicationService->apply(
             $jobPosting,
-            $request->safe()->except(['resume']),
+            $request->safe()->except(['resume', 'cf_turnstile_response']),
             $request->file('resume'),
         );
 
