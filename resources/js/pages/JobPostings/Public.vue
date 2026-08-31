@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import '../../../css/welcome/main.css';
 import { Head, usePage } from '@inertiajs/vue3';
-import { Briefcase } from 'lucide-vue-next';
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { Briefcase, CheckCircle2, X } from 'lucide-vue-next';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import AppFooter from '@/components/Welcome/AppFooter.vue';
 import AppHeader from '@/components/Welcome/AppHeader.vue';
 import ApplyModal from './partials/ApplyModal.vue';
@@ -23,6 +23,45 @@ const jobPostings = computed<JobPosting[]>(
 
 const isApplyModalOpen = ref(false);
 const selectedJob = ref<JobPosting | null>(null);
+
+// Custom Page Toast State
+const toast = ref<{
+    show: boolean;
+    title: string;
+    message: string;
+    jobTitle: string;
+}>({
+    show: false,
+    title: '',
+    message: '',
+    jobTitle: '',
+});
+
+let toastTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function handleApplySuccess(jobTitle: string) {
+    if (toastTimeout) {
+        clearTimeout(toastTimeout);
+    }
+
+    toast.value = {
+        show: true,
+        title: 'Application Submitted Successfully!',
+        message: `Your application for "${jobTitle}" has been received. Our recruitment team will review your qualifications and contact you soon.`,
+        jobTitle,
+    };
+
+    toastTimeout = setTimeout(() => {
+        toast.value.show = false;
+    }, 6500);
+}
+
+function dismissToast() {
+    if (toastTimeout) {
+        clearTimeout(toastTimeout);
+    }
+    toast.value.show = false;
+}
 
 function formatDate(dateStr: string) {
     if (!dateStr) {
@@ -54,6 +93,7 @@ function formatType(type: string) {
 // Scroll-triggered entrance animation
 const sectionRef = ref<HTMLElement | null>(null);
 const isVisible = ref(false);
+let observer: IntersectionObserver | null = null;
 
 onMounted(() => {
     const el = sectionRef.value;
@@ -62,18 +102,23 @@ onMounted(() => {
         return;
     }
 
-    const observer = new IntersectionObserver(
+    observer = new IntersectionObserver(
         ([entry]) => {
             if (entry && entry.isIntersecting) {
                 isVisible.value = true;
-                observer.disconnect();
+                observer?.disconnect();
             }
         },
         { threshold: 0.15 },
     );
     observer.observe(el);
+});
 
-    onUnmounted(() => observer.disconnect());
+onUnmounted(() => {
+    observer?.disconnect();
+    if (toastTimeout) {
+        clearTimeout(toastTimeout);
+    }
 });
 </script>
 
@@ -224,8 +269,45 @@ onMounted(() => {
                 </div>
             </div>
 
-            <ApplyModal v-model:open="isApplyModalOpen" :job="selectedJob" />
+            <ApplyModal
+                v-model:open="isApplyModalOpen"
+                :job="selectedJob"
+                @success="handleApplySuccess"
+            />
         </section>
+
+        <!-- Custom Careers Page Toast Notification -->
+        <Teleport to="body">
+            <Transition name="toast-slide">
+                <div
+                    v-if="toast.show"
+                    class="careers-custom-toast"
+                    role="alert"
+                    aria-live="assertive"
+                >
+                    <div class="toast-icon-box">
+                        <CheckCircle2 :size="20" class="toast-check-icon" />
+                    </div>
+                    <div class="toast-body">
+                        <div class="toast-header-row">
+                            <span class="toast-badge">Application Sent</span>
+                            <span class="toast-time">Just now</span>
+                        </div>
+                        <h4 class="toast-heading">{{ toast.title }}</h4>
+                        <p class="toast-text">{{ toast.message }}</p>
+                    </div>
+                    <button
+                        type="button"
+                        class="toast-dismiss-btn"
+                        aria-label="Dismiss notification"
+                        @click="dismissToast"
+                    >
+                        <X :size="16" />
+                    </button>
+                    <div class="toast-timer-bar"></div>
+                </div>
+            </Transition>
+        </Teleport>
 
         <!-- Main Site Footer -->
         <AppFooter />
@@ -747,5 +829,205 @@ onMounted(() => {
     font-size: 0.88rem;
     color: var(--color-text-muted);
     line-height: 1.55;
+}
+
+/* ─── Careers Custom Toast ───────────────────────── */
+.careers-custom-toast {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 99999;
+    max-width: 440px;
+    width: calc(100% - 2.5rem);
+    background: var(--color-bg-elevated, #ffffff);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    box-shadow:
+        0 20px 40px -10px rgba(13, 17, 23, 0.18),
+        0 0 0 1px rgba(29, 33, 157, 0.08);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 1rem 1.15rem;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.toast-icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+.toast-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.toast-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.toast-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.15rem 0.55rem;
+    border-radius: 100px;
+    background: rgba(29, 33, 157, 0.08);
+    color: var(--color-primary, #1d219d);
+}
+
+.toast-time {
+    font-size: 0.72rem;
+    color: var(--color-text-muted, #64748b);
+    font-weight: 500;
+}
+
+.toast-heading {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-primary-dark, #0f172a);
+    margin: 0 0 0.25rem;
+    line-height: 1.3;
+}
+
+.toast-text {
+    font-size: 0.82rem;
+    color: var(--color-text-muted, #475569);
+    line-height: 1.45;
+    margin: 0;
+    word-break: break-word;
+}
+
+.toast-dismiss-btn {
+    background: none;
+    border: none;
+    color: var(--color-text-muted, #94a3b8);
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: -0.15rem;
+    margin-right: -0.25rem;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.toast-dismiss-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--color-text);
+}
+
+.toast-timer-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #1d219d, #c9a84c);
+    animation: toastCountdown 6.5s linear forwards;
+}
+
+@keyframes toastCountdown {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* ─── Mobile Adjustments (<640px) ─────────────────── */
+@media (max-width: 640px) {
+    .careers-custom-toast {
+        top: max(0.85rem, env(safe-area-inset-top, 0.85rem));
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        width: calc(100% - 1.5rem);
+        max-width: 420px;
+        padding: 0.85rem 0.95rem;
+        gap: 0.75rem;
+        border-radius: 14px;
+        box-shadow:
+            0 12px 30px -6px rgba(13, 17, 23, 0.22),
+            0 0 0 1px rgba(29, 33, 157, 0.08);
+    }
+
+    .toast-icon-box {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+    }
+
+    .toast-badge {
+        font-size: 0.62rem;
+        padding: 0.12rem 0.45rem;
+    }
+
+    .toast-time {
+        font-size: 0.68rem;
+    }
+
+    .toast-heading {
+        font-size: 0.88rem;
+        margin: 0 0 0.15rem;
+    }
+
+    .toast-text {
+        font-size: 0.78rem;
+        line-height: 1.4;
+    }
+
+    .toast-dismiss-btn {
+        padding: 0.25rem;
+        min-width: 28px;
+        min-height: 28px;
+    }
+}
+
+/* ─── Toast Transitions ───────────────────────────── */
+.toast-slide-enter-active,
+.toast-slide-leave-active {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-slide-enter-from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.96);
+}
+
+.toast-slide-leave-to {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.96);
+}
+
+@media (max-width: 640px) {
+    .toast-slide-enter-from {
+        opacity: 0;
+        transform: translate(-50%, -20px) scale(0.96);
+    }
+
+    .toast-slide-leave-to {
+        opacity: 0;
+        transform: translate(-50%, -15px) scale(0.96);
+    }
 }
 </style>

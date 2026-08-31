@@ -19,6 +19,10 @@ const props = defineProps<{
     job: JobPosting | null;
 }>();
 
+const emit = defineEmits<{
+    (e: 'success', jobTitle: string): void;
+}>();
+
 const currentStep = ref(1);
 
 const form = useForm({
@@ -214,6 +218,7 @@ function handleSubmit() {
     form.post(apply(props.job.id).url, {
         forceFormData: true,
         onSuccess: () => {
+            const jobTitle = props.job?.title ?? 'Job Position';
             isOpen.value = false;
             form.reset();
             currentStep.value = 1;
@@ -221,6 +226,8 @@ function handleSubmit() {
             if (fileInput.value) {
                 fileInput.value.value = '';
             }
+
+            emit('success', jobTitle);
         },
         onError: (errors) => {
             if (turnstileWidgetId.value && window.turnstile) {
