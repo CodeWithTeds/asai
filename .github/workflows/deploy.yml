@@ -1,4 +1,4 @@
-name: Direct Deploy to Hostinger
+name: Deploy to Hostinger
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  web-deploy:
+  deploy:
     name: Build, Package and Deploy
     runs-on: ubuntu-latest
 
@@ -45,8 +45,6 @@ jobs:
             -x "node_modules*" \
             -x "tests*" \
             -x ".env*" \
-            -x "HOSTINGER_DEPLOYMENT_GUIDE.md" \
-            -x "asai_export.sql" \
             -x "public/storage/*" \
             -x "storage/app/public/*" \
             -x "storage/logs/*" \
@@ -54,88 +52,40 @@ jobs:
             -x "storage/framework/sessions/*" \
             -x "storage/framework/views/*"
 
-      - name: Create Unzip Helper Script in public folder
+      - name: Prepare Remote Extraction Helper
         run: |
           mkdir -p public
-          cat << 'EOF' > public/extract.php
-          <?php
-          $token = $_GET['token'] ?? '';
-          if ($token !== 'asai-deploy-key-2026') {
-              http_response_code(403);
-              die('Forbidden: Invalid Token');
-          }
-
-          $targetDir = dirname(__DIR__);
-          $zipFile = $targetDir . '/deploy.zip';
-
-          if (!file_exists($zipFile)) {
-              $zipFile = __DIR__ . '/deploy.zip';
-          }
-
-          if (!file_exists($zipFile)) {
-              http_response_code(404);
-              die('Error: deploy.zip not found on server');
-          }
-
-          $zip = new ZipArchive;
-          if ($zip->open($zipFile) === TRUE) {
-              $zip->extractTo($targetDir);
-              $zip->close();
-              @unlink($zipFile);
-              @unlink(__FILE__);
-
-              // Sync any existing files from storage/app/public to public/storage
-              $srcDir = $targetDir . '/storage/app/public';
-              $dstDir = $targetDir . '/public/storage';
-
-              if (is_dir($srcDir)) {
-                  if (!is_dir($dstDir)) {
-                      @mkdir($dstDir, 0755, true);
-                  }
-                  $iterator = new RecursiveIteratorIterator(
-                      new RecursiveDirectoryIterator($srcDir, RecursiveDirectoryIterator::SKIP_DOTS),
-                      RecursiveIteratorIterator::SELF_FIRST
-                  );
-                  foreach ($iterator as $item) {
-                      $subPath = $iterator->getSubPathname();
-                      $target = $dstDir . '/' . $subPath;
-                      if ($item->isDir()) {
-                          if (!is_dir($target)) {
-                              @mkdir($target, 0755, true);
-                          }
-                      } else {
-                          if (!is_dir(dirname($target))) {
-                              @mkdir(dirname($target), 0755, true);
-                          }
-                          @copy($item->getPathname(), $target);
-                      }
-                  }
-              }
-
-              // Clear cached route/config files so changes take effect immediately
-              foreach (glob($targetDir . '/bootstrap/cache/*.php') as $cachedFile) {
-                  @unlink($cachedFile);
-              }
-              echo 'DEPLOY_SUCCESS';
-          } else {
-              http_response_code(500);
-              die('Error: Failed to extract zip');
-          }
-          EOF
-
-      - name: Upload Files to Hostinger via cURL FTP
-        run: |
-          echo "Uploading deploy.zip to Hostinger..."
-          curl -k --ssl-reqd -T deploy.zip -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" "ftp://${{ secrets.FTP_SERVER }}:21/domains/annapolissecurity.ph/public_html/deploy.zip"
-          echo "Uploading public/extract.php to Hostinger..."
-          curl -k --ssl-reqd -T public/extract.php -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" "ftp://${{ secrets.FTP_SERVER }}:21/domains/annapolissecurity.ph/public_html/public/extract.php"
-
-      - name: Trigger Remote Unzip on Hostinger
-        run: |
-          echo "Triggering remote extraction on Hostinger..."
-          RESPONSE=$(curl -s -k "https://annapolissecurity.ph/extract.php?token=asai-deploy-key-2026")
-          echo "Server Response: $RESPONSE"
-          if [[ "$RESPONSE" != *"DEPLOY_SUCCESS"* ]]; then
-            echo "ERROR: Extraction did not report DEPLOY_SUCCESS! Got: $RESPONSE"
+          DEPLOY_TOKEN="${{ secrets.DEPLOY_TOKEN }}"
+          if [ -z "$DEPLOY_TOKEN" ]; then
+            echo "::error::DEPLOY_TOKEN secret is not set. Aborting deployment."
             exit 1
           fi
+          sed "s/__DEPLOY_TOKEN__/${DEPLOY_TOKEN}/g" .github/scripts/extract.php > public/extract.php
+          echo "DEPLOY_TOKEN=${DEPLOY_TOKEN}" >> $GITHUB_ENV
+
+      - name: Upload Files to Hostinger via FTP
+        run: |
+          # Why -k: Hostinger FTP uses certificates that may not chain to GitHub runner's CA bundle
+          CURL_FTP_OPTS="--ssl-reqd --ftp-pasv -k --connect-timeout 45 --retry 5 --retry-delay 5 --retry-all-errors --max-time 600"
+          FTP_CREDS="${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}"
+          FTP_BASE="ftp://${{ secrets.FTP_SERVER }}:21/domains/annapolissecurity.ph/public_html"
+
+          echo "Uploading deploy.zip..."
+          curl $CURL_FTP_OPTS -T deploy.zip -u "$FTP_CREDS" "${FTP_BASE}/deploy.zip"
+
+          echo "Uploading extract.php..."
+          curl $CURL_FTP_OPTS -T public/extract.php -u "$FTP_CREDS" "${FTP_BASE}/public/extract.php"
+
+      - name: Trigger Remote Extraction on Hostinger
+        run: |
+          echo "Triggering remote extraction..."
+          RESPONSE=$(curl -s --connect-timeout 30 --max-time 180 --retry 3 --retry-delay 5 \
+            -X POST \
+            -d "token=${DEPLOY_TOKEN}" \
+            "https://annapolissecurity.ph/extract.php")
+          echo "Server Response: $RESPONSE"
+          if [[ "$RESPONSE" != *"DEPLOY_SUCCESS"* ]]; then
+            echo "::error::Extraction failed. Server responded: $RESPONSE"
+            exit 1
+          fi
+          echo "Deployment completed successfully."
